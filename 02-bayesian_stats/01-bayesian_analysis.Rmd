@@ -1,0 +1,268 @@
+---
+title: "chi22-course"
+author: "Abhraneel Sarma"
+date: "3/3/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tibble)
+library(purrr)
+library(tidyr)
+library(ggplot2)
+library(forcats)
+library(broom)
+library(broom.mixed)
+library(modelr)
+library(tidybayes)
+library(ggdist)
+library(brms)
+```
+
+
+## Introduction
+
+In this document, we will outline the Bayesian analogs of the statistical tests described [here](https://github.com/chatchavan/CHI-Course-Transparent-Quant/blob/master/frequentist.Rmd) (and in the previous lecture)
+
+## Data
+
+Load the data and helper functions
+
+```{r}
+dataset = readr::read_csv("~/Documents/Github/chi22-course/data/blinded.csv")
+
+tidy.wrapper = function(model) {
+  if (class(model) == "lm") {
+    tidy(result_ttest, conf.int = TRUE) %>% 
+      select(-c(statistic, p.value)) %>% 
+      mutate(model = "Frequentist") %>%
+      select(model, everything())
+  } else if (class(model) == "brmsfit") {
+    tidy(result_ttest.bayesian) %>% 
+      filter(effect == "fixed") %>% 
+      select(c(term:conf.high)) %>% 
+      mutate(model = "Bayesian") %>%
+      select(model, everything())
+  } else {
+    stop("unknown model class")
+  }
+}
+```
+
+
+```{r, fig.height = 2, fig.width = 7}
+dataset %>% 
+  mutate(effectiveness = fct_rev(factor(effectiveness, levels = 1:9))) %>%
+  
+  # stacked bar plot
+  ggplot(aes(x = condition, fill = effectiveness)) +
+  geom_bar(position = "stack", stat="count") +
+  
+  # plot data for different experiments as small multiples
+  facet_wrap( ~ experiment) +
+  
+  # grey color scale is robust for colorblind
+  scale_fill_brewer(palette="Greys", drop = FALSE) +
+  
+  # horizontal plot
+  coord_flip() +
+  
+  # legend
+  guides(fill = guide_legend(reverse = TRUE)) +
+  theme_minimal()
+```
+
+As we can see above, the dataset contains results from four experiments. For the purposes of this demonstration we will confine ourselves to just the first experiment.
+
+```{r}
+exp1.data = dataset %>%
+  filter(experiment == 1)
+```
+
+
+## Model 1. Wilcoxon signed rank test
+This is a non-parametric test which we will skip for now. Although, there exists Bayesian non-parametric methods, they are more advanced for this course.
+
+## Model 2. t-test
+
+```{r}
+# this is the linear model equivalent for the paired sample t-test
+result_ttest =
+  lm(
+    effectiveness ~ condition - 1, 
+    data = exp1.data
+  )
+
+result_ttest.bayesian = 
+  brm(
+    effectiveness ~ condition - 1,
+    prior = c(
+      prior(normal(0, 1), class = "b"), # there's a lot of data so even fairly "strong" priors are going to not matter so much here
+      prior(student_t(3, 0, 1), class = "sigma")
+    ),
+    family = student(),
+    data = exp1.data,
+    chains = 3, cores = 3
+  )
+```
+
+Next we visualise the results, along with a side-by-side comparison of the frequentist estimates:
+
+```{r, echo = FALSE, warning = FALSE}
+bind_rows(
+  tidy.wrapper(result_ttest),
+  tidy.wrapper(result_ttest.bayesian)
+) %>%
+  ggplot() +
+  geom_pointrange(
+    aes(
+      x = term, 
+      y = estimate, 
+      ymin = conf.low, 
+      ymax = conf.high, 
+      color = model
+    ), position = position_dodge(width = 0.2))
+```
+
+## Model 3. Ordinal Logistic Regression
+
+```{r}
+data(Trolley, package = "rethinking")
+Trolley
+```
+
+
+
+```{r}
+# figure from: Statistical rethinking with brms, ggplot2, and the tidyverse: Second edition by A Solomon Kurz
+exp1.data %>%
+  count(effectiveness) %>%
+  mutate(pr_k = n / nrow(exp1.data),
+         cum_pr_k = cumsum(pr_k)) %>% 
+  ggplot(aes(x = effectiveness, y = cum_pr_k, 
+             fill = effectiveness)) +
+  geom_line(color = canva_pal("Green fields")(4)[2]) +
+  geom_point(shape = 21, color = "grey92", 
+             size = 2.5, stroke = 1) +
+  scale_fill_gradient(low = canva_pal("Green fields")(4)[4],
+                      high = canva_pal("Green fields")(4)[1]) +
+  scale_x_continuous(breaks = 1:7) +
+  scale_y_continuous("cumulative proportion", 
+                     breaks = c(0, .5, 1), limits = c(0, 1)) +
+  theme_minimal() +
+  theme(axis.ticks = element_blank(),
+        axis.title.y = element_text(angle = 90),
+        legend.position = "none")
+```
+
+What is the model trying to estimate:
+
+```{r}
+# primary data
+exp1.data_plot = exp1.data %>%
+  count(effectiveness) %>%
+  mutate(pr_k = n / nrow(exp1.data)) %>%
+  add_row(effectiveness = 2, n = 0, pr_k = 0) %>%
+  arrange(effectiveness) %>%
+  mutate(cum_pr_k = cumsum(n / nrow(exp1.data))) %>% 
+  mutate(discrete_probability = ifelse(effectiveness == 1, cum_pr_k, cum_pr_k - pr_k))
+
+text = exp1.data_plot %>%
+  mutate(
+    text = effectiveness,
+    effectiveness = effectiveness + 0.25,
+    cum_pr_k = ifelse(cum_pr_k - 0.05 < 0.065, 0.05, cum_pr_k - 0.05)
+  )
+
+exp1.data_plot %>% 
+  ggplot(aes(x = effectiveness, y = cum_pr_k)) +
+  geom_line(aes(color = cum_pr_k), color = canva_pal("Green fields")(4)[1]) +
+  geom_point(shape = 21, colour = "grey92", 
+             size = 2.5, stroke = 1) +
+  geom_linerange(aes(ymin = 0, ymax = cum_pr_k),
+                 alpha = 1/2, color = canva_pal("Green fields")(4)[1]) +
+  geom_linerange(aes(x = effectiveness + .025,
+                     ymin = ifelse(effectiveness == 1, 0, discrete_probability), 
+                     ymax = cum_pr_k),
+                 color = "black") +
+  # number annotation
+  geom_text(data = text, 
+            aes(label = text),
+            size = 4) +
+  scale_color_gradient(low = canva_pal("Green fields")(4)[4],
+                       high = canva_pal("Green fields")(4)[1]) +
+  scale_x_continuous(breaks = 1:7) +
+  scale_y_continuous("cumulative proportion", breaks = c(0, .5, 1), limits = c(0, 1)) +
+  theme(axis.ticks = element_blank(),
+        axis.title.y = element_text(angle = 90),
+        legend.position = "none")
+```
+
+
+```{r}
+d_plot %>% 
+  ggplot(aes(x = response, y = cum_pr_k,
+             color = cum_pr_k, fill = cum_pr_k)) +
+  geom_line(color = canva_pal("Green fields")(4)[1]) +
+  geom_point(shape = 21, colour = "grey92", 
+             size = 2.5, stroke = 1) +
+  geom_linerange(aes(ymin = 0, ymax = cum_pr_k),
+                 alpha = 1/2, color = canva_pal("Green fields")(4)[1]) +
+  geom_linerange(aes(x = response + .025,
+                     ymin = ifelse(response == 1, 0, discrete_probability), 
+                     ymax = cum_pr_k),
+                 color = "black") +
+  # number annotation
+  geom_text(data = text, 
+            aes(label = text),
+            size = 4) +
+  scale_fill_gradient(low = canva_pal("Green fields")(4)[4],
+                      high = canva_pal("Green fields")(4)[1]) +
+  scale_color_gradient(low = canva_pal("Green fields")(4)[4],
+                       high = canva_pal("Green fields")(4)[1]) +
+  scale_x_continuous(breaks = 1:7) +
+  scale_y_continuous("cumulative proportion", breaks = c(0, .5, 1), limits = c(0, 1)) +
+  theme(axis.ticks = element_blank(),
+        axis.title.y = element_text(angle = 90),
+        legend.position = "none")
+```
+
+
+```{r, eval = FALSE}
+result_olr.bayesian = brm(
+  bf(effectiveness ~ condition), 
+  prior = c(
+    prior(normal(0, 1), class = "Intercept"),
+    prior(normal(0, 0.5), class = "b")
+  ),
+  family = cumulative(),
+  data = exp1.data)
+```
+
+
+```{r, fig.height = 2, fig.width = 7}
+data_grid(exp1.data, condition) %>%
+  add_epred_draws(result_olr.bayesian, ndraws = 100) %>%
+  group_by(.draw, condition) %>%
+  mutate(cum_pr_k = cumsum(.epred)) %>%
+  ggplot() +
+  geom_line(aes(x = condition, y = cum_pr_k, group = interaction(.draw, .category)), alpha = 0.1) +
+  facet_grid(. ~ .category)
+```
+
+
+```{r}
+result_olr <- 
+  exp1.data %>% 
+  mutate(effectiveness = ordered(effectiveness, levels = as.character(1:9))) %>% 
+  ordinal::clm(effectiveness ~ condition,
+      data = .)
+
+anova(result_olr, type = "3")
+
+emmeans::emmeans(result_olr,  ~ condition)
+confint(result_olr)
+```
+
