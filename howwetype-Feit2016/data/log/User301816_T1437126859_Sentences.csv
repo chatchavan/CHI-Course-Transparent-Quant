@@ -1,0 +1,1399 @@
+stimulus_index,stimulus,input_time_ms,input_index,key_symbol,transcribed_string
+0,Mitä sinä kuulet?,0,0,Shift_R,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,155,1,M,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,375,2,i,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,624,3,t,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,749,4,adiaeresis,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,935,5,space,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,1185,6,i,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,1310,7,n,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,1654,8,BackSpace,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,1779,9,BackSpace,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,2027,10,s,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,2339,11,o,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,3058,12,BackSpace,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,3401,13,i,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,3463,14,n,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,3651,15,quoteright,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,3651,16,adiaeresis,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,4275,17,BackSpace,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,4461,18,BackSpace,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,5023,19,adiaeresis,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,5210,20,space,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,5367,21,k,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,5553,22,u,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,5678,23,u,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,5835,24,l,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,5960,25,e,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,6147,26,t,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,6302,27,Shift_R,Mitä sinä kuulet?
+0,Mitä sinä kuulet?,6520,28,question,Mitä sinä kuulet?
+1,Mikä on vialla?,0,0,Shift_R,Mikä on vialla?
+1,Mikä on vialla?,217,1,M,Mikä on vialla?
+1,Mikä on vialla?,342,2,i,Mikä on vialla?
+1,Mikä on vialla?,529,3,k,Mikä on vialla?
+1,Mikä on vialla?,654,4,adiaeresis,Mikä on vialla?
+1,Mikä on vialla?,842,5,space,Mikä on vialla?
+1,Mikä on vialla?,1092,6,p,Mikä on vialla?
+1,Mikä on vialla?,1184,7,n,Mikä on vialla?
+1,Mikä on vialla?,1496,8,BackSpace,Mikä on vialla?
+1,Mikä on vialla?,1652,9,BackSpace,Mikä on vialla?
+1,Mikä on vialla?,2089,10,o,Mikä on vialla?
+1,Mikä on vialla?,2184,11,n,Mikä on vialla?
+1,Mikä on vialla?,2276,12,space,Mikä on vialla?
+1,Mikä on vialla?,2401,13,v,Mikä on vialla?
+1,Mikä on vialla?,2495,14,i,Mikä on vialla?
+1,Mikä on vialla?,2588,15,a,Mikä on vialla?
+1,Mikä on vialla?,2744,16,l,Mikä on vialla?
+1,Mikä on vialla?,2869,17,l,Mikä on vialla?
+1,Mikä on vialla?,2963,18,a,Mikä on vialla?
+1,Mikä on vialla?,3212,19,Shift_R,Mikä on vialla?
+1,Mikä on vialla?,3587,20,question,Mikä on vialla?
+2,"Kiitos, hyvää työtä.",0,0,Shift_R,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",280,1,K,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",467,2,i,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",624,3,i,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",842,4,t,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",1029,5,o,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",1186,6,s,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",1778,7,comma,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",1871,8,space,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",2214,9,h,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",2464,10,y,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",2838,11,v,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",2933,12,adiaeresis,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",3088,13,adiaeresis,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",3213,14,space,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",3822,15,t,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",4039,16,y,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",4414,17,odiaeresis,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",4914,18,t,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",5007,19,adiaeresis,"Kiitos, hyvää työtä."
+2,"Kiitos, hyvää työtä.",5413,20,period,"Kiitos, hyvää työtä."
+3,Voin palata aikaisemmin.,0,0,Shift_R,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,374,1,V,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,499,2,o,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,561,3,i,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,779,4,n,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,904,5,space,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,997,6,a,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,1341,7,a,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,1591,8,BackSpace,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,1746,9,BackSpace,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,2214,10,p,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,2308,11,a,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,2463,12,l,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,2558,13,a,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,2744,14,t,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,2931,15,a,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,3056,16,space,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,3243,17,a,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,3431,18,i,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,3555,19,a,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,3618,20,k,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,4335,21,BackSpace,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,4492,22,BackSpace,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,4835,23,a,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,5148,24,BackSpace,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,5647,25,k,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,5740,26,a,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,5927,27,i,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,6207,28,s,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,6519,29,e,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,6707,30,m,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,6832,31,m,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,7019,32,i,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,7082,33,n,Voin palata aikaisemmin.
+3,Voin palata aikaisemmin.,7487,34,period,Voin palata aikaisemmin.
+4,Voitko auttaa minua?,0,0,Shift_R,Voitko auttaa minua?
+4,Voitko auttaa minua?,279,1,V,Voitko auttaa minua?
+4,Voitko auttaa minua?,435,2,O,Voitko auttaa minua?
+4,Voitko auttaa minua?,529,3,i,Voitko auttaa minua?
+4,Voitko auttaa minua?,654,4,t,Voitko auttaa minua?
+4,Voitko auttaa minua?,779,5,k,Voitko auttaa minua?
+4,Voitko auttaa minua?,842,6,o,Voitko auttaa minua?
+4,Voitko auttaa minua?,967,7,space,Voitko auttaa minua?
+4,Voitko auttaa minua?,1465,8,BackSpace,Voitko auttaa minua?
+4,Voitko auttaa minua?,1590,9,BackSpace,Voitko auttaa minua?
+4,Voitko auttaa minua?,1746,10,BackSpace,Voitko auttaa minua?
+4,Voitko auttaa minua?,1902,11,BackSpace,Voitko auttaa minua?
+4,Voitko auttaa minua?,2027,12,BackSpace,Voitko auttaa minua?
+4,Voitko auttaa minua?,2184,13,BackSpace,Voitko auttaa minua?
+4,Voitko auttaa minua?,2682,14,o,Voitko auttaa minua?
+4,Voitko auttaa minua?,2744,15,i,Voitko auttaa minua?
+4,Voitko auttaa minua?,2869,16,t,Voitko auttaa minua?
+4,Voitko auttaa minua?,2931,17,k,Voitko auttaa minua?
+4,Voitko auttaa minua?,3056,18,o,Voitko auttaa minua?
+4,Voitko auttaa minua?,3119,19,space,Voitko auttaa minua?
+4,Voitko auttaa minua?,3743,20,a,Voitko auttaa minua?
+4,Voitko auttaa minua?,3836,21,u,Voitko auttaa minua?
+4,Voitko auttaa minua?,3993,22,t,Voitko auttaa minua?
+4,Voitko auttaa minua?,4179,23,t,Voitko auttaa minua?
+4,Voitko auttaa minua?,4335,24,a,Voitko auttaa minua?
+4,Voitko auttaa minua?,4554,25,a,Voitko auttaa minua?
+4,Voitko auttaa minua?,4803,26,space,Voitko auttaa minua?
+4,Voitko auttaa minua?,4991,27,i,Voitko auttaa minua?
+4,Voitko auttaa minua?,5148,28,n,Voitko auttaa minua?
+4,Voitko auttaa minua?,5271,29,u,Voitko auttaa minua?
+4,Voitko auttaa minua?,5615,30,BackSpace,Voitko auttaa minua?
+4,Voitko auttaa minua?,5740,31,BackSpace,Voitko auttaa minua?
+4,Voitko auttaa minua?,5927,32,BackSpace,Voitko auttaa minua?
+4,Voitko auttaa minua?,6582,33,m,Voitko auttaa minua?
+4,Voitko auttaa minua?,6675,34,i,Voitko auttaa minua?
+4,Voitko auttaa minua?,6832,35,n,Voitko auttaa minua?
+4,Voitko auttaa minua?,6925,36,u,Voitko auttaa minua?
+4,Voitko auttaa minua?,7050,37,t,Voitko auttaa minua?
+4,Voitko auttaa minua?,7144,38,a,Voitko auttaa minua?
+4,Voitko auttaa minua?,7611,39,BackSpace,Voitko auttaa minua?
+4,Voitko auttaa minua?,7767,40,BackSpace,Voitko auttaa minua?
+4,Voitko auttaa minua?,7924,41,a,Voitko auttaa minua?
+4,Voitko auttaa minua?,8454,42,Shift_R,Voitko auttaa minua?
+4,Voitko auttaa minua?,8735,43,question,Voitko auttaa minua?
+5,Kuinka voit?,0,0,Shift_R,Kuinka voit?
+5,Kuinka voit?,187,1,K,Kuinka voit?
+5,Kuinka voit?,437,2,u,Kuinka voit?
+5,Kuinka voit?,499,3,i,Kuinka voit?
+5,Kuinka voit?,686,4,n,Kuinka voit?
+5,Kuinka voit?,749,5,k,Kuinka voit?
+5,Kuinka voit?,904,6,a,Kuinka voit?
+5,Kuinka voit?,1061,7,space,Kuinka voit?
+5,Kuinka voit?,1341,8,v,Kuinka voit?
+5,Kuinka voit?,1466,9,o,Kuinka voit?
+5,Kuinka voit?,1529,10,i,Kuinka voit?
+5,Kuinka voit?,1778,11,t,Kuinka voit?
+5,Kuinka voit?,2028,12,Shift_R,Kuinka voit?
+5,Kuinka voit?,2309,13,question,Kuinka voit?
+6,Kiitos huolenpidostasi.,0,0,Shift_R,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,280,1,K,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,500,2,i,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,592,3,i,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,812,4,o,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,1372,5,BackSpace,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,1654,6,t,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,1779,7,o,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,2090,8,s,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,2684,9,space,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,2901,10,h,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,2996,11,u,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,3338,12,o,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,3651,13,l,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,3806,14,e,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,4149,15,n,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,4430,16,p,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,4555,17,i,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,4804,18,d,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,4929,19,o,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,5460,20,s,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,6395,21,t,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,6458,22,a,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,6802,23,s,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,6927,24,i,Kiitos huolenpidostasi.
+6,Kiitos huolenpidostasi.,7457,25,period,Kiitos huolenpidostasi.
+7,Olen tulossa.,0,0,Shift_R,Olen tulossa.
+7,Olen tulossa.,217,1,O,Olen tulossa.
+7,Olen tulossa.,404,2,l,Olen tulossa.
+7,Olen tulossa.,499,3,e,Olen tulossa.
+7,Olen tulossa.,624,4,n,Olen tulossa.
+7,Olen tulossa.,747,5,space,Olen tulossa.
+7,Olen tulossa.,967,6,t,Olen tulossa.
+7,Olen tulossa.,1059,7,u,Olen tulossa.
+7,Olen tulossa.,1247,8,l,Olen tulossa.
+7,Olen tulossa.,1466,9,o,Olen tulossa.
+7,Olen tulossa.,1591,10,s,Olen tulossa.
+7,Olen tulossa.,1809,11,s,Olen tulossa.
+7,Olen tulossa.,2089,12,a,Olen tulossa.
+7,Olen tulossa.,2683,13,period,Olen tulossa.
+8,Lähettäisitkö minulle sähköpostia?,0,0,Shift_R,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,373,1,L,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,467,2,adiaeresis,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,717,3,h,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,842,4,e,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,1059,5,t,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,1247,6,t,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,1340,7,adiaeresis,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,1559,8,i,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,1746,9,s,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,1871,10,i,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,2089,11,t,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,2214,12,k,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,2276,13,odiaeresis,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,2713,14,space,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,2931,15,m,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,3026,16,i,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,3119,17,n,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,3243,18,u,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,3431,19,l,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,3588,20,l,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,3743,21,e,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,3930,22,space,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,4460,23,s,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,4803,24,adiaeresis,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,5490,25,h,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,5521,26,k,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,5677,27,odiaeresis,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,5927,28,p,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,6083,29,o,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,6240,30,s,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,6800,31,t,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,6894,32,i,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,7019,33,a,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,7674,34,Shift_R,Lähettäisitkö minulle sähköpostia?
+8,Lähettäisitkö minulle sähköpostia?,8017,35,question,Lähettäisitkö minulle sähköpostia?
+9,Voitko jo paremmin?,0,0,Shift_R,Voitko jo paremmin?
+9,Voitko jo paremmin?,279,1,V,Voitko jo paremmin?
+9,Voitko jo paremmin?,404,2,o,Voitko jo paremmin?
+9,Voitko jo paremmin?,467,3,i,Voitko jo paremmin?
+9,Voitko jo paremmin?,592,4,t,Voitko jo paremmin?
+9,Voitko jo paremmin?,717,5,k,Voitko jo paremmin?
+9,Voitko jo paremmin?,779,6,o,Voitko jo paremmin?
+9,Voitko jo paremmin?,997,7,space,Voitko jo paremmin?
+9,Voitko jo paremmin?,1122,8,j,Voitko jo paremmin?
+9,Voitko jo paremmin?,1247,9,o,Voitko jo paremmin?
+9,Voitko jo paremmin?,1340,10,space,Voitko jo paremmin?
+9,Voitko jo paremmin?,1590,11,p,Voitko jo paremmin?
+9,Voitko jo paremmin?,1715,12,a,Voitko jo paremmin?
+9,Voitko jo paremmin?,2432,13,r,Voitko jo paremmin?
+9,Voitko jo paremmin?,2557,14,e,Voitko jo paremmin?
+9,Voitko jo paremmin?,2807,15,m,Voitko jo paremmin?
+9,Voitko jo paremmin?,2963,16,m,Voitko jo paremmin?
+9,Voitko jo paremmin?,3181,17,i,Voitko jo paremmin?
+9,Voitko jo paremmin?,3276,18,n,Voitko jo paremmin?
+9,Voitko jo paremmin?,3649,19,Shift_R,Voitko jo paremmin?
+9,Voitko jo paremmin?,3868,20,question,Voitko jo paremmin?
+10,Kuinka pian tarvitset sen?,0,0,Shift_R,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,281,1,k,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,499,2,u,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,592,3,i,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,779,4,n,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,842,5,k,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,1279,6,BackSpace,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,1434,7,BackSpace,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,1623,8,BackSpace,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,1746,9,BackSpace,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,1966,10,BackSpace,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,2340,11,Shift_R,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,2651,12,K,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,2933,13,u,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,3026,14,i,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,3213,15,n,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,3307,16,k,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,3557,17,a,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,3868,18,p,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,3963,19,i,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,4150,20,a,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,4493,21,BackSpace,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,4649,22,BackSpace,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,4805,23,BackSpace,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,4992,24,space,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,5585,25,p,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,5740,26,i,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,5927,27,a,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,6052,28,n,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,6147,29,space,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,6646,30,a,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,6989,31,BackSpace,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,7144,32,t,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,7239,33,a,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,7956,34,r,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,8236,35,v,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,8331,36,i,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,8549,37,t,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,8830,38,s,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,9078,39,e,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,9298,40,t,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,9641,41,space,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,9921,42,s,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,10203,43,e,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,10421,44,n,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,10920,45,Shift_R,Kuinka pian tarvitset sen?
+10,Kuinka pian tarvitset sen?,11263,46,question,Kuinka pian tarvitset sen?
+11,Ymmärsitkö sinä tämän?,0,0,Shift_R,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,375,1,Y,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,467,2,M,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,654,3,m,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,749,4,adiaeresis,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,1185,5,BackSpace,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,1342,6,BackSpace,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,1809,7,BackSpace,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,2339,8,m,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,2496,9,m,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,2589,10,adiaeresis,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,2871,11,r,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,3244,12,s,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,3369,13,i,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,3556,14,t,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,3743,15,k,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,3774,16,odiaeresis,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,4024,17,space,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,4430,18,s,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,4743,19,i,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,4835,20,n,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,5023,21,adiaeresis,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,5398,22,space,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,6022,23,t,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,6147,24,adiaeresis,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,6333,25,m,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,6427,26,adiaeresis,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,6552,27,n,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,6770,28,Shift_R,Ymmärsitkö sinä tämän?
+11,Ymmärsitkö sinä tämän?,7082,29,question,Ymmärsitkö sinä tämän?
+12,Torstai sopii minulle paremmin.,0,0,Shift_R,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,437,1,T,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,811,2,o,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,1435,3,r,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,1935,4,s,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,2153,5,t,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,2278,6,a,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,2496,7,i,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,2559,8,space,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,2808,9,s,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,2902,10,o,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,3120,11,p,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,3276,12,i,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,3432,13,i,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,3588,14,space,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,3775,15,m,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,3838,16,i,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,3994,17,n,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,4087,18,u,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,4087,19,i,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,4305,20,l,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,4462,21,l,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,4992,22,BackSpace,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,5148,23,BackSpace,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,5304,24,BackSpace,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,5897,25,l,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,6053,26,l,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,6147,27,e,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,6271,28,space,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,6459,29,p,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,6615,30,a,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,7083,31,r,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,7176,32,e,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,7410,33,m,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,7565,34,m,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,7753,35,i,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,7815,36,n,Torstai sopii minulle paremmin.
+12,Torstai sopii minulle paremmin.,8596,37,period,Torstai sopii minulle paremmin.
+13,Meidän täytyy jutella tästä kuukaudesta.,0,0,Shift_R,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,187,1,M,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,342,2,e,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,499,3,i,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,654,4,d,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,810,5,adiaeresis,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,997,6,n,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,1154,7,space,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,1372,8,t,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,1434,9,adiaeresis,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,1777,10,y,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,1964,11,t,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,2059,12,y,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,2214,13,y,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,2776,14,space,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,3213,15,j,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,3401,16,u,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,3493,17,t,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,3868,18,e,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,4148,19,l,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,4305,20,l,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,4398,21,a,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,4555,22,space,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,4928,23,t,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,5053,24,adiaeresis,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,5335,25,s,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,5522,26,t,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,5677,27,adiaeresis,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,5865,28,space,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,6489,29,k,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,7549,30,u,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,7705,31,u,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,7955,32,k,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,8049,33,a,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,8204,34,u,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,8361,35,d,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,8861,36,e,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,9764,37,s,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,9921,38,t,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,10046,39,a,Meidän täytyy jutella tästä kuukaudesta.
+13,Meidän täytyy jutella tästä kuukaudesta.,10545,40,period,Meidän täytyy jutella tästä kuukaudesta.
+14,Kunhan pelleilen kanssasi!,0,0,Shift_R,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,500,1,K,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,779,2,u,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,999,3,n,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,1248,4,h,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,1342,5,a,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,1529,6,n,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,1779,7,space,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,2091,8,p,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,2309,9,e,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,2371,10,l,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,2528,11,l,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,2651,12,e,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,2776,13,i,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,3136,14,l,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,3261,15,e,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,3386,16,n,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,3509,17,space,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,3822,18,k,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,3947,19,a,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,4041,20,n,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,4353,21,s,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,4601,22,s,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,4758,23,a,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,4976,24,s,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,5414,25,i,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,5944,26,Shift_R,Kunhan pelleilen kanssasi!
+14,Kunhan pelleilen kanssasi!,7130,27,exclam,Kunhan pelleilen kanssasi!
+16,Lähetin sen hänelle.,0,0,Shift_R,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,279,1,L,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,1092,2,adiaeresis,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,1528,3,h,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,1653,4,e,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,1871,5,t,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,1934,6,i,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,1996,7,n,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,2121,8,space,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,2276,9,s,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,2526,10,e,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,2620,11,n,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,2683,12,space,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,3181,13,h,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,3276,14,adiaeresis,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,3431,15,n,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,3555,16,e,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,3680,17,l,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,3837,18,l,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,3993,19,e,Lähetin sen hänelle.
+16,Lähetin sen hänelle.,4148,20,period,Lähetin sen hänelle.
+17,Tuletko kanssamme lounaalle?,0,0,Shift_R,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,311,1,T,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,435,2,u,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,623,3,l,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,717,4,e,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,935,5,t,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,1028,6,k,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,1122,7,o,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,1247,8,space,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,1465,9,k,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,1590,10,a,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,1746,11,n,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,1839,12,s,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,2059,13,s,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,2214,14,a,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,2495,15,m,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,2619,16,e,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,3181,17,BackSpace,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,3524,18,m,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,3649,19,e,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,3774,20,space,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,4023,21,l,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,4273,22,o,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,4335,23,u,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,4585,24,n,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,4741,25,a,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,4866,26,a,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,5053,27,l,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,5209,28,l,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,5365,29,e,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,5802,30,Shift_R,Tuletko kanssamme lounaalle?
+17,Tuletko kanssamme lounaalle?,6145,31,question,Tuletko kanssamme lounaalle?
+18,Pidä minut ajan tasalla!,0,0,Shift_R,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,811,1,P,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,874,2,i,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,1217,3,e,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,1716,4,BackSpace,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,1809,5,d,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,1996,6,adiaeresis,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,2246,7,space,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,2401,8,m,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,2464,9,i,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,2621,10,n,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,2776,11,u,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,3088,12,t,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,3276,13,space,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,3431,14,a,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,3588,15,j,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,3681,16,a,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,3805,17,n,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,3900,18,space,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,4337,19,t,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,4523,20,a,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,4773,21,s,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,4992,22,a,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,5117,23,l,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,5273,24,l,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,5365,25,a,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,5615,26,Shift_R,Pidä minut ajan tasalla!
+18,Pidä minut ajan tasalla!,6302,27,exclam,Pidä minut ajan tasalla!
+19,Saimmeko omamme takaisin?,0,0,Shift_R,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,94,1,S,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,437,2,a,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,749,3,i,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,997,4,m,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,1154,5,m,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,1279,6,e,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,1434,7,k,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,1529,8,o,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,1654,9,space,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,1934,10,o,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,2059,11,m,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,2184,12,a,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,2277,13,m,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,2434,14,m,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,2683,15,space,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,3058,16,BackSpace,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,3838,17,e,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,3993,18,space,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,4430,19,t,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,4493,20,a,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,4773,21,k,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,4898,22,a,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,5117,23,i,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,5178,24,s,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,5303,25,i,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,5398,26,n,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,5710,27,Shift_R,Saimmeko omamme takaisin?
+19,Saimmeko omamme takaisin?,5959,28,question,Saimmeko omamme takaisin?
+20,Toivon että voit jo paremmin.,0,0,Shift_R,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,249,1,T,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,374,2,o,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,435,3,i,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,592,4,v,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,717,5,o,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,810,6,n,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,967,7,space,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,1466,8,BackSpace,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,2059,9,space,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,2214,10,e,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,2463,11,t,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,2558,12,t,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,3026,13,adiaeresis,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,3463,14,space,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,3805,15,v,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,3930,16,o,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,4023,17,i,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,4118,18,t,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,4243,19,space,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,4335,20,j,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,4430,21,o,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,4555,22,space,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,4960,23,p,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,5085,24,a,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,5335,25,r,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,5522,26,e,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,5677,27,m,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,5865,28,m,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,6364,29,i,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,6489,30,n,Toivon että voit jo paremmin.
+20,Toivon että voit jo paremmin.,6739,31,period,Toivon että voit jo paremmin.
+21,Tulen takaisin perjantaina.,0,0,Shift_R,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,811,1,T,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,1341,2,l,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,1466,3,e,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,1809,4,BackSpace,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,1965,5,BackSpace,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,2465,6,u,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,2558,7,l,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,2713,8,e,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,2808,9,n,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,2963,10,space,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,3151,11,t,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,3338,12,a,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,3494,13,k,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,3619,14,a,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,3837,15,i,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,4149,16,s,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,4243,17,i,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,4337,18,n,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,4430,19,space,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,4680,20,p,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,4805,21,e,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,4992,22,r,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,5335,23,j,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,5460,24,a,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,5616,25,n,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,5802,26,t,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,5927,27,a,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,6084,28,i,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,6209,29,n,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,6365,30,a,Tulen takaisin perjantaina.
+21,Tulen takaisin perjantaina.,6801,31,period,Tulen takaisin perjantaina.
+22,Kokeilen uudestaan.,0,0,Shift_R,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,217,1,K,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,280,2,O,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,437,3,k,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,498,4,e,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,623,5,i,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,810,6,l,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,1029,7,BackSpace,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,1185,8,BackSpace,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,1342,9,BackSpace,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,1497,10,BackSpace,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,1746,11,BackSpace,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,2401,12,o,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,2589,13,k,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,2745,14,e,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,2807,15,i,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,2963,16,l,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,3119,17,e,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,3244,18,n,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,3369,19,space,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,3774,20,u,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,3961,21,u,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,4149,22,d,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,4336,23,e,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,4960,24,s,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,5398,25,a,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,5927,26,BackSpace,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,6083,27,r,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,6490,28,BackSpace,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,7050,29,t,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,7144,30,a,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,7362,31,a,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,8080,32,n,Kokeilen uudestaan.
+22,Kokeilen uudestaan.,8549,33,period,Kokeilen uudestaan.
+23,Nähdään kolmannella.,0,0,Shift_R,Nähdään kolmannella.
+23,Nähdään kolmannella.,685,1,N,Nähdään kolmannella.
+23,Nähdään kolmannella.,810,2,adiaeresis,Nähdään kolmannella.
+23,Nähdään kolmannella.,1029,3,h,Nähdään kolmannella.
+23,Nähdään kolmannella.,1279,4,d,Nähdään kolmannella.
+23,Nähdään kolmannella.,1404,5,adiaeresis,Nähdään kolmannella.
+23,Nähdään kolmannella.,1559,6,adiaeresis,Nähdään kolmannella.
+23,Nähdään kolmannella.,1746,7,n,Nähdään kolmannella.
+23,Nähdään kolmannella.,1964,8,space,Nähdään kolmannella.
+23,Nähdään kolmannella.,2214,9,k,Nähdään kolmannella.
+23,Nähdään kolmannella.,2682,10,o,Nähdään kolmannella.
+23,Nähdään kolmannella.,2901,11,l,Nähdään kolmannella.
+23,Nähdään kolmannella.,3087,12,m,Nähdään kolmannella.
+23,Nähdään kolmannella.,3212,13,a,Nähdään kolmannella.
+23,Nähdään kolmannella.,3368,14,n,Nähdään kolmannella.
+23,Nähdään kolmannella.,3524,15,n,Nähdään kolmannella.
+23,Nähdään kolmannella.,3649,16,e,Nähdään kolmannella.
+23,Nähdään kolmannella.,3930,17,l,Nähdään kolmannella.
+23,Nähdään kolmannella.,4368,18,a,Nähdään kolmannella.
+23,Nähdään kolmannella.,4803,19,BackSpace,Nähdään kolmannella.
+23,Nähdään kolmannella.,5396,20,l,Nähdään kolmannella.
+23,Nähdään kolmannella.,5552,21,a,Nähdään kolmannella.
+23,Nähdään kolmannella.,5771,22,period,Nähdään kolmannella.
+24,Aioin osallistua.,0,0,Shift_R,Aioin osallistua.
+24,Aioin osallistua.,717,1,A,Aioin osallistua.
+24,Aioin osallistua.,779,2,I,Aioin osallistua.
+24,Aioin osallistua.,1029,3,o,Aioin osallistua.
+24,Aioin osallistua.,1122,4,i,Aioin osallistua.
+24,Aioin osallistua.,1497,5,BackSpace,Aioin osallistua.
+24,Aioin osallistua.,1654,6,BackSpace,Aioin osallistua.
+24,Aioin osallistua.,1809,7,BackSpace,Aioin osallistua.
+24,Aioin osallistua.,2059,8,i,Aioin osallistua.
+24,Aioin osallistua.,2059,9,o,Aioin osallistua.
+24,Aioin osallistua.,3058,10,i,Aioin osallistua.
+24,Aioin osallistua.,3276,11,n,Aioin osallistua.
+24,Aioin osallistua.,3401,12,space,Aioin osallistua.
+24,Aioin osallistua.,3713,13,o,Aioin osallistua.
+24,Aioin osallistua.,3868,14,s,Aioin osallistua.
+24,Aioin osallistua.,4086,15,a,Aioin osallistua.
+24,Aioin osallistua.,4430,16,l,Aioin osallistua.
+24,Aioin osallistua.,4586,17,l,Aioin osallistua.
+24,Aioin osallistua.,4805,18,i,Aioin osallistua.
+24,Aioin osallistua.,4960,19,s,Aioin osallistua.
+24,Aioin osallistua.,5148,20,t,Aioin osallistua.
+24,Aioin osallistua.,5273,21,u,Aioin osallistua.
+24,Aioin osallistua.,5398,22,a,Aioin osallistua.
+24,Aioin osallistua.,5897,23,period,Aioin osallistua.
+25,Luulen tämän olevan hyvä.,0,0,Shift_R,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,374,1,L,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,624,2,u,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,780,3,u,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,936,4,l,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,1092,5,e,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,1185,6,n,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,1279,7,space,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,1528,8,t,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,1746,9,adiaeresis,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,2028,10,adiaeresis,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,2433,11,BackSpace,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,2870,12,m,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,3057,13,adiaeresis,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,3463,14,n,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,3650,15,space,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,3900,16,o,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,4087,17,l,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,4399,18,e,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,5054,19,v,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,5179,20,a,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,5366,21,n,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,5491,22,space,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,5959,23,g,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,6333,24,BackSpace,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,6427,25,h,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,6739,26,y,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,7301,27,v,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,7519,28,adiaeresis,Luulen tämän olevan hyvä.
+25,Luulen tämän olevan hyvä.,7956,29,period,Luulen tämän olevan hyvä.
+26,Käyttäydytkö lapsellisesti?,0,0,Shift_R,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,374,1,K,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,467,2,adiaeresis,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,779,3,y,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,1248,4,t,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,1434,5,t,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,1529,6,adiaeresis,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,1903,7,u,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,2121,8,d,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,2214,9,u,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,2496,10,BackSpace,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,2621,11,BackSpace,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,2995,12,BackSpace,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,3493,13,y,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,3680,14,d,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,3775,15,y,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,3962,16,t,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,4118,17,k,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,4180,18,odiaeresis,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,4430,19,space,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,4710,20,l,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,4867,21,a,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,5772,22,p,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,5865,23,s,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,6115,24,e,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,6209,25,l,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,6365,26,l,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,6552,27,i,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,6644,28,s,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,6832,29,e,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,7019,30,s,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,7394,31,i,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,7769,32,BackSpace,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,8424,33,t,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,8516,34,i,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,8798,35,Shift_R,Käyttäydytkö lapsellisesti?
+26,Käyttäydytkö lapsellisesti?,9078,36,question,Käyttäydytkö lapsellisesti?
+27,Tarvitsetko sen tänään?,0,0,Shift_R,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,156,1,T,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,343,2,a,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,593,3,r,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,1591,4,v,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,1654,5,i,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,1996,6,t,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,2465,7,s,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,2713,8,e,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,3276,9,t,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,3370,10,k,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,3463,11,o,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,3619,12,space,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,3900,13,s,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,4118,14,e,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,4212,15,n,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,4305,16,space,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,4649,17,t,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,4774,18,adiaeresis,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,4961,19,n,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,4992,20,m,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,5117,21,adiaeresis,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,5242,22,adiaeresis,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,5677,23,BackSpace,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,5802,24,BackSpace,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,5990,25,BackSpace,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,6583,26,adiaeresis,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,6802,27,adiaeresis,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,7051,28,n,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,7051,29,space,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,8081,30,BackSpace,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,8361,31,Shift_R,Tarvitsetko sen tänään?
+27,Tarvitsetko sen tänään?,8580,32,question,Tarvitsetko sen tänään?
+28,Onko hän valmis vielä?,0,0,Shift_R,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,217,1,O,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,312,2,N,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,529,3,k,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,624,4,o,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,749,5,space,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,1061,6,BackSpace,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,1184,7,BackSpace,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,1341,8,BackSpace,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,1496,9,BackSpace,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,2059,10,n,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,2121,11,k,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,2246,12,o,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,2371,13,space,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,2621,14,h,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,2621,15,j,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,2745,16,adiaeresis,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,3276,17,BackSpace,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,3401,18,BackSpace,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,4055,19,adiaeresis,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,4243,20,n,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,4337,21,space,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,4680,22,v,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,4805,23,a,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,4928,24,l,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,4992,25,m,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,5148,26,i,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,5240,27,s,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,5428,28,space,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,5740,29,v,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,5802,30,i,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,6052,31,e,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,6177,32,l,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,6302,33,adiaeresis,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,6677,34,Shift_R,Onko hän valmis vielä?
+28,Onko hän valmis vielä?,6957,35,question,Onko hän valmis vielä?
+29,Onneksi olkoon.,0,0,Shift_R,Onneksi olkoon.
+29,Onneksi olkoon.,280,1,O,Onneksi olkoon.
+29,Onneksi olkoon.,280,2,P,Onneksi olkoon.
+29,Onneksi olkoon.,404,3,n,Onneksi olkoon.
+29,Onneksi olkoon.,654,4,n,Onneksi olkoon.
+29,Onneksi olkoon.,904,5,BackSpace,Onneksi olkoon.
+29,Onneksi olkoon.,1060,6,BackSpace,Onneksi olkoon.
+29,Onneksi olkoon.,1217,7,BackSpace,Onneksi olkoon.
+29,Onneksi olkoon.,1529,8,n,Onneksi olkoon.
+29,Onneksi olkoon.,1652,9,n,Onneksi olkoon.
+29,Onneksi olkoon.,1777,10,e,Onneksi olkoon.
+29,Onneksi olkoon.,1902,11,k,Onneksi olkoon.
+29,Onneksi olkoon.,2120,12,s,Onneksi olkoon.
+29,Onneksi olkoon.,2184,13,i,Onneksi olkoon.
+29,Onneksi olkoon.,2370,14,space,Onneksi olkoon.
+29,Onneksi olkoon.,2526,15,o,Onneksi olkoon.
+29,Onneksi olkoon.,2713,16,l,Onneksi olkoon.
+29,Onneksi olkoon.,2901,17,k,Onneksi olkoon.
+29,Onneksi olkoon.,3056,18,o,Onneksi olkoon.
+29,Onneksi olkoon.,3212,19,o,Onneksi olkoon.
+29,Onneksi olkoon.,3368,20,n,Onneksi olkoon.
+29,Onneksi olkoon.,3868,21,period,Onneksi olkoon.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,0,0,Shift_R,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,187,1,V,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,343,2,o,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,406,3,i,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,624,4,m,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,779,5,m,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,874,6,e,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,999,7,space,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,1186,8,j,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,1373,9,u,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,1467,10,o,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,1779,11,d,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,1966,12,a,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,2153,13,space,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,2621,14,c,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,2715,15,c,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,3384,16,BackSpace,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,3541,17,BackSpace,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,3759,18,v,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,3884,19,i,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,4072,20,i,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,4289,21,n,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,4384,22,i,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,4664,23,adiaeresis,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,4851,24,space,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,5008,25,j,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,5133,26,a,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,5289,27,space,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,5413,28,j,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,5506,29,a,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,5756,30,k,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,5913,31,a,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,6069,32,a,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,6443,33,a,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,6817,34,BackSpace,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,7067,35,space,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,7285,36,k,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,7473,37,u,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,7628,38,u,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,7753,39,l,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,7909,40,u,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,8190,41,m,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,8253,42,i,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,8470,43,s,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,8532,44,i,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,8720,45,a,Voimme juoda viiniä ja jakaa kuulumisia.
+30,Voimme juoda viiniä ja jakaa kuulumisia.,9189,46,period,Voimme juoda viiniä ja jakaa kuulumisia.
+31,Ei ollut edes lähellä.,0,0,Shift_R,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,374,1,e,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,499,2,i,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,1154,3,BackSpace,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,1310,4,BackSpace,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,1560,5,Shift_R,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,1685,6,E,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,2059,7,space,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,2496,8,BackSpace,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,3026,9,i,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,3120,10,space,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,3245,11,o,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,3401,12,l,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,3588,13,l,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,3744,14,u,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,3900,15,t,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,4025,16,space,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,4180,17,e,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,4430,18,d,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,4680,19,e,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,5023,20,s,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,5335,21,space,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,6052,22,l,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,6240,23,adiaeresis,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,6521,24,h,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,6614,25,e,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,6833,26,l,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,6989,27,l,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,7114,28,adiaeresis,Ei ollut edes lähellä.
+31,Ei ollut edes lähellä.,7706,29,period,Ei ollut edes lähellä.
+32,Tuo lienee oikea vastaus.,0,0,Shift_R,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,187,1,T,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,375,2,u,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,467,3,o,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,654,4,space,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,810,5,l,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,935,6,i,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,1060,7,e,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,1185,8,n,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,1310,9,n,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,1372,10,e,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,1684,11,BackSpace,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,1809,12,BackSpace,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,1871,13,e,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,2059,14,e,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,2246,15,space,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,2496,16,o,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,2621,17,i,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,2807,18,k,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,2901,19,e,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,3057,20,a,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,3244,21,space,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,3963,22,v,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,4055,23,a,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,4305,24,s,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,4680,25,t,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,4930,26,a,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,5490,27,u,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,5615,28,s,Tuo lienee oikea vastaus.
+32,Tuo lienee oikea vastaus.,6427,29,period,Tuo lienee oikea vastaus.
+33,Kuinka niin?,0,0,Shift_R,Kuinka niin?
+33,Kuinka niin?,250,1,K,Kuinka niin?
+33,Kuinka niin?,874,2,k,Kuinka niin?
+33,Kuinka niin?,1311,3,BackSpace,Kuinka niin?
+33,Kuinka niin?,1560,4,u,Kuinka niin?
+33,Kuinka niin?,1654,5,i,Kuinka niin?
+33,Kuinka niin?,1841,6,n,Kuinka niin?
+33,Kuinka niin?,1966,7,k,Kuinka niin?
+33,Kuinka niin?,2121,8,a,Kuinka niin?
+33,Kuinka niin?,2278,9,space,Kuinka niin?
+33,Kuinka niin?,2403,10,n,Kuinka niin?
+33,Kuinka niin?,2496,11,i,Kuinka niin?
+33,Kuinka niin?,2621,12,i,Kuinka niin?
+33,Kuinka niin?,2715,13,n,Kuinka niin?
+33,Kuinka niin?,3120,14,Shift_R,Kuinka niin?
+33,Kuinka niin?,3401,15,question,Kuinka niin?
+34,Kävelen juuri sisään.,0,0,Shift_R,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,219,1,K,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,375,2,Shift_R,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,437,3,adiaeresis,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,780,4,v,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,1061,5,e,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,1217,6,l,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,1311,7,e,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,1404,8,n,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,1529,9,space,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,1685,10,j,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,1841,11,u,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,1966,12,u,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,2091,13,r,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,2808,14,i,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,3276,15,space,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,3588,16,s,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,3682,17,i,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,3838,18,s,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,3900,19,adiaeresis,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,4055,20,adiaeresis,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,4430,21,n,Kävelen juuri sisään.
+34,Kävelen juuri sisään.,4930,22,period,Kävelen juuri sisään.
+35,Tämä näyttää hyvältä.,0,0,Shift_R,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,374,1,T,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,624,2,adiaeresis,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,654,3,m,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,842,4,adiaeresis,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,1061,5,space,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,1248,6,n,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,1466,7,adiaeresis,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,1778,8,u,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,2371,9,BackSpace,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,3276,10,y,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,3494,11,t,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,3650,12,t,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,3838,13,adiaeresis,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,4025,14,adiaeresis,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,4337,15,space,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,4742,16,h,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,4898,17,y,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,4992,18,v,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,5554,19,adiaeresis,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,5741,20,k,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,5927,21,t,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,6052,22,adiaeresis,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,6302,23,BackSpace,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,6677,24,BackSpace,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,7082,25,BackSpace,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,8236,26,l,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,8424,27,t,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,8580,28,adiaeresis,Tämä näyttää hyvältä.
+35,Tämä näyttää hyvältä.,9017,29,period,Tämä näyttää hyvältä.
+36,Tapahtuiko tuo?,0,0,Shift_R,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,187,1,T,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,343,2,a,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,592,3,p,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,592,4,aring,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,624,5,a,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,1185,6,BackSpace,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,1372,7,BackSpace,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,1467,8,a,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,2091,9,h,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,2216,10,t,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,2309,11,u,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,2371,12,i,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,2402,13,o,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,2589,14,k,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,2684,15,o,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,2776,16,space,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,3088,17,BackSpace,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,3244,18,BackSpace,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,3401,19,BackSpace,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,3526,20,BackSpace,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,3868,21,k,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,3931,22,o,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,4088,23,space,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,4523,24,t,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,4555,25,u,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,4648,26,o,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,5055,27,Shift_R,Tapahtuiko tuo?
+36,Tapahtuiko tuo?,5366,28,question,Tapahtuiko tuo?
+37,Missä olet?,0,0,Shift_R,Missä olet?
+37,Missä olet?,155,1,semicolon,Missä olet?
+37,Missä olet?,592,2,BackSpace,Missä olet?
+37,Missä olet?,936,3,Shift_R,Missä olet?
+37,Missä olet?,1061,4,M,Missä olet?
+37,Missä olet?,1311,5,i,Missä olet?
+37,Missä olet?,1311,6,o,Missä olet?
+37,Missä olet?,1841,7,BackSpace,Missä olet?
+37,Missä olet?,2121,8,s,Missä olet?
+37,Missä olet?,2309,9,s,Missä olet?
+37,Missä olet?,2403,10,adiaeresis,Missä olet?
+37,Missä olet?,2526,11,space,Missä olet?
+37,Missä olet?,2651,12,o,Missä olet?
+37,Missä olet?,2808,13,l,Missä olet?
+37,Missä olet?,2994,14,e,Missä olet?
+37,Missä olet?,3213,15,t,Missä olet?
+37,Missä olet?,3306,16,Shift_R,Missä olet?
+37,Missä olet?,3556,17,question,Missä olet?
+38,Nähdään pian!,0,0,Shift_R,Nähdään pian!
+38,Nähdään pian!,187,1,N,Nähdään pian!
+38,Nähdään pian!,374,2,adiaeresis,Nähdään pian!
+38,Nähdään pian!,562,3,h,Nähdään pian!
+38,Nähdään pian!,718,4,s,Nähdään pian!
+38,Nähdään pian!,811,5,adiaeresis,Nähdään pian!
+38,Nähdään pian!,998,6,adiaeresis,Nähdään pian!
+38,Nähdään pian!,1342,7,BackSpace,Nähdään pian!
+38,Nähdään pian!,1466,8,BackSpace,Nähdään pian!
+38,Nähdään pian!,1622,9,BackSpace,Nähdään pian!
+38,Nähdään pian!,1810,10,d,Nähdään pian!
+38,Nähdään pian!,1903,11,quoteright,Nähdään pian!
+38,Nähdään pian!,2059,12,adiaeresis,Nähdään pian!
+38,Nähdään pian!,2402,13,BackSpace,Nähdään pian!
+38,Nähdään pian!,2527,14,BackSpace,Nähdään pian!
+38,Nähdään pian!,3151,15,adiaeresis,Nähdään pian!
+38,Nähdään pian!,3276,16,adiaeresis,Nähdään pian!
+38,Nähdään pian!,3463,17,n,Nähdään pian!
+38,Nähdään pian!,3588,18,space,Nähdään pian!
+38,Nähdään pian!,3775,19,p,Nähdään pian!
+38,Nähdään pian!,3838,20,i,Nähdään pian!
+38,Nähdään pian!,4055,21,a,Nähdään pian!
+38,Nähdään pian!,4150,22,n,Nähdään pian!
+38,Nähdään pian!,4524,23,Shift_R,Nähdään pian!
+38,Nähdään pian!,5273,24,exclam,Nähdään pian!
+39,Pitääkö meidän  jutella?,0,0,Shift_R,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,529,1,i,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,1092,2,BackSpace,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,1403,3,Shift_R,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,1746,4,Aring,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,1746,5,P,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,2027,6,Shift_R,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,2370,7,BackSpace,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,2526,8,BackSpace,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,2838,9,Shift_R,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,3087,10,P,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,3368,11,i,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,3524,12,t,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,3649,13,adiaeresis,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,3805,14,adiaeresis,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,4086,15,k,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,4118,16,odiaeresis,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,4335,17,space,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,4523,18,m,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,4648,19,e,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,4741,20,i,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,5148,21,f,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,5271,22,adiaeresis,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,5365,23,n,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,5740,24,BackSpace,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,5927,25,BackSpace,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,6051,26,BackSpace,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,6270,27,d,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,6488,28,adiaeresis,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,6769,29,n,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,7019,30,space,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,7112,31,space,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,7424,32,j,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,7580,33,u,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,7799,34,t,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,7955,35,e,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,8236,36,l,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,8424,37,l,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,9328,38,a,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,9546,39,Shift_R,Pitääkö meidän  jutella?
+39,Pitääkö meidän  jutella?,9889,40,question,Pitääkö meidän  jutella?
+40,Oletko paikalla tänään?,0,0,Shift_R,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,219,1,O,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,406,2,l,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,562,3,e,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,812,4,t,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,936,5,k,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,1030,6,o,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,1248,7,space,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,1467,8,p,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,1623,9,a,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,1685,10,i,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,1872,11,k,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,1966,12,a,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,2060,13,l,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,2216,14,l,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,2340,15,a,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,2465,16,space,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,2621,17,t,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,2777,18,adiaeresis,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,3276,19,n,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,3463,20,adiaeresis,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,3651,21,adiaeresis,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,3900,22,n,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,4368,23,Shift_R,Oletko paikalla tänään?
+40,Oletko paikalla tänään?,4680,24,question,Oletko paikalla tänään?
+41,Hyvää lomaa sinullekin..,0,0,Shift_R,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,562,1,H,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,873,2,y,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,1154,3,v,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,1247,4,adiaeresis,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,1403,5,adiaeresis,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,1590,6,space,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,1902,7,l,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,2277,8,m,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,2651,9,BackSpace,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,2963,10,o,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,3151,11,m,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,3151,12,comma,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,3244,13,a,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,3556,14,BackSpace,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,3712,15,BackSpace,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,3806,16,a,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,3993,17,a,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,4211,18,space,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,4398,19,s,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,4493,20,i,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,4866,21,n,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,4991,22,u,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,5210,23,l,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,5366,24,l,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,5490,25,e,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,5585,26,k,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,5771,27,i,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,5865,28,n,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,6490,29,period,Hyvää lomaa sinullekin..
+41,Hyvää lomaa sinullekin..,6645,30,period,Hyvää lomaa sinullekin..
+42,Ota mitä vain voit.,0,0,Shift_R,Ota mitä vain voit.
+42,Ota mitä vain voit.,405,1,O,Ota mitä vain voit.
+42,Ota mitä vain voit.,530,2,t,Ota mitä vain voit.
+42,Ota mitä vain voit.,749,3,a,Ota mitä vain voit.
+42,Ota mitä vain voit.,936,4,space,Ota mitä vain voit.
+42,Ota mitä vain voit.,1809,5,m,Ota mitä vain voit.
+42,Ota mitä vain voit.,1871,6,i,Ota mitä vain voit.
+42,Ota mitä vain voit.,2028,7,t,Ota mitä vain voit.
+42,Ota mitä vain voit.,2121,8,adiaeresis,Ota mitä vain voit.
+42,Ota mitä vain voit.,2278,9,space,Ota mitä vain voit.
+42,Ota mitä vain voit.,2589,10,v,Ota mitä vain voit.
+42,Ota mitä vain voit.,2746,11,a,Ota mitä vain voit.
+42,Ota mitä vain voit.,2808,12,i,Ota mitä vain voit.
+42,Ota mitä vain voit.,2933,13,n,Ota mitä vain voit.
+42,Ota mitä vain voit.,3058,14,space,Ota mitä vain voit.
+42,Ota mitä vain voit.,3276,15,v,Ota mitä vain voit.
+42,Ota mitä vain voit.,3431,16,o,Ota mitä vain voit.
+42,Ota mitä vain voit.,3431,17,i,Ota mitä vain voit.
+42,Ota mitä vain voit.,3619,18,t,Ota mitä vain voit.
+42,Ota mitä vain voit.,3931,19,period,Ota mitä vain voit.
+43,Voitko auttaa?,0,0,Shift_R,Voitko auttaa?
+43,Voitko auttaa?,187,1,V,Voitko auttaa?
+43,Voitko auttaa?,342,2,o,Voitko auttaa?
+43,Voitko auttaa?,529,3,t,Voitko auttaa?
+43,Voitko auttaa?,1059,4,BackSpace,Voitko auttaa?
+43,Voitko auttaa?,1341,5,i,Voitko auttaa?
+43,Voitko auttaa?,1466,6,t,Voitko auttaa?
+43,Voitko auttaa?,1591,7,k,Voitko auttaa?
+43,Voitko auttaa?,1684,8,o,Voitko auttaa?
+43,Voitko auttaa?,1871,9,space,Voitko auttaa?
+43,Voitko auttaa?,2089,10,a,Voitko auttaa?
+43,Voitko auttaa?,2214,11,u,Voitko auttaa?
+43,Voitko auttaa?,2214,12,i,Voitko auttaa?
+43,Voitko auttaa?,2339,13,t,Voitko auttaa?
+43,Voitko auttaa?,2713,14,BackSpace,Voitko auttaa?
+43,Voitko auttaa?,2869,15,BackSpace,Voitko auttaa?
+43,Voitko auttaa?,3181,16,t,Voitko auttaa?
+43,Voitko auttaa?,3618,17,t,Voitko auttaa?
+43,Voitko auttaa?,3961,18,a,Voitko auttaa?
+43,Voitko auttaa?,4243,19,a,Voitko auttaa?
+43,Voitko auttaa?,4648,20,Shift_R,Voitko auttaa?
+43,Voitko auttaa?,4992,21,question,Voitko auttaa?
+44,Mikä tämä on?,0,0,Shift_R,Mikä tämä on?
+44,Mikä tämä on?,249,1,m,Mikä tämä on?
+44,Mikä tämä on?,374,2,i,Mikä tämä on?
+44,Mikä tämä on?,560,3,k,Mikä tämä on?
+44,Mikä tämä on?,904,4,adiaeresis,Mikä tämä on?
+44,Mikä tämä on?,1309,5,BackSpace,Mikä tämä on?
+44,Mikä tämä on?,1434,6,BackSpace,Mikä tämä on?
+44,Mikä tämä on?,1621,7,BackSpace,Mikä tämä on?
+44,Mikä tämä on?,1746,8,BackSpace,Mikä tämä on?
+44,Mikä tämä on?,2089,9,Shift_R,Mikä tämä on?
+44,Mikä tämä on?,2307,10,M,Mikä tämä on?
+44,Mikä tämä on?,2557,11,i,Mikä tämä on?
+44,Mikä tämä on?,2713,12,k,Mikä tämä on?
+44,Mikä tämä on?,2901,13,adiaeresis,Mikä tämä on?
+44,Mikä tämä on?,3119,14,space,Mikä tämä on?
+44,Mikä tämä on?,3431,15,t,Mikä tämä on?
+44,Mikä tämä on?,3524,16,adiaeresis,Mikä tämä on?
+44,Mikä tämä on?,3680,17,m,Mikä tämä on?
+44,Mikä tämä on?,3805,18,adiaeresis,Mikä tämä on?
+44,Mikä tämä on?,3961,19,space,Mikä tämä on?
+44,Mikä tämä on?,4211,20,o,Mikä tämä on?
+44,Mikä tämä on?,4368,21,n,Mikä tämä on?
+44,Mikä tämä on?,4648,22,Shift_R,Mikä tämä on?
+44,Mikä tämä on?,4960,23,question,Mikä tämä on?
+45,Se olisi hienoa.,0,0,Shift_R,Se olisi hienoa.
+45,Se olisi hienoa.,217,1,S,Se olisi hienoa.
+45,Se olisi hienoa.,436,2,e,Se olisi hienoa.
+45,Se olisi hienoa.,624,3,space,Se olisi hienoa.
+45,Se olisi hienoa.,842,4,o,Se olisi hienoa.
+45,Se olisi hienoa.,1029,5,l,Se olisi hienoa.
+45,Se olisi hienoa.,1184,6,i,Se olisi hienoa.
+45,Se olisi hienoa.,1371,7,s,Se olisi hienoa.
+45,Se olisi hienoa.,1404,8,i,Se olisi hienoa.
+45,Se olisi hienoa.,1528,9,space,Se olisi hienoa.
+45,Se olisi hienoa.,1716,10,h,Se olisi hienoa.
+45,Se olisi hienoa.,1839,11,i,Se olisi hienoa.
+45,Se olisi hienoa.,2059,12,e,Se olisi hienoa.
+45,Se olisi hienoa.,2151,13,n,Se olisi hienoa.
+45,Se olisi hienoa.,2246,14,o,Se olisi hienoa.
+45,Se olisi hienoa.,2433,15,a,Se olisi hienoa.
+45,Se olisi hienoa.,2745,16,comma,Se olisi hienoa.
+45,Se olisi hienoa.,2745,17,period,Se olisi hienoa.
+45,Se olisi hienoa.,3338,18,BackSpace,Se olisi hienoa.
+45,Se olisi hienoa.,3493,19,BackSpace,Se olisi hienoa.
+45,Se olisi hienoa.,4273,20,period,Se olisi hienoa.
+46,Onko se ohi?,0,0,Shift_R,Onko se ohi?
+46,Onko se ohi?,280,1,O,Onko se ohi?
+46,Onko se ohi?,467,2,n,Onko se ohi?
+46,Onko se ohi?,654,3,k,Onko se ohi?
+46,Onko se ohi?,874,4,o,Onko se ohi?
+46,Onko se ohi?,1061,5,space,Onko se ohi?
+46,Onko se ohi?,1311,6,s,Onko se ohi?
+46,Onko se ohi?,1497,7,e,Onko se ohi?
+46,Onko se ohi?,1684,8,space,Onko se ohi?
+46,Onko se ohi?,1966,9,o,Onko se ohi?
+46,Onko se ohi?,2121,10,h,Onko se ohi?
+46,Onko se ohi?,2246,11,i,Onko se ohi?
+46,Onko se ohi?,2776,12,Shift_R,Onko se ohi?
+46,Onko se ohi?,2995,13,question,Onko se ohi?
+47,Toivottavasti teille kuuluu hyvää.,0,0,Shift_R,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,342,1,T,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,498,2,o,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,592,3,i,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,717,4,v,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,810,5,o,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,997,6,t,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,1184,7,t,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,1309,8,a,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,1652,9,v,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,1840,10,a,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,2120,11,s,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,2526,12,t,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,2651,13,i,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,2776,14,space,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,2994,15,t,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,3181,16,e,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,3431,17,i,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,3587,18,l,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,3899,19,l,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,4055,20,e,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,4243,21,space,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,4429,22,k,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,4648,23,u,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,4773,24,u,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,4960,25,l,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,5116,26,u,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,5240,27,u,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,5365,28,space,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,5927,29,h,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,6083,30,y,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,6115,31,v,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,6270,32,adiaeresis,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,6457,33,adiaeresis,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,6863,34,minus,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,7549,35,BackSpace,Toivottavasti teille kuuluu hyvää.
+47,Toivottavasti teille kuuluu hyvää.,8080,36,period,Toivottavasti teille kuuluu hyvää.
+48,Minkälainen tunnelma?,0,0,Shift_R,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,249,1,M,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,343,2,i,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,842,3,n,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,904,4,k,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,1123,5,adiaeresis,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,1434,6,l,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,1559,7,a,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,1746,8,i,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,1746,9,o,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,1809,10,n,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,1965,11,e,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,2184,12,BackSpace,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,2371,13,BackSpace,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,2496,14,BackSpace,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,2713,15,n,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,2808,16,e,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,2901,17,n,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,3182,18,space,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,3743,19,t,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,3837,20,u,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,4024,21,n,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,4149,22,n,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,4585,23,e,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,4680,24,l,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,4929,25,m,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,5023,26,a,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,5366,27,Shift_R,Minkälainen tunnelma?
+48,Minkälainen tunnelma?,5709,28,question,Minkälainen tunnelma?
+49,Oikein hyvää matkaa!,0,0,Shift_R,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,250,1,O,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,312,2,I,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,531,3,k,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,749,4,e,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,999,5,BackSpace,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,1154,6,BackSpace,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,1279,7,BackSpace,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,1871,8,i,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,2060,9,k,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,2216,10,e,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,2309,11,i,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,2434,12,n,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,2590,13,space,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,3088,14,h,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,3308,15,y,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,3526,16,v,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,3588,17,adiaeresis,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,3776,18,adiaeresis,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,3932,19,space,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,4088,20,m,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,4212,21,a,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,4400,22,t,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,5085,23,k,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,5210,24,a,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,5429,25,a,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,5585,26,Shift_R,Oikein hyvää matkaa!
+49,Oikein hyvää matkaa!,6833,27,exclam,Oikein hyvää matkaa!
