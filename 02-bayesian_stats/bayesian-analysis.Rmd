@@ -45,12 +45,12 @@ Helper functions.
 # this function extracts results from different models and generate results of the same format to be used in visualizations
 tidy.wrapper = function(model) {
   if (class(model) == "lm") {
-    tidy(result_ttest, conf.int = TRUE) %>%
+    tidy(model, conf.int = TRUE) %>%
       select(-c(statistic, p.value)) %>%
       mutate(model = "Frequentist") %>%
       select(model, everything())
   } else if (class(model) == "brmsfit") {
-    tidy(result_ttest.bayesian) %>%
+    tidy(model) %>%
       filter(effect == "fixed") %>%
       select(c(term:conf.high)) %>%
       mutate(model = "Bayesian") %>%
@@ -70,7 +70,7 @@ TODO: explain the dataset here
 
 ```{r load-dataset}
 
-# Fumemng -> Abhraneel I'm using the Rproj in the root folder, although my is identical...
+# Fumemng -> Abhraneel I'm using the Rproj in the root folder, although my path is identical...
 
 dataset = readr::read_csv("02-bayesian_stats/data/blinded.csv")
 # dataset = readr::read_csv("~/Documents/Github/chi22-course/data/blinded.csv")
@@ -152,7 +152,7 @@ if(IF_RUN_MODEL){
       prior(student_t(3, 0, 1), class = "sigma")),
     data = exp1.data,
     seed = 99,
-    backend = "cmdstanr", #Fumeng: I have to use this as my backend, 'rstan' backend doesn't work on my laptops...
+    backend = "cmdstanr", #Fumeng: I have to use this as my backend. 'rstan' backend doesn't work on my laptops...
     chains = 4, 
     cores = 4,
     file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
@@ -270,25 +270,27 @@ if(IF_RUN_MODEL){
 ```{r}
 
 posterior_samples <- tibble(condition = c(TRUE, FALSE)) %>%
-  add_fitted_draws(dataset2.brm.student, re_formula = NA, value = "posterior_change") %>%
-  select(-.chain, -.iteration)
+  add_fitted_draws(dataset2.brm.student, re_formula = NA) 
 
 
 head(posterior_samples)
 
 ```
 ```{r plot-posterior_intervals}
-tidy.wrapper(dataset2.brm.student) %>%
+posterior_samples %>%
+  mean_qi() %>%
+ mutate(term = if_else(condition, 'condition_graph',  'conditionno_graph')) %>%
   ggplot() +
   geom_pointrange(
     aes(
       x = term, 
-      y = estimate, 
-      ymin = conf.low, 
-      ymax = conf.high, 
+      y = .value, 
+      ymin = .lower, 
+      ymax = .upper, 
       color = term
     ), position = position_dodge(width = 0.2)) +
     scale_color_brewer(palette = "Set2") +
+    ylab('posterior change') + 
     ggtitle('posterior confidence intervals')
 
 ```
@@ -297,10 +299,11 @@ tidy.wrapper(dataset2.brm.student) %>%
 
 posterior_samples %>%
   mutate(term = if_else(condition, 'condition_graph',  'conditionno_graph')) %>%
-  ggplot(., aes(x = posterior_change, fill = term)) +
+  ggplot(., aes(x = .value, fill = term)) +
   geom_density(alpha = 0.5, color = NA) +
   scale_fill_brewer(palette="Set2") +
-  ggtitle('posterior distribution')
+  ggtitle('posterior distribution') + 
+  coord_flip()
 
 ```
 
@@ -312,7 +315,6 @@ posterior_samples %>%
 
 Fumeng: I'm confused... It seems that Abhraneel has to generate some data in order to do poisson regression.
 I would say we use the generated data from Dataset 2 or remove this... 
-
 
 
 
@@ -389,7 +391,6 @@ fit.poiss = brm(
   data = df.gen, family = poisson(), 
   chains = 4, cores = 4)
 ```
-
 
 
 
