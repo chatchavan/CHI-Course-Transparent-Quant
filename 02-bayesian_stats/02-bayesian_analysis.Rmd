@@ -19,7 +19,7 @@ library(brms)
 Load the data
 
 ```{r}
-df = readr::read_csv("data/exp2.csv") %>%
+df = readr::read_csv("02-bayesian_stats/data/exp2.csv") %>%
   mutate(condition = condition == 'expansive') %>%
   group_by(participant)
 
@@ -51,7 +51,10 @@ fit.brm = brm(
     prior(student_t(3, 0, 2), class = "b", dpar = "sigma"),
     prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
   ), 
-  chains = 4, cores = 4,
+  seed = 99,
+  backend = "cmdstanr", #Fumeng: I have to use this as my backend, 'rstan' backend doesn't work on my laptops...
+  chains = 4, 
+  cores = 4,
   data = df)
 
 summary(fit.brm)
