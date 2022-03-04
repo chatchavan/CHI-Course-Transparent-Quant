@@ -1,0 +1,279 @@
+---
+title: "Data analysis"
+output: html_notebook
+---
+
+```{r echo=FALSE}
+library(tidyverse)
+library(lmerTest)
+import::from(broom.mixed, tidy)
+import::from(multcomp, glht, mcp)
+import::from(ggbeeswarm, geom_beeswarm)
+import::from(modelr, add_residuals, add_predictions)
+import::from(qqplotr, stat_qq_line, stat_qq_point, stat_qq_band)
+import::from(nortest, lillie.test)
+import::from(ARTool, art, artlm, artlm.con, art.con)
+source("../util/plot_glht.R")
+```
+
+# Preprocess input data
+
+## Load data
+```{r}
+path_background <- "data/participant_info.csv"
+path_log_root <- "data/log"
+
+df_background <- read_csv(path_background, col_types = "cl")
+
+filenames <- list.files(path_log_root, pattern = "*.csv")
+
+df_info <- 
+  tibble(
+  file_path = list.files(path_log_root, pattern = "*.csv", full.names = TRUE)) %>% 
+  mutate(
+    filenames = basename(file_path)) %>% 
+  separate(filenames, c("user_id", "start_timestamp", "condition"), sep = "_") %>% 
+  mutate(
+    user_id = str_replace(user_id, "User", ""),
+    condition = str_replace(condition, ".csv", ""),
+    start_timestamp = as.double(str_replace(start_timestamp, "T", ""))) 
+
+df_log <- 
+  df_info %>% 
+  mutate(log_df = map(file_path, ~read_csv(.x, col_types = "icdicc"))) %>% 
+  unnest(log_df) %>% 
+  select(-file_path, start_timestamp)
+```
+
+## Calculate WPM
+```{r}
+df_wpm <- 
+  df_log %>% 
+  mutate(words = (str_length(transcribed_string) - 1.0) / 5.0) %>% 
+  select(user_id, condition, stimulus_index, input_time_ms, words) %>% 
+  group_by(user_id, condition, stimulus_index) %>% 
+  summarize(
+    minute = (last(input_time_ms) - first(input_time_ms)) / 1000.0 / 60.0,
+    wpm = first(words) / minute,
+    .groups = "drop")
+```
+
+## Join with the background data and assign factor data columns
+```{r}
+df_wpm_bkgnd <- 
+  df_wpm %>% 
+  left_join(df_background, by = "user_id") %>% 
+  mutate(
+    condition = factor(condition, levels = c("Sentences", "Random", "Mix")),
+    typing_style = factor(if_else(is_touchtypist, "Touchtypist", "Non-touchtypist"), 
+                          levels = c("Touchtypist", "Non-touchtypist"))) %>% 
+  select(user_id, typing_style, condition, stimulus_index, wpm)
+
+sample_n(df_wpm_bkgnd, 20)
+```
+
+
+# Visualize data
+
+```{r}
+df_wpm_bkgnd %>% 
+  ggplot(aes(x = condition, y = wpm)) +
+  geom_beeswarm(alpha = 0.5) +
+  facet_wrap(~typing_style)
+```
+
+The data may not be Gaussian-distributed.
+
+```{r}
+df_wpm_bkgnd %>% 
+  ggplot(aes(x = condition, y = wpm, color = typing_style)) +
+  geom_violin() +
+  facet_wrap(~user_id)
+```
+
+
+# Analysis without transformation
+
+## Fit model
+```{r}
+m_ris <- lmer(wpm ~ typing_style + condition + (1 + condition | user_id), data = df_wpm_bkgnd)
+m_ris
+```
+
+## ANOVA
+```{r}
+anova(m_ris)
+```
+
+## GLHT
+```{r fig.height=2, fig.width=6}
+m_ris %>% 
+  glht(mcp(condition = "Tukey",
+           typing_style = "Tukey")) %>% 
+  confint() %>% 
+  tidy() %>% 
+  plot_glht(unit = "WPM", adjustment_method = "Tukey HSD, family-wise")
+```
+# Assumption check
+
+```{r}
+plot(m_ris)
+
+df_aug <- 
+  df_wpm_bkgnd %>% 
+  add_residuals(m_ris) %>% 
+  add_predictions(m_ris)
+
+df_aug %>% 
+  ggplot(aes(sample = resid)) +
+  stat_qq_band() + 
+  stat_qq_line() + 
+  stat_qq_point(size = 0.5)
+
+df_aug %>% 
+  ggplot(aes(x = pred, y = resid, color = user_id)) +
+  geom_hline(yintercept = 0, color = "grey") +
+  geom_point(alpha = 0.5) + 
+  geom_smooth(aes(group = NULL, color = NULL), method = "loess") +
+  facet_grid(condition ~ .) 
+
+```
+## Log transformation
+
+```{r}
+m_log_ris <- lmer(log(wpm) ~ typing_style + condition + (1 + condition | user_id), data = df_wpm_bkgnd)
+anova(m_log_ris)
+m_log_ris %>% 
+  glht(mcp(condition = "Tukey",
+           typing_style = "Tukey")) %>% 
+  confint() %>% 
+  tidy() %>% 
+  mutate(
+    estimate = exp(estimate),
+    conf.low = exp(conf.low),
+    conf.high = exp(conf.high)) %>% 
+  plot_glht(unit = "times of the baseline WPM", adjustment_method = "Tukey HSD, family-wise", reference_value = 1)
+```
+
+```{r}
+df_aug_log <- 
+  df_wpm_bkgnd %>% 
+  add_residuals(m_log_ris) %>% 
+  add_predictions(m_log_ris)
+
+df_aug_log %>% 
+  ggplot(aes(sample = resid)) +
+  stat_qq_band() + 
+  stat_qq_line() + 
+  stat_qq_point(size = 0.5)
+
+df_aug_log %>% 
+  ggplot(aes(x = pred, y = resid)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, color = "black")
+
+
+lillie.test(df_aug_log$resid)
+```
+
+# Alrigned rank transformation
+(NOTE: I disabled these chunks because they take long to run. Remove `eval=FALSE, include=FALSE` to run them)
+
+```{r eval=FALSE, include=FALSE}
+art_result <- art(wpm ~ typing_style * condition + (1 | user_id), data = df_wpm_bkgnd)
+
+# anova(art_result)   # NOTE: Takes long time to run
+
+# Analysis of Variance of Aligned Rank Transformed Data
+# 
+# Table Type: Analysis of Deviance Table (Type III Wald F tests with Kenward-Roger df)
+# Model: Mixed Effects (lmer)
+# Response: art(wpm)
+# 
+#                                   F Df Df.res  Pr(>F)
+# 1 typing_style              0.15532  1     28 0.69648
+# 2 condition              2051.08055  2   4459 < 2e-16 ***
+# 3 typing_style:condition    1.48392  2   4459 0.22686
+# ---
+# Signif. codes:   0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+#================================================================================
+# Comparison between Kenward-Roger and Satterthwaite
+##### Results of Satterthwaite has a weird DenDF
+# Type III Analysis of Variance Table with Satterthwaite's method
+#                         Sum Sq Mean Sq NumDF  DenDF F value Pr(>F)
+# condition               971847  485923     2 32.875  0.5077 0.6065
+# typing_style            148649  148649     1  1.750  0.1553 0.7363
+# condition:typing_style 1109597  554798     2  8.559  0.5797 0.5806
+
+###### Results of the Kenward-Roger's method has the same degrees of freedom as car::Anova
+# Type III Analysis of Variance Table with Kenward-Roger's method
+#                         Sum Sq Mean Sq NumDF DenDF F value Pr(>F)
+# condition               971847  485923     2  4459  0.5077 0.6019
+# typing_style            148649  148649     1    28  0.1553 0.6965
+# condition:typing_style 1109597  554798     2  4459  0.5797 0.5601
+
+
+art_anova_all <- function(art_obj, type = "III", method = c("Satterthwaite", "Kenward-Roger")) {
+  tibble(term = colnames(art_obj$aligned.ranks)) %>% 
+    mutate(map_dfr(term, function(term) {
+      artlm(art_obj, term) %>% 
+        as_lmerModLmerTest() %>% 
+        anova(type = type, ddf = method[1]) %>%
+        as_tibble(rownames = ".term") %>%
+        filter(.term %in% c(term, str_replace(term, ":", "")))    # in older version of some unidentified package, the interaction term had colon removed.
+    })) %>% 
+    select(-.term)
+}
+
+art_anova_all(art_result)
+
+
+
+art.con(art_result, ~typing_style)
+
+m_lart_result_cond <- artlm.con(art_result, "condition")
+plot(m_lart_result_cond)
+```
+
+
+
+# Manually extract ART result to fit models
+```{r eval=FALSE, include=FALSE}
+art_result <- art(wpm ~ typing_style * condition + (1 | user_id), data = df_wpm_bkgnd)
+
+# check sum of aligned responses
+assertthat::are_equal(sum(art_result$aligned$typing_style), 0)
+assertthat::are_equal(sum(art_result$aligned$condition), 0)
+assertthat::are_equal(sum(art_result$aligned$`typing_style:condition`), 0)
+
+# check aligned (unranked) with F tests
+df_wpm_aligned <- 
+  df_wpm_bkgnd %>% 
+  mutate(
+    wpm_R_typing_style = art_result$aligned$typing_style,
+    wpm_R_condition = art_result$aligned$condition,
+    wpm_R_interaction = art_result$aligned$`typing_style:condition`)
+
+anova(lmer(wpm_R_typing_style ~ typing_style * condition + (1 | user_id), data = df_wpm_aligned))
+anova(lmer(wpm_R_condition ~ typing_style * condition + (1 | user_id), data = df_wpm_aligned))
+anova(lmer(wpm_R_interaction ~ typing_style * condition + (1 | user_id), data = df_wpm_aligned))
+
+# augment ART columns and fit models
+df_wpart_result <- 
+  df_wpm_bkgnd %>% 
+  mutate(
+    wpm_AR_typing_style = art_result$aligned.ranks$typing_style,
+    wpm_AR_condition = art_result$aligned.ranks$condition,
+    wpm_AR_interaction = art_result$aligned.ranks$`typing_style:condition`)
+
+art_result_typing_style <-  lmer(wpm_AR_typing_style ~ typing_style * condition + (1 | user_id), data = df_wpart_result)
+
+art_result_condition <-  lmer(wpm_AR_condition ~ typing_style * condition + (1 | user_id), data = df_wpart_result)
+
+art_result_interaction <-  lmer(wpm_AR_interaction ~ typing_style * condition + (1 | user_id), data = df_wpart_result)
+
+anova(art_result_typing_style, ddf= "Kenward-Roger")
+
+```
+
