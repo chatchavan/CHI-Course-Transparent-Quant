@@ -7,42 +7,58 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 library(dplyr)
 library(tibble)
 library(purrr)
 library(tidyr)
-library(ggplot2)
 library(forcats)
+library(ggthemes)
+
+
 library(broom)
 library(broom.mixed)
+
 library(modelr)
-library(tidybayes)
-library(ggdist)
+
 library(brms)
+library(tidybayes)
+
+library(rethinking)
+
+library(ggdist)
+library(ggplot2)
+
+theme_set(theme_ggdist())
 ```
 
 
 ## Introduction
 
-In this document, we will outline the Bayesian analogs of the statistical tests described [here](https://github.com/chatchavan/CHI-Course-Transparent-Quant/blob/master/frequentist.Rmd) (and in the previous lecture)
+In this document, we will outline the Bayesian analogs of the statistical analyses described [here](https://github.com/chatchavan/CHI-Course-Transparent-Quant/blob/master/frequentist.Rmd) (and in the previous course lecture).
 
 ## Data
 
-Load the data and helper functions
+Load the data and helper functions.
 
-```{r}
-dataset = readr::read_csv("~/Documents/Github/chi22-course/data/blinded.csv")
+```{r load-data-and-helper}
 
+# Fumemng -> Abhraneel I'm using the Rproj in the root folder, although my is identical...
+
+dataset = readr::read_csv("02-bayesian_stats/data/blinded.csv")
+# dataset = readr::read_csv("~/Documents/Github/chi22-course/data/blinded.csv")
+
+# this function extracts results from different models and generate results of the same format to be used in visualizations
 tidy.wrapper = function(model) {
   if (class(model) == "lm") {
-    tidy(result_ttest, conf.int = TRUE) %>% 
-      select(-c(statistic, p.value)) %>% 
+    tidy(result_ttest, conf.int = TRUE) %>%
+      select(-c(statistic, p.value)) %>%
       mutate(model = "Frequentist") %>%
       select(model, everything())
   } else if (class(model) == "brmsfit") {
-    tidy(result_ttest.bayesian) %>% 
-      filter(effect == "fixed") %>% 
-      select(c(term:conf.high)) %>% 
+    tidy(result_ttest.bayesian) %>%
+      filter(effect == "fixed") %>%
+      select(c(term:conf.high)) %>%
       mutate(model = "Bayesian") %>%
       select(model, everything())
   } else {
@@ -51,8 +67,18 @@ tidy.wrapper = function(model) {
 }
 ```
 
+TODO: explain the dataset here
 
-```{r, fig.height = 2, fig.width = 7}
+### Let's first look at the data in a table
+
+```{r glance-dataset}
+
+    dataset
+
+```  
+
+
+```{r plot-dataset, fig.height = 3, fig.width = 7}
 dataset %>% 
   mutate(effectiveness = fct_rev(factor(effectiveness, levels = 1:9))) %>%
   
@@ -70,24 +96,26 @@ dataset %>%
   coord_flip() +
   
   # legend
-  guides(fill = guide_legend(reverse = TRUE)) +
-  theme_minimal()
+  guides(fill = guide_legend(reverse = TRUE)) 
 ```
 
-As we can see above, the dataset contains results from four experiments. For the purposes of this demonstration we will confine ourselves to just the first experiment.
+As we can see above, the original dataset contains results from four different experiments. For the purposes of this lecture, we will confine ourselves to the first experiment.
 
-```{r}
+```{r filter-data}
 exp1.data = dataset %>%
   filter(experiment == 1)
+
+exp1.data
 ```
 
 
 ## Model 1. Wilcoxon signed rank test
-This is a non-parametric test which we will skip for now. Although, there exists Bayesian non-parametric methods, they are more advanced for this course.
+
+This is a non-parametric test which we will skip for now. Although, there exists Bayesian non-parametric methods, they are more advanced for this lecture
 
 ## Model 2. t-test
 
-```{r}
+```{r bayesian-t-test}
 # this is the linear model equivalent for the paired sample t-test
 result_ttest =
   lm(
@@ -103,14 +131,16 @@ result_ttest.bayesian =
       prior(student_t(3, 0, 1), class = "sigma")
     ),
     family = student(),
+    seed = 99,
+    backend = "cmdstanr", #Fumeng: I have to use this as my backend, 'rstan' backend doesn't work on my laptops...
     data = exp1.data,
     chains = 3, cores = 3
   )
 ```
 
-Next we visualise the results, along with a side-by-side comparison of the frequentist estimates:
+Next, we visualise the results, along with a side-by-side comparison of the frequentist estimates:
 
-```{r, echo = FALSE, warning = FALSE}
+```{r t-test-compare, echo = FALSE, warning = FALSE}
 bind_rows(
   tidy.wrapper(result_ttest),
   tidy.wrapper(result_ttest.bayesian)
@@ -123,10 +153,30 @@ bind_rows(
       ymin = conf.low, 
       ymax = conf.high, 
       color = model
-    ), position = position_dodge(width = 0.2))
+    ), position = position_dodge(width = 0.2)) +
+    scale_color_brewer(palette = "Set2")
 ```
 
+
+
+
+
+
+
 ## Model 3. Ordinal Logistic Regression
+
+
+
+
+
+
+
+
+
+
+
+
+???? 
 
 ```{r}
 data(Trolley, package = "rethinking")
@@ -151,9 +201,7 @@ exp1.data %>%
   scale_x_continuous(breaks = 1:7) +
   scale_y_continuous("cumulative proportion", 
                      breaks = c(0, .5, 1), limits = c(0, 1)) +
-  theme_minimal() +
   theme(axis.ticks = element_blank(),
-        axis.title.y = element_text(angle = 90),
         legend.position = "none")
 ```
 
