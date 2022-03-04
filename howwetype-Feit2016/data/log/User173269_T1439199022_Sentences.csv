@@ -1,0 +1,1148 @@
+stimulus_index,stimulus,input_time_ms,input_index,key_symbol,transcribed_string
+0,WE can have wine and catch up.,0,0,Shift_L,WE can have wine and catch up.
+0,WE can have wine and catch up.,62,1,W,WE can have wine and catch up.
+0,WE can have wine and catch up.,155,2,E,WE can have wine and catch up.
+0,WE can have wine and catch up.,437,3,space,WE can have wine and catch up.
+0,WE can have wine and catch up.,654,4,c,WE can have wine and catch up.
+0,WE can have wine and catch up.,749,5,a,WE can have wine and catch up.
+0,WE can have wine and catch up.,936,6,n,WE can have wine and catch up.
+0,WE can have wine and catch up.,1061,7,space,WE can have wine and catch up.
+0,WE can have wine and catch up.,1247,8,h,WE can have wine and catch up.
+0,WE can have wine and catch up.,1372,9,a,WE can have wine and catch up.
+0,WE can have wine and catch up.,1467,10,v,WE can have wine and catch up.
+0,WE can have wine and catch up.,1654,11,e,WE can have wine and catch up.
+0,WE can have wine and catch up.,1716,12,space,WE can have wine and catch up.
+0,WE can have wine and catch up.,1996,13,w,WE can have wine and catch up.
+0,WE can have wine and catch up.,2121,14,i,WE can have wine and catch up.
+0,WE can have wine and catch up.,2309,15,n,WE can have wine and catch up.
+0,WE can have wine and catch up.,2403,16,e,WE can have wine and catch up.
+0,WE can have wine and catch up.,2496,17,space,WE can have wine and catch up.
+0,WE can have wine and catch up.,2651,18,a,WE can have wine and catch up.
+0,WE can have wine and catch up.,2808,19,n,WE can have wine and catch up.
+0,WE can have wine and catch up.,2901,20,d,WE can have wine and catch up.
+0,WE can have wine and catch up.,2994,21,space,WE can have wine and catch up.
+0,WE can have wine and catch up.,3401,22,c,WE can have wine and catch up.
+0,WE can have wine and catch up.,3556,23,a,WE can have wine and catch up.
+0,WE can have wine and catch up.,3618,24,t,WE can have wine and catch up.
+0,WE can have wine and catch up.,3868,25,c,WE can have wine and catch up.
+0,WE can have wine and catch up.,3963,26,h,WE can have wine and catch up.
+0,WE can have wine and catch up.,4493,27,space,WE can have wine and catch up.
+0,WE can have wine and catch up.,4743,28,u,WE can have wine and catch up.
+0,WE can have wine and catch up.,4960,29,p,WE can have wine and catch up.
+0,WE can have wine and catch up.,5210,30,period,WE can have wine and catch up.
+1,Good for you.,0,0,Shift_L,Good for you.
+1,Good for you.,62,1,G,Good for you.
+1,Good for you.,312,2,o,Good for you.
+1,Good for you.,406,3,o,Good for you.
+1,Good for you.,1217,4,o,Good for you.
+1,Good for you.,2153,5,BackSpace,Good for you.
+1,Good for you.,2278,6,d,Good for you.
+1,Good for you.,2589,7,space,Good for you.
+1,Good for you.,2871,8,f,Good for you.
+1,Good for you.,3183,9,o,Good for you.
+1,Good for you.,3338,10,r,Good for you.
+1,Good for you.,3463,11,space,Good for you.
+1,Good for you.,3681,12,y,Good for you.
+1,Good for you.,3776,13,o,Good for you.
+1,Good for you.,3993,14,u,Good for you.
+1,Good for you.,4400,15,period,Good for you.
+2,I am on my way.,0,0,Shift_L,I am on my way.
+2,I am on my way.,62,1,I,I am on my way.
+2,I am on my way.,279,2,space,I am on my way.
+2,I am on my way.,373,3,a,I am on my way.
+2,I am on my way.,467,4,m,I am on my way.
+2,I am on my way.,623,5,space,I am on my way.
+2,I am on my way.,779,6,o,I am on my way.
+2,I am on my way.,935,7,n,I am on my way.
+2,I am on my way.,1092,8,space,I am on my way.
+2,I am on my way.,1247,9,m,I am on my way.
+2,I am on my way.,1496,10,y,I am on my way.
+2,I am on my way.,1684,11,space,I am on my way.
+2,I am on my way.,1839,12,w,I am on my way.
+2,I am on my way.,2027,13,a,I am on my way.
+2,I am on my way.,2121,14,y,I am on my way.
+2,I am on my way.,2526,15,period,I am on my way.
+3,Did you get this?,0,0,Shift_L,Did you get this?
+3,Did you get this?,250,1,D,Did you get this?
+3,Did you get this?,499,2,i,Did you get this?
+3,Did you get this?,654,3,d,Did you get this?
+3,Did you get this?,749,4,space,Did you get this?
+3,Did you get this?,1061,5,y,Did you get this?
+3,Did you get this?,1154,6,o,Did you get this?
+3,Did you get this?,1342,7,u,Did you get this?
+3,Did you get this?,1529,8,space,Did you get this?
+3,Did you get this?,1716,9,g,Did you get this?
+3,Did you get this?,1779,10,e,Did you get this?
+3,Did you get this?,2028,11,t,Did you get this?
+3,Did you get this?,2214,12,t,Did you get this?
+3,Did you get this?,2995,13,BackSpace,Did you get this?
+3,Did you get this?,3276,14,space,Did you get this?
+3,Did you get this?,3401,15,t,Did you get this?
+3,Did you get this?,3556,16,h,Did you get this?
+3,Did you get this?,3743,17,i,Did you get this?
+3,Did you get this?,3900,18,s,Did you get this?
+3,Did you get this?,4275,19,Shift_L,Did you get this?
+3,Did you get this?,4398,20,question,Did you get this?
+4,That would be great.,0,0,Shift_L,That would be great.
+4,That would be great.,155,1,T,That would be great.
+4,That would be great.,654,2,h,That would be great.
+4,That would be great.,779,3,a,That would be great.
+4,That would be great.,935,4,t,That would be great.
+4,That would be great.,1122,5,space,That would be great.
+4,That would be great.,1309,6,w,That would be great.
+4,That would be great.,1434,7,o,That would be great.
+4,That would be great.,1621,8,u,That would be great.
+4,That would be great.,1809,9,l,That would be great.
+4,That would be great.,1934,10,d,That would be great.
+4,That would be great.,1996,11,space,That would be great.
+4,That would be great.,2152,12,b,That would be great.
+4,That would be great.,2214,13,e,That would be great.
+4,That would be great.,2309,14,space,That would be great.
+4,That would be great.,2526,15,g,That would be great.
+4,That would be great.,2713,16,r,That would be great.
+4,That would be great.,2807,17,e,That would be great.
+4,That would be great.,3026,18,a,That would be great.
+4,That would be great.,3119,19,t,That would be great.
+4,That would be great.,3463,20,period,That would be great.
+5,Do you need it today?,0,0,Shift_L,Do you need it today?
+5,Do you need it today?,686,1,D,Do you need it today?
+5,Do you need it today?,1029,2,o,Do you need it today?
+5,Do you need it today?,1248,3,space,Do you need it today?
+5,Do you need it today?,1404,4,y,Do you need it today?
+5,Do you need it today?,1529,5,o,Do you need it today?
+5,Do you need it today?,1716,6,u,Do you need it today?
+5,Do you need it today?,1934,7,space,Do you need it today?
+5,Do you need it today?,2059,8,n,Do you need it today?
+5,Do you need it today?,2401,9,e,Do you need it today?
+5,Do you need it today?,2558,10,e,Do you need it today?
+5,Do you need it today?,2713,11,d,Do you need it today?
+5,Do you need it today?,2808,12,space,Do you need it today?
+5,Do you need it today?,2995,13,i,Do you need it today?
+5,Do you need it today?,3120,14,t,Do you need it today?
+5,Do you need it today?,3213,15,space,Do you need it today?
+5,Do you need it today?,3338,16,t,Do you need it today?
+5,Do you need it today?,3463,17,o,Do you need it today?
+5,Do you need it today?,3743,18,d,Do you need it today?
+5,Do you need it today?,3993,19,a,Do you need it today?
+5,Do you need it today?,4180,20,y,Do you need it today?
+5,Do you need it today?,4430,21,Shift_L,Do you need it today?
+5,Do you need it today?,4523,22,question,Do you need it today?
+6,I am walking in now.,0,0,Shift_L,I am walking in now.
+6,I am walking in now.,62,1,I,I am walking in now.
+6,I am walking in now.,249,2,space,I am walking in now.
+6,I am walking in now.,404,3,a,I am walking in now.
+6,I am walking in now.,529,4,m,I am walking in now.
+6,I am walking in now.,686,5,space,I am walking in now.
+6,I am walking in now.,872,6,w,I am walking in now.
+6,I am walking in now.,1061,7,a,I am walking in now.
+6,I am walking in now.,1122,8,l,I am walking in now.
+6,I am walking in now.,1279,9,k,I am walking in now.
+6,I am walking in now.,1434,10,i,I am walking in now.
+6,I am walking in now.,1621,11,n,I am walking in now.
+6,I am walking in now.,1716,12,g,I am walking in now.
+6,I am walking in now.,1809,13,space,I am walking in now.
+6,I am walking in now.,2027,14,i,I am walking in now.
+6,I am walking in now.,2152,15,n,I am walking in now.
+6,I am walking in now.,2309,16,space,I am walking in now.
+6,I am walking in now.,2588,17,n,I am walking in now.
+6,I am walking in now.,2776,18,o,I am walking in now.
+6,I am walking in now.,2901,19,w,I am walking in now.
+6,I am walking in now.,3088,20,period,I am walking in now.
+7,Are you feeling better?,0,0,Shift_L,Are you feeling better?
+7,Are you feeling better?,312,1,A,Are you feeling better?
+7,Are you feeling better?,499,2,R,Are you feeling better?
+7,Are you feeling better?,717,3,e,Are you feeling better?
+7,Are you feeling better?,842,4,space,Are you feeling better?
+7,Are you feeling better?,1123,5,y,Are you feeling better?
+7,Are you feeling better?,1309,6,o,Are you feeling better?
+7,Are you feeling better?,2089,7,BackSpace,Are you feeling better?
+7,Are you feeling better?,2246,8,BackSpace,Are you feeling better?
+7,Are you feeling better?,2371,9,BackSpace,Are you feeling better?
+7,Are you feeling better?,2463,10,BackSpace,Are you feeling better?
+7,Are you feeling better?,2588,11,BackSpace,Are you feeling better?
+7,Are you feeling better?,3276,12,r,Are you feeling better?
+7,Are you feeling better?,3463,13,e,Are you feeling better?
+7,Are you feeling better?,3493,14,space,Are you feeling better?
+7,Are you feeling better?,3775,15,y,Are you feeling better?
+7,Are you feeling better?,3868,16,o,Are you feeling better?
+7,Are you feeling better?,4087,17,u,Are you feeling better?
+7,Are you feeling better?,4273,18,space,Are you feeling better?
+7,Are you feeling better?,4430,19,f,Are you feeling better?
+7,Are you feeling better?,4648,20,e,Are you feeling better?
+7,Are you feeling better?,4804,21,e,Are you feeling better?
+7,Are you feeling better?,4960,22,l,Are you feeling better?
+7,Are you feeling better?,5148,23,i,Are you feeling better?
+7,Are you feeling better?,5335,24,n,Are you feeling better?
+7,Are you feeling better?,5460,25,g,Are you feeling better?
+7,Are you feeling better?,5522,26,space,Are you feeling better?
+7,Are you feeling better?,5709,27,b,Are you feeling better?
+7,Are you feeling better?,5834,28,e,Are you feeling better?
+7,Are you feeling better?,5990,29,t,Are you feeling better?
+7,Are you feeling better?,6115,30,t,Are you feeling better?
+7,Are you feeling better?,6207,31,e,Are you feeling better?
+7,Are you feeling better?,6364,32,r,Are you feeling better?
+7,Are you feeling better?,6801,33,Shift_L,Are you feeling better?
+7,Are you feeling better?,6864,34,question,Are you feeling better?
+8,I can return earlier.,0,0,Shift_L,I can return earlier.
+8,I can return earlier.,187,1,I,I can return earlier.
+8,I can return earlier.,404,2,space,I can return earlier.
+8,I can return earlier.,624,3,c,I can return earlier.
+8,I can return earlier.,842,4,a,I can return earlier.
+8,I can return earlier.,936,5,n,I can return earlier.
+8,I can return earlier.,1123,6,space,I can return earlier.
+8,I can return earlier.,1248,7,r,I can return earlier.
+8,I can return earlier.,1404,8,e,I can return earlier.
+8,I can return earlier.,1653,9,t,I can return earlier.
+8,I can return earlier.,1746,10,u,I can return earlier.
+8,I can return earlier.,2059,11,r,I can return earlier.
+8,I can return earlier.,2153,12,n,I can return earlier.
+8,I can return earlier.,2340,13,space,I can return earlier.
+8,I can return earlier.,2465,14,e,I can return earlier.
+8,I can return earlier.,2652,15,a,I can return earlier.
+8,I can return earlier.,2933,16,r,I can return earlier.
+8,I can return earlier.,3057,17,l,I can return earlier.
+8,I can return earlier.,3213,18,i,I can return earlier.
+8,I can return earlier.,3368,19,e,I can return earlier.
+8,I can return earlier.,3557,20,r,I can return earlier.
+8,I can return earlier.,3713,21,period,I can return earlier.
+9,I think that is the right anwer.,0,0,Shift_L,I think that is the right anwer.
+9,I think that is the right anwer.,62,1,I,I think that is the right anwer.
+9,I think that is the right anwer.,281,2,space,I think that is the right anwer.
+9,I think that is the right anwer.,437,3,t,I think that is the right anwer.
+9,I think that is the right anwer.,686,4,i,I think that is the right anwer.
+9,I think that is the right anwer.,842,5,n,I think that is the right anwer.
+9,I think that is the right anwer.,967,6,k,I think that is the right anwer.
+9,I think that is the right anwer.,1154,7,space,I think that is the right anwer.
+9,I think that is the right anwer.,1309,8,a,I think that is the right anwer.
+9,I think that is the right anwer.,1778,9,BackSpace,I think that is the right anwer.
+9,I think that is the right anwer.,2371,10,t,I think that is the right anwer.
+9,I think that is the right anwer.,3151,11,BackSpace,I think that is the right anwer.
+9,I think that is the right anwer.,3276,12,BackSpace,I think that is the right anwer.
+9,I think that is the right anwer.,3432,13,BackSpace,I think that is the right anwer.
+9,I think that is the right anwer.,3557,14,BackSpace,I think that is the right anwer.
+9,I think that is the right anwer.,3713,15,BackSpace,I think that is the right anwer.
+9,I think that is the right anwer.,4555,16,h,I think that is the right anwer.
+9,I think that is the right anwer.,4805,17,i,I think that is the right anwer.
+9,I think that is the right anwer.,4992,18,n,I think that is the right anwer.
+9,I think that is the right anwer.,5148,19,k,I think that is the right anwer.
+9,I think that is the right anwer.,5335,20,space,I think that is the right anwer.
+9,I think that is the right anwer.,5647,21,t,I think that is the right anwer.
+9,I think that is the right anwer.,5834,22,h,I think that is the right anwer.
+9,I think that is the right anwer.,6052,23,a,I think that is the right anwer.
+9,I think that is the right anwer.,6240,24,t,I think that is the right anwer.
+9,I think that is the right anwer.,7301,25,space,I think that is the right anwer.
+9,I think that is the right anwer.,7674,26,i,I think that is the right anwer.
+9,I think that is the right anwer.,7831,27,s,I think that is the right anwer.
+9,I think that is the right anwer.,7924,28,space,I think that is the right anwer.
+9,I think that is the right anwer.,8111,29,t,I think that is the right anwer.
+9,I think that is the right anwer.,8174,30,h,I think that is the right anwer.
+9,I think that is the right anwer.,8330,31,e,I think that is the right anwer.
+9,I think that is the right anwer.,8393,32,space,I think that is the right anwer.
+9,I think that is the right anwer.,8953,33,r,I think that is the right anwer.
+9,I think that is the right anwer.,9203,34,i,I think that is the right anwer.
+9,I think that is the right anwer.,9453,35,g,I think that is the right anwer.
+9,I think that is the right anwer.,9547,36,h,I think that is the right anwer.
+9,I think that is the right anwer.,9641,37,t,I think that is the right anwer.
+9,I think that is the right anwer.,9766,38,space,I think that is the right anwer.
+9,I think that is the right anwer.,10046,39,a,I think that is the right anwer.
+9,I think that is the right anwer.,10140,40,n,I think that is the right anwer.
+9,I think that is the right anwer.,10577,41,w,I think that is the right anwer.
+9,I think that is the right anwer.,10795,42,e,I think that is the right anwer.
+9,I think that is the right anwer.,10982,43,r,I think that is the right anwer.
+9,I think that is the right anwer.,11200,44,period,I think that is the right anwer.
+10,We need to talk about this month.,0,0,Shift_L,We need to talk about this month.
+10,We need to talk about this month.,186,1,W,We need to talk about this month.
+10,We need to talk about this month.,623,2,e,We need to talk about this month.
+10,We need to talk about this month.,748,3,space,We need to talk about this month.
+10,We need to talk about this month.,935,4,n,We need to talk about this month.
+10,We need to talk about this month.,1092,5,e,We need to talk about this month.
+10,We need to talk about this month.,1247,6,e,We need to talk about this month.
+10,We need to talk about this month.,1434,7,d,We need to talk about this month.
+10,We need to talk about this month.,1528,8,space,We need to talk about this month.
+10,We need to talk about this month.,1746,9,t,We need to talk about this month.
+10,We need to talk about this month.,1809,10,o,We need to talk about this month.
+10,We need to talk about this month.,1996,11,space,We need to talk about this month.
+10,We need to talk about this month.,2089,12,t,We need to talk about this month.
+10,We need to talk about this month.,2401,13,a,We need to talk about this month.
+10,We need to talk about this month.,2557,14,l,We need to talk about this month.
+10,We need to talk about this month.,2713,15,k,We need to talk about this month.
+10,We need to talk about this month.,2869,16,space,We need to talk about this month.
+10,We need to talk about this month.,3244,17,a,We need to talk about this month.
+10,We need to talk about this month.,3368,18,b,We need to talk about this month.
+10,We need to talk about this month.,3587,19,o,We need to talk about this month.
+10,We need to talk about this month.,3805,20,u,We need to talk about this month.
+10,We need to talk about this month.,4024,21,t,We need to talk about this month.
+10,We need to talk about this month.,4148,22,space,We need to talk about this month.
+10,We need to talk about this month.,4242,23,t,We need to talk about this month.
+10,We need to talk about this month.,4336,24,h,We need to talk about this month.
+10,We need to talk about this month.,4554,25,i,We need to talk about this month.
+10,We need to talk about this month.,4648,26,s,We need to talk about this month.
+10,We need to talk about this month.,4773,27,space,We need to talk about this month.
+10,We need to talk about this month.,5023,28,m,We need to talk about this month.
+10,We need to talk about this month.,5178,29,o,We need to talk about this month.
+10,We need to talk about this month.,5365,30,n,We need to talk about this month.
+10,We need to talk about this month.,5521,31,t,We need to talk about this month.
+10,We need to talk about this month.,5615,32,h,We need to talk about this month.
+10,We need to talk about this month.,5990,33,period,We need to talk about this month.
+11,Where are you?,0,0,Shift_L,Where are you?
+11,Where are you?,467,1,W,Where are you?
+11,Where are you?,904,2,h,Where are you?
+11,Where are you?,1092,3,e,Where are you?
+11,Where are you?,1248,4,r,Where are you?
+11,Where are you?,1341,5,e,Where are you?
+11,Where are you?,1529,6,space,Where are you?
+11,Where are you?,1621,7,a,Where are you?
+11,Where are you?,1934,8,r,Where are you?
+11,Where are you?,2153,9,e,Where are you?
+11,Where are you?,2246,10,space,Where are you?
+11,Where are you?,2558,11,y,Where are you?
+11,Where are you?,2621,12,o,Where are you?
+11,Where are you?,2808,13,u,Where are you?
+11,Where are you?,3057,14,Shift_L,Where are you?
+11,Where are you?,3182,15,question,Where are you?
+12,Not even close.,0,0,Shift_L,Not even close.
+12,Not even close.,93,1,N,Not even close.
+12,Not even close.,280,2,o,Not even close.
+12,Not even close.,530,3,t,Not even close.
+12,Not even close.,623,4,space,Not even close.
+12,Not even close.,1060,5,e,Not even close.
+12,Not even close.,1185,6,v,Not even close.
+12,Not even close.,1279,7,e,Not even close.
+12,Not even close.,1434,8,n,Not even close.
+12,Not even close.,1622,9,space,Not even close.
+12,Not even close.,1715,10,c,Not even close.
+12,Not even close.,1871,11,l,Not even close.
+12,Not even close.,2027,12,o,Not even close.
+12,Not even close.,2277,13,s,Not even close.
+12,Not even close.,2464,14,e,Not even close.
+12,Not even close.,2559,15,period,Not even close.
+13,What is wrong?,0,0,Shift_L,What is wrong?
+13,What is wrong?,217,1,W,What is wrong?
+13,What is wrong?,560,2,h,What is wrong?
+13,What is wrong?,654,3,a,What is wrong?
+13,What is wrong?,779,4,t,What is wrong?
+13,What is wrong?,997,5,space,What is wrong?
+13,What is wrong?,1217,6,i,What is wrong?
+13,What is wrong?,1309,7,s,What is wrong?
+13,What is wrong?,1434,8,space,What is wrong?
+13,What is wrong?,1841,9,w,What is wrong?
+13,What is wrong?,2152,10,r,What is wrong?
+13,What is wrong?,2339,11,o,What is wrong?
+13,What is wrong?,2526,12,n,What is wrong?
+13,What is wrong?,2651,13,g,What is wrong?
+13,What is wrong?,3026,14,Shift_L,What is wrong?
+13,What is wrong?,3151,15,question,What is wrong?
+14,You have a nice holiday too.,0,0,Shift_L,You have a nice holiday too.
+14,You have a nice holiday too.,155,1,Y,You have a nice holiday too.
+14,You have a nice holiday too.,500,2,o,You have a nice holiday too.
+14,You have a nice holiday too.,717,3,u,You have a nice holiday too.
+14,You have a nice holiday too.,904,4,space,You have a nice holiday too.
+14,You have a nice holiday too.,1092,5,h,You have a nice holiday too.
+14,You have a nice holiday too.,1185,6,a,You have a nice holiday too.
+14,You have a nice holiday too.,1279,7,v,You have a nice holiday too.
+14,You have a nice holiday too.,1435,8,e,You have a nice holiday too.
+14,You have a nice holiday too.,1497,9,space,You have a nice holiday too.
+14,You have a nice holiday too.,1653,10,a,You have a nice holiday too.
+14,You have a nice holiday too.,1715,11,space,You have a nice holiday too.
+14,You have a nice holiday too.,1903,12,n,You have a nice holiday too.
+14,You have a nice holiday too.,3244,13,i,You have a nice holiday too.
+14,You have a nice holiday too.,3369,14,c,You have a nice holiday too.
+14,You have a nice holiday too.,3619,15,e,You have a nice holiday too.
+14,You have a nice holiday too.,3681,16,space,You have a nice holiday too.
+14,You have a nice holiday too.,4399,17,h,You have a nice holiday too.
+14,You have a nice holiday too.,4648,18,o,You have a nice holiday too.
+14,You have a nice holiday too.,4835,19,l,You have a nice holiday too.
+14,You have a nice holiday too.,4991,20,i,You have a nice holiday too.
+14,You have a nice holiday too.,5210,21,d,You have a nice holiday too.
+14,You have a nice holiday too.,5398,22,a,You have a nice holiday too.
+14,You have a nice holiday too.,5459,23,y,You have a nice holiday too.
+14,You have a nice holiday too.,5678,24,space,You have a nice holiday too.
+14,You have a nice holiday too.,5771,25,t,You have a nice holiday too.
+14,You have a nice holiday too.,5896,26,o,You have a nice holiday too.
+14,You have a nice holiday too.,6021,27,o,You have a nice holiday too.
+14,You have a nice holiday too.,6271,28,period,You have a nice holiday too.
+15,Please call tomorrow if possible.,0,0,Shift_L,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,125,1,P,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,280,2,l,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,560,3,e,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,810,4,a,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,1060,5,s,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,1247,6,e,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,1372,7,space,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,1496,8,c,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,1715,9,a,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,1809,10,l,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,1934,11,l,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,2184,12,space,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,2339,13,t,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,2401,14,o,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,2588,15,m,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,2744,16,o,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,2932,17,r,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,3088,18,r,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,3212,19,o,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,3368,20,w,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,3462,21,space,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,3649,22,i,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,4024,23,f,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,4086,24,space,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,4368,25,p,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,4523,26,o,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,4679,27,s,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,4835,28,s,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,4928,29,i,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,5116,30,b,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,5334,31,l,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,5428,32,e,Please call tomorrow if possible.
+15,Please call tomorrow if possible.,5521,33,period,Please call tomorrow if possible.
+16,What do you hear?,0,0,Shift_L,What do you hear?
+16,What do you hear?,312,1,W,What do you hear?
+16,What do you hear?,654,2,h,What do you hear?
+16,What do you hear?,749,3,a,What do you hear?
+16,What do you hear?,842,4,t,What do you hear?
+16,What do you hear?,1060,5,space,What do you hear?
+16,What do you hear?,1247,6,d,What do you hear?
+16,What do you hear?,1372,7,o,What do you hear?
+16,What do you hear?,1559,8,space,What do you hear?
+16,What do you hear?,1841,9,y,What do you hear?
+16,What do you hear?,1902,10,o,What do you hear?
+16,What do you hear?,2089,11,u,What do you hear?
+16,What do you hear?,2309,12,space,What do you hear?
+16,What do you hear?,2464,13,h,What do you hear?
+16,What do you hear?,2557,14,e,What do you hear?
+16,What do you hear?,2776,15,a,What do you hear?
+16,What do you hear?,2869,16,r,What do you hear?
+16,What do you hear?,3151,17,Shift_L,What do you hear?
+16,What do you hear?,3213,18,question,What do you hear?
+17,Why do you ask?,0,0,Shift_L,Why do you ask?
+17,Why do you ask?,312,1,W,Why do you ask?
+17,Why do you ask?,749,2,h,Why do you ask?
+17,Why do you ask?,1092,3,y,Why do you ask?
+17,Why do you ask?,1279,4,space,Why do you ask?
+17,Why do you ask?,1466,5,d,Why do you ask?
+17,Why do you ask?,1529,6,o,Why do you ask?
+17,Why do you ask?,1716,7,space,Why do you ask?
+17,Why do you ask?,1934,8,y,Why do you ask?
+17,Why do you ask?,2028,9,o,Why do you ask?
+17,Why do you ask?,2214,10,u,Why do you ask?
+17,Why do you ask?,2464,11,space,Why do you ask?
+17,Why do you ask?,2621,12,a,Why do you ask?
+17,Why do you ask?,2776,13,s,Why do you ask?
+17,Why do you ask?,2870,14,k,Why do you ask?
+17,Why do you ask?,3151,15,Shift_L,Why do you ask?
+17,Why do you ask?,3245,16,question,Why do you ask?
+18,Do we need to discuss?,0,0,Shift_L,Do we need to discuss?
+18,Do we need to discuss?,280,1,D,Do we need to discuss?
+18,Do we need to discuss?,592,2,o,Do we need to discuss?
+18,Do we need to discuss?,779,3,space,Do we need to discuss?
+18,Do we need to discuss?,872,4,w,Do we need to discuss?
+18,Do we need to discuss?,1029,5,e,Do we need to discuss?
+18,Do we need to discuss?,1154,6,space,Do we need to discuss?
+18,Do we need to discuss?,1309,7,n,Do we need to discuss?
+18,Do we need to discuss?,1559,8,e,Do we need to discuss?
+18,Do we need to discuss?,1715,9,e,Do we need to discuss?
+18,Do we need to discuss?,1934,10,d,Do we need to discuss?
+18,Do we need to discuss?,2027,11,space,Do we need to discuss?
+18,Do we need to discuss?,2246,12,t,Do we need to discuss?
+18,Do we need to discuss?,2339,13,o,Do we need to discuss?
+18,Do we need to discuss?,2526,14,space,Do we need to discuss?
+18,Do we need to discuss?,2744,15,d,Do we need to discuss?
+18,Do we need to discuss?,3181,16,i,Do we need to discuss?
+18,Do we need to discuss?,3588,17,s,Do we need to discuss?
+18,Do we need to discuss?,3805,18,c,Do we need to discuss?
+18,Do we need to discuss?,3930,19,u,Do we need to discuss?
+18,Do we need to discuss?,4086,20,s,Do we need to discuss?
+18,Do we need to discuss?,4243,21,s,Do we need to discuss?
+18,Do we need to discuss?,4523,22,Shift_L,Do we need to discuss?
+18,Do we need to discuss?,4680,23,question,Do we need to discuss?
+19,Are you going to jopin us for lunch?,0,0,Shift_L,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,187,1,A,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,562,2,r,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,686,3,e,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,779,4,space,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,1061,5,y,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,1154,6,o,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,1373,7,u,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,1591,8,space,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,1716,9,g,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,1810,10,o,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,1996,11,i,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,2153,12,n,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,2340,13,g,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,2402,14,space,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,2558,15,t,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,2683,16,o,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,2902,17,space,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,3213,18,j,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,3432,19,o,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,3432,20,p,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,3588,21,i,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,3775,22,n,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,4368,23,space,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,4680,24,u,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,4805,25,s,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,4898,26,space,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,5085,27,f,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,5179,28,o,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,5304,29,r,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,6583,30,space,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,6802,31,l,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,7019,32,u,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,7238,33,n,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,7394,34,h,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,8518,35,BackSpace,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,9203,36,c,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,9298,37,h,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,9641,38,Shift_L,Are you going to jopin us for lunch?
+19,Are you going to jopin us for lunch?,9733,39,question,Are you going to jopin us for lunch?
+20,Thursday workd better for me.,0,0,Shift_L,Thursday workd better for me.
+20,Thursday workd better for me.,217,1,T,Thursday workd better for me.
+20,Thursday workd better for me.,436,2,h,Thursday workd better for me.
+20,Thursday workd better for me.,623,3,u,Thursday workd better for me.
+20,Thursday workd better for me.,904,4,r,Thursday workd better for me.
+20,Thursday workd better for me.,1185,5,s,Thursday workd better for me.
+20,Thursday workd better for me.,2526,6,d,Thursday workd better for me.
+20,Thursday workd better for me.,2745,7,a,Thursday workd better for me.
+20,Thursday workd better for me.,2807,8,y,Thursday workd better for me.
+20,Thursday workd better for me.,3025,9,space,Thursday workd better for me.
+20,Thursday workd better for me.,3462,10,w,Thursday workd better for me.
+20,Thursday workd better for me.,3587,11,o,Thursday workd better for me.
+20,Thursday workd better for me.,3868,12,r,Thursday workd better for me.
+20,Thursday workd better for me.,4024,13,k,Thursday workd better for me.
+20,Thursday workd better for me.,4211,14,d,Thursday workd better for me.
+20,Thursday workd better for me.,4273,15,space,Thursday workd better for me.
+20,Thursday workd better for me.,4492,16,b,Thursday workd better for me.
+20,Thursday workd better for me.,4617,17,e,Thursday workd better for me.
+20,Thursday workd better for me.,5116,18,t,Thursday workd better for me.
+20,Thursday workd better for me.,5241,19,t,Thursday workd better for me.
+20,Thursday workd better for me.,5398,20,e,Thursday workd better for me.
+20,Thursday workd better for me.,5584,21,r,Thursday workd better for me.
+20,Thursday workd better for me.,5677,22,space,Thursday workd better for me.
+20,Thursday workd better for me.,5833,23,f,Thursday workd better for me.
+20,Thursday workd better for me.,5958,24,o,Thursday workd better for me.
+20,Thursday workd better for me.,6052,25,r,Thursday workd better for me.
+20,Thursday workd better for me.,6177,26,space,Thursday workd better for me.
+20,Thursday workd better for me.,6364,27,m,Thursday workd better for me.
+20,Thursday workd better for me.,6426,28,e,Thursday workd better for me.
+20,Thursday workd better for me.,7081,29,period,Thursday workd better for me.
+21,What is this?,0,0,Shift_L,What is this?
+21,What is this?,217,1,W,What is this?
+21,What is this?,560,2,h,What is this?
+21,What is this?,685,3,a,What is this?
+21,What is this?,779,4,t,What is this?
+21,What is this?,997,5,space,What is this?
+21,What is this?,1184,6,i,What is this?
+21,What is this?,1309,7,s,What is this?
+21,What is this?,1404,8,space,What is this?
+21,What is this?,1652,9,t,What is this?
+21,What is this?,1746,10,h,What is this?
+21,What is this?,1934,11,i,What is this?
+21,What is this?,2059,12,s,What is this?
+21,What is this?,2401,13,Shift_L,What is this?
+21,What is this?,2526,14,question,What is this?
+22,Please send me an email.,0,0,Shift_L,Please send me an email.
+22,Please send me an email.,156,1,P,Please send me an email.
+22,Please send me an email.,344,2,l,Please send me an email.
+22,Please send me an email.,531,3,e,Please send me an email.
+22,Please send me an email.,780,4,a,Please send me an email.
+22,Please send me an email.,968,5,s,Please send me an email.
+22,Please send me an email.,1124,6,e,Please send me an email.
+22,Please send me an email.,1186,7,space,Please send me an email.
+22,Please send me an email.,1342,8,s,Please send me an email.
+22,Please send me an email.,1529,9,e,Please send me an email.
+22,Please send me an email.,1654,10,n,Please send me an email.
+22,Please send me an email.,1748,11,d,Please send me an email.
+22,Please send me an email.,1871,12,space,Please send me an email.
+22,Please send me an email.,2184,13,m,Please send me an email.
+22,Please send me an email.,2309,14,e,Please send me an email.
+22,Please send me an email.,2403,15,space,Please send me an email.
+22,Please send me an email.,2590,16,a,Please send me an email.
+22,Please send me an email.,2715,17,n,Please send me an email.
+22,Please send me an email.,2871,18,space,Please send me an email.
+22,Please send me an email.,3120,19,e,Please send me an email.
+22,Please send me an email.,3213,20,m,Please send me an email.
+22,Please send me an email.,3370,21,a,Please send me an email.
+22,Please send me an email.,3463,22,i,Please send me an email.
+22,Please send me an email.,3620,23,l,Please send me an email.
+22,Please send me an email.,3838,24,period,Please send me an email.
+23,Are you being a baby?,0,0,Shift_L,Are you being a baby?
+23,Are you being a baby?,250,1,A,Are you being a baby?
+23,Are you being a baby?,467,2,r,Are you being a baby?
+23,Are you being a baby?,592,3,e,Are you being a baby?
+23,Are you being a baby?,686,4,space,Are you being a baby?
+23,Are you being a baby?,967,5,y,Are you being a baby?
+23,Are you being a baby?,1092,6,o,Are you being a baby?
+23,Are you being a baby?,1279,7,u,Are you being a baby?
+23,Are you being a baby?,1497,8,space,Are you being a baby?
+23,Are you being a baby?,1621,9,b,Are you being a baby?
+23,Are you being a baby?,1716,10,e,Are you being a baby?
+23,Are you being a baby?,1903,11,i,Are you being a baby?
+23,Are you being a baby?,2089,12,n,Are you being a baby?
+23,Are you being a baby?,2246,13,g,Are you being a baby?
+23,Are you being a baby?,2339,14,space,Are you being a baby?
+23,Are you being a baby?,2526,15,a,Are you being a baby?
+23,Are you being a baby?,2558,16,space,Are you being a baby?
+23,Are you being a baby?,2808,17,b,Are you being a baby?
+23,Are you being a baby?,2901,18,a,Are you being a baby?
+23,Are you being a baby?,2963,19,b,Are you being a baby?
+23,Are you being a baby?,3276,20,y,Are you being a baby?
+23,Are you being a baby?,3588,21,Shift_L,Are you being a baby?
+23,Are you being a baby?,3805,22,question,Are you being a baby?
+24,Have a great trip.,0,0,Shift_L,Have a great trip.
+24,Have a great trip.,155,1,H,Have a great trip.
+24,Have a great trip.,342,2,a,Have a great trip.
+24,Have a great trip.,467,3,v,Have a great trip.
+24,Have a great trip.,560,4,e,Have a great trip.
+24,Have a great trip.,685,5,space,Have a great trip.
+24,Have a great trip.,810,6,a,Have a great trip.
+24,Have a great trip.,872,7,space,Have a great trip.
+24,Have a great trip.,1091,8,g,Have a great trip.
+24,Have a great trip.,1278,9,r,Have a great trip.
+24,Have a great trip.,1340,10,e,Have a great trip.
+24,Have a great trip.,1559,11,a,Have a great trip.
+24,Have a great trip.,1621,12,t,Have a great trip.
+24,Have a great trip.,1840,13,space,Have a great trip.
+24,Have a great trip.,1964,14,t,Have a great trip.
+24,Have a great trip.,2152,15,r,Have a great trip.
+24,Have a great trip.,2276,16,i,Have a great trip.
+24,Have a great trip.,2432,17,p,Have a great trip.
+24,Have a great trip.,2682,18,period,Have a great trip.
+25,Did we get ours back?,0,0,Shift_L,Did we get ours back?
+25,Did we get ours back?,406,1,D,Did we get ours back?
+25,Did we get ours back?,717,2,i,Did we get ours back?
+25,Did we get ours back?,936,3,d,Did we get ours back?
+25,Did we get ours back?,1061,4,space,Did we get ours back?
+25,Did we get ours back?,1217,5,w,Did we get ours back?
+25,Did we get ours back?,1404,6,e,Did we get ours back?
+25,Did we get ours back?,1498,7,space,Did we get ours back?
+25,Did we get ours back?,1716,8,g,Did we get ours back?
+25,Did we get ours back?,1809,9,e,Did we get ours back?
+25,Did we get ours back?,2028,10,t,Did we get ours back?
+25,Did we get ours back?,2091,11,space,Did we get ours back?
+25,Did we get ours back?,2340,12,o,Did we get ours back?
+25,Did we get ours back?,2526,13,u,Did we get ours back?
+25,Did we get ours back?,2933,14,r,Did we get ours back?
+25,Did we get ours back?,3276,15,s,Did we get ours back?
+25,Did we get ours back?,3370,16,space,Did we get ours back?
+25,Did we get ours back?,3557,17,b,Did we get ours back?
+25,Did we get ours back?,3651,18,a,Did we get ours back?
+25,Did we get ours back?,3930,19,c,Did we get ours back?
+25,Did we get ours back?,4025,20,k,Did we get ours back?
+25,Did we get ours back?,4305,21,Shift_L,Did we get ours back?
+25,Did we get ours back?,4430,22,question,Did we get ours back?
+26,How are you?,0,0,Shift_L,How are you?
+26,How are you?,156,1,H,How are you?
+26,How are you?,375,2,o,How are you?
+26,How are you?,531,3,w,How are you?
+26,How are you?,654,4,space,How are you?
+26,How are you?,779,5,a,How are you?
+26,How are you?,1029,6,r,How are you?
+26,How are you?,1217,7,e,How are you?
+26,How are you?,1279,8,space,How are you?
+26,How are you?,2153,9,y,How are you?
+26,How are you?,2184,10,o,How are you?
+26,How are you?,2403,11,u,How are you?
+26,How are you?,2746,12,Shift_L,How are you?
+26,How are you?,2808,13,question,How are you?
+27,See you on the third.,0,0,Shift_L,See you on the third.
+27,See you on the third.,155,1,S,See you on the third.
+27,See you on the third.,623,2,e,See you on the third.
+27,See you on the third.,779,3,e,See you on the third.
+27,See you on the third.,873,4,space,See you on the third.
+27,See you on the third.,1122,5,y,See you on the third.
+27,See you on the third.,1217,6,o,See you on the third.
+27,See you on the third.,1404,7,u,See you on the third.
+27,See you on the third.,1621,8,space,See you on the third.
+27,See you on the third.,1777,9,o,See you on the third.
+27,See you on the third.,1965,10,n,See you on the third.
+27,See you on the third.,2121,11,space,See you on the third.
+27,See you on the third.,2246,12,t,See you on the third.
+27,See you on the third.,2339,13,h,See you on the third.
+27,See you on the third.,2464,14,e,See you on the third.
+27,See you on the third.,2557,15,space,See you on the third.
+27,See you on the third.,2807,16,t,See you on the third.
+27,See you on the third.,2901,17,h,See you on the third.
+27,See you on the third.,3119,18,i,See you on the third.
+27,See you on the third.,3276,19,r,See you on the third.
+27,See you on the third.,3774,20,d,See you on the third.
+27,See you on the third.,3993,21,period,See you on the third.
+28,How soon do you need it?,0,0,Shift_L,How soon do you need it?
+28,How soon do you need it?,92,1,H,How soon do you need it?
+28,How soon do you need it?,280,2,o,How soon do you need it?
+28,How soon do you need it?,436,3,w,How soon do you need it?
+28,How soon do you need it?,560,4,space,How soon do you need it?
+28,How soon do you need it?,717,5,s,How soon do you need it?
+28,How soon do you need it?,842,6,o,How soon do you need it?
+28,How soon do you need it?,997,7,o,How soon do you need it?
+28,How soon do you need it?,1217,8,n,How soon do you need it?
+28,How soon do you need it?,1372,9,space,How soon do you need it?
+28,How soon do you need it?,1590,10,d,How soon do you need it?
+28,How soon do you need it?,1684,11,o,How soon do you need it?
+28,How soon do you need it?,1871,12,space,How soon do you need it?
+28,How soon do you need it?,2214,13,y,How soon do you need it?
+28,How soon do you need it?,2276,14,o,How soon do you need it?
+28,How soon do you need it?,2464,15,u,How soon do you need it?
+28,How soon do you need it?,2682,16,space,How soon do you need it?
+28,How soon do you need it?,2838,17,n,How soon do you need it?
+28,How soon do you need it?,3025,18,e,How soon do you need it?
+28,How soon do you need it?,3805,19,e,How soon do you need it?
+28,How soon do you need it?,4024,20,d,How soon do you need it?
+28,How soon do you need it?,4273,21,space,How soon do you need it?
+28,How soon do you need it?,4523,22,i,How soon do you need it?
+28,How soon do you need it?,4616,23,t,How soon do you need it?
+28,How soon do you need it?,5023,24,Shift_L,How soon do you need it?
+28,How soon do you need it?,5053,25,question,How soon do you need it?
+29,Take what you can get.,0,0,Shift_L,Take what you can get.
+29,Take what you can get.,155,1,T,Take what you can get.
+29,Take what you can get.,405,2,a,Take what you can get.
+29,Take what you can get.,562,3,k,Take what you can get.
+29,Take what you can get.,717,4,e,Take what you can get.
+29,Take what you can get.,779,5,space,Take what you can get.
+29,Take what you can get.,997,6,w,Take what you can get.
+29,Take what you can get.,1122,7,h,Take what you can get.
+29,Take what you can get.,1185,8,a,Take what you can get.
+29,Take what you can get.,1372,9,t,Take what you can get.
+29,Take what you can get.,1591,10,space,Take what you can get.
+29,Take what you can get.,1809,11,y,Take what you can get.
+29,Take what you can get.,1934,12,o,Take what you can get.
+29,Take what you can get.,2184,13,u,Take what you can get.
+29,Take what you can get.,2401,14,space,Take what you can get.
+29,Take what you can get.,2651,15,a,Take what you can get.
+29,Take what you can get.,2808,16,n,Take what you can get.
+29,Take what you can get.,3743,17,BackSpace,Take what you can get.
+29,Take what you can get.,3868,18,BackSpace,Take what you can get.
+29,Take what you can get.,4461,19,c,Take what you can get.
+29,Take what you can get.,4710,20,a,Take what you can get.
+29,Take what you can get.,4773,21,n,Take what you can get.
+29,Take what you can get.,4930,22,space,Take what you can get.
+29,Take what you can get.,5116,23,g,Take what you can get.
+29,Take what you can get.,5178,24,e,Take what you can get.
+29,Take what you can get.,5428,25,t,Take what you can get.
+29,Take what you can get.,5772,26,period,Take what you can get.
+30,I sent it to her.,0,0,Shift_L,I sent it to her.
+30,I sent it to her.,156,1,I,I sent it to her.
+30,I sent it to her.,406,2,space,I sent it to her.
+30,I sent it to her.,531,3,s,I sent it to her.
+30,I sent it to her.,717,4,e,I sent it to her.
+30,I sent it to her.,1497,5,n,I sent it to her.
+30,I sent it to her.,1684,6,t,I sent it to her.
+30,I sent it to her.,1779,7,space,I sent it to her.
+30,I sent it to her.,2028,8,i,I sent it to her.
+30,I sent it to her.,2153,9,t,I sent it to her.
+30,I sent it to her.,2246,10,space,I sent it to her.
+30,I sent it to her.,2651,11,t,I sent it to her.
+30,I sent it to her.,2714,12,o,I sent it to her.
+30,I sent it to her.,2901,13,space,I sent it to her.
+30,I sent it to her.,3088,14,h,I sent it to her.
+30,I sent it to her.,3183,15,e,I sent it to her.
+30,I sent it to her.,3370,16,r,I sent it to her.
+30,I sent it to her.,3526,17,period,I sent it to her.
+31,Did that happen?,0,0,Shift_L,Did that happen?
+31,Did that happen?,437,1,D,Did that happen?
+31,Did that happen?,779,2,i,Did that happen?
+31,Did that happen?,1029,3,d,Did that happen?
+31,Did that happen?,1122,4,space,Did that happen?
+31,Did that happen?,1404,5,t,Did that happen?
+31,Did that happen?,1590,6,h,Did that happen?
+31,Did that happen?,1715,7,a,Did that happen?
+31,Did that happen?,1809,8,t,Did that happen?
+31,Did that happen?,2027,9,space,Did that happen?
+31,Did that happen?,2214,10,h,Did that happen?
+31,Did that happen?,2309,11,a,Did that happen?
+31,Did that happen?,2496,12,p,Did that happen?
+31,Did that happen?,2621,13,p,Did that happen?
+31,Did that happen?,2807,14,e,Did that happen?
+31,Did that happen?,2901,15,n,Did that happen?
+31,Did that happen?,3213,16,Shift_L,Did that happen?
+31,Did that happen?,3463,17,question,Did that happen?
+32,Is it over?,0,0,Shift_L,Is it over?
+32,Is it over?,125,1,I,Is it over?
+32,Is it over?,500,2,s,Is it over?
+32,Is it over?,561,3,space,Is it over?
+32,Is it over?,779,4,i,Is it over?
+32,Is it over?,1029,5,t,Is it over?
+32,Is it over?,1154,6,space,Is it over?
+32,Is it over?,1372,7,o,Is it over?
+32,Is it over?,1622,8,v,Is it over?
+32,Is it over?,1684,9,e,Is it over?
+32,Is it over?,1871,10,r,Is it over?
+32,Is it over?,2277,11,Shift_L,Is it over?
+32,Is it over?,2309,12,question,Is it over?
+33,Keep me posted!,0,0,Shift_L,Keep me posted!
+33,Keep me posted!,155,1,K,Keep me posted!
+33,Keep me posted!,560,2,e,Keep me posted!
+33,Keep me posted!,717,3,e,Keep me posted!
+33,Keep me posted!,935,4,p,Keep me posted!
+33,Keep me posted!,1154,5,space,Keep me posted!
+33,Keep me posted!,1309,6,m,Keep me posted!
+33,Keep me posted!,1372,7,e,Keep me posted!
+33,Keep me posted!,1465,8,space,Keep me posted!
+33,Keep me posted!,1684,9,p,Keep me posted!
+33,Keep me posted!,1840,10,o,Keep me posted!
+33,Keep me posted!,1934,11,s,Keep me posted!
+33,Keep me posted!,2184,12,t,Keep me posted!
+33,Keep me posted!,2713,13,e,Keep me posted!
+33,Keep me posted!,2869,14,d,Keep me posted!
+33,Keep me posted!,3463,15,Shift_L,Keep me posted!
+33,Keep me posted!,3588,16,exclam,Keep me posted!
+34,Can you help?,0,0,Shift_L,Can you help?
+34,Can you help?,217,1,C,Can you help?
+34,Can you help?,499,2,a,Can you help?
+34,Can you help?,624,3,n,Can you help?
+34,Can you help?,779,4,space,Can you help?
+34,Can you help?,1559,5,y,Can you help?
+34,Can you help?,1654,6,o,Can you help?
+34,Can you help?,1871,7,u,Can you help?
+34,Can you help?,2090,8,space,Can you help?
+34,Can you help?,2278,9,h,Can you help?
+34,Can you help?,2371,10,e,Can you help?
+34,Can you help?,2558,11,l,Can you help?
+34,Can you help?,2746,12,p,Can you help?
+34,Can you help?,2901,13,Shift_L,Can you help?
+34,Can you help?,3026,14,question,Can you help?
+35,I hope you are feeling better.,0,0,Shift_L,I hope you are feeling better.
+35,I hope you are feeling better.,125,1,O,I hope you are feeling better.
+35,I hope you are feeling better.,717,2,BackSpace,I hope you are feeling better.
+35,I hope you are feeling better.,1122,3,Shift_L,I hope you are feeling better.
+35,I hope you are feeling better.,1247,4,I,I hope you are feeling better.
+35,I hope you are feeling better.,1465,5,space,I hope you are feeling better.
+35,I hope you are feeling better.,1653,6,h,I hope you are feeling better.
+35,I hope you are feeling better.,1934,7,o,I hope you are feeling better.
+35,I hope you are feeling better.,2309,8,p,I hope you are feeling better.
+35,I hope you are feeling better.,2464,9,e,I hope you are feeling better.
+35,I hope you are feeling better.,2589,10,space,I hope you are feeling better.
+35,I hope you are feeling better.,2932,11,y,I hope you are feeling better.
+35,I hope you are feeling better.,3057,12,o,I hope you are feeling better.
+35,I hope you are feeling better.,3244,13,i,I hope you are feeling better.
+35,I hope you are feeling better.,4585,14,BackSpace,I hope you are feeling better.
+35,I hope you are feeling better.,5334,15,u,I hope you are feeling better.
+35,I hope you are feeling better.,5553,16,space,I hope you are feeling better.
+35,I hope you are feeling better.,5865,17,a,I hope you are feeling better.
+35,I hope you are feeling better.,6145,18,r,I hope you are feeling better.
+35,I hope you are feeling better.,6333,19,e,I hope you are feeling better.
+35,I hope you are feeling better.,6395,20,space,I hope you are feeling better.
+35,I hope you are feeling better.,6582,21,f,I hope you are feeling better.
+35,I hope you are feeling better.,6769,22,e,I hope you are feeling better.
+35,I hope you are feeling better.,6925,23,e,I hope you are feeling better.
+35,I hope you are feeling better.,7082,24,l,I hope you are feeling better.
+35,I hope you are feeling better.,7300,25,i,I hope you are feeling better.
+35,I hope you are feeling better.,7518,26,n,I hope you are feeling better.
+35,I hope you are feeling better.,7705,27,g,I hope you are feeling better.
+35,I hope you are feeling better.,7799,28,space,I hope you are feeling better.
+35,I hope you are feeling better.,7986,29,b,I hope you are feeling better.
+35,I hope you are feeling better.,8080,30,e,I hope you are feeling better.
+35,I hope you are feeling better.,8299,31,t,I hope you are feeling better.
+35,I hope you are feeling better.,8424,32,t,I hope you are feeling better.
+35,I hope you are feeling better.,8579,33,e,I hope you are feeling better.
+35,I hope you are feeling better.,8766,34,r,I hope you are feeling better.
+35,I hope you are feeling better.,9265,35,Shift_L,I hope you are feeling better.
+35,I hope you are feeling better.,10389,36,period,I hope you are feeling better.
+36,Just playing with you!,0,0,Shift_L,Just playing with you!
+36,Just playing with you!,93,1,J,Just playing with you!
+36,Just playing with you!,312,2,u,Just playing with you!
+36,Just playing with you!,529,3,s,Just playing with you!
+36,Just playing with you!,592,4,t,Just playing with you!
+36,Just playing with you!,811,5,space,Just playing with you!
+36,Just playing with you!,1029,6,p,Just playing with you!
+36,Just playing with you!,1154,7,l,Just playing with you!
+36,Just playing with you!,1310,8,a,Just playing with you!
+36,Just playing with you!,1560,9,y,Just playing with you!
+36,Just playing with you!,1934,10,i,Just playing with you!
+36,Just playing with you!,2151,11,n,Just playing with you!
+36,Just playing with you!,2371,12,g,Just playing with you!
+36,Just playing with you!,2463,13,space,Just playing with you!
+36,Just playing with you!,3057,14,w,Just playing with you!
+36,Just playing with you!,3151,15,i,Just playing with you!
+36,Just playing with you!,3400,16,t,Just playing with you!
+36,Just playing with you!,3493,17,h,Just playing with you!
+36,Just playing with you!,3680,18,space,Just playing with you!
+36,Just playing with you!,3805,19,y,Just playing with you!
+36,Just playing with you!,4024,20,o,Just playing with you!
+36,Just playing with you!,4274,21,u,Just playing with you!
+36,Just playing with you!,4555,22,Shift_L,Just playing with you!
+36,Just playing with you!,4680,23,exclam,Just playing with you!
+37,What is the mood?,0,0,Shift_L,What is the mood?
+37,What is the mood?,93,1,W,What is the mood?
+37,What is the mood?,437,2,h,What is the mood?
+37,What is the mood?,904,3,a,What is the mood?
+37,What is the mood?,998,4,t,What is the mood?
+37,What is the mood?,1217,5,space,What is the mood?
+37,What is the mood?,1434,6,i,What is the mood?
+37,What is the mood?,1529,7,s,What is the mood?
+37,What is the mood?,1622,8,space,What is the mood?
+37,What is the mood?,1809,9,t,What is the mood?
+37,What is the mood?,1902,10,h,What is the mood?
+37,What is the mood?,2027,11,e,What is the mood?
+37,What is the mood?,2121,12,space,What is the mood?
+37,What is the mood?,2309,13,m,What is the mood?
+37,What is the mood?,2776,14,o,What is the mood?
+37,What is the mood?,2932,15,o,What is the mood?
+37,What is the mood?,3088,16,d,What is the mood?
+37,What is the mood?,3401,17,Shift_L,What is the mood?
+37,What is the mood?,3494,18,question,What is the mood?
+38,Are you in today?,0,0,Shift_L,Are you in today?
+38,Are you in today?,219,1,A,Are you in today?
+38,Are you in today?,562,2,r,Are you in today?
+38,Are you in today?,687,3,e,Are you in today?
+38,Are you in today?,812,4,space,Are you in today?
+38,Are you in today?,1124,5,y,Are you in today?
+38,Are you in today?,1217,6,o,Are you in today?
+38,Are you in today?,1467,7,u,Are you in today?
+38,Are you in today?,1654,8,space,Are you in today?
+38,Are you in today?,1809,9,i,Are you in today?
+38,Are you in today?,1966,10,n,Are you in today?
+38,Are you in today?,2121,11,space,Are you in today?
+38,Are you in today?,2278,12,t,Are you in today?
+38,Are you in today?,2403,13,o,Are you in today?
+38,Are you in today?,2621,14,d,Are you in today?
+38,Are you in today?,2871,15,a,Are you in today?
+38,Are you in today?,3026,16,y,Are you in today?
+38,Are you in today?,3245,17,Shift_L,Are you in today?
+38,Are you in today?,3338,18,question,Are you in today?
+39,Thanks good job.,0,0,Shift_L,Thanks good job.
+39,Thanks good job.,94,1,T,Thanks good job.
+39,Thanks good job.,312,2,h,Thanks good job.
+39,Thanks good job.,406,3,a,Thanks good job.
+39,Thanks good job.,531,4,n,Thanks good job.
+39,Thanks good job.,687,5,k,Thanks good job.
+39,Thanks good job.,811,6,s,Thanks good job.
+39,Thanks good job.,874,7,space,Thanks good job.
+39,Thanks good job.,1248,8,g,Thanks good job.
+39,Thanks good job.,1498,9,o,Thanks good job.
+39,Thanks good job.,1623,10,o,Thanks good job.
+39,Thanks good job.,1810,11,d,Thanks good job.
+39,Thanks good job.,1903,12,space,Thanks good job.
+39,Thanks good job.,2122,13,j,Thanks good job.
+39,Thanks good job.,2278,14,o,Thanks good job.
+39,Thanks good job.,2496,15,b,Thanks good job.
+39,Thanks good job.,3120,16,period,Thanks good job.
+40,I was planning to attend.,0,0,Shift_L,I was planning to attend.
+40,I was planning to attend.,125,1,I,I was planning to attend.
+40,I was planning to attend.,344,2,space,I was planning to attend.
+40,I was planning to attend.,468,3,w,I was planning to attend.
+40,I was planning to attend.,718,4,a,I was planning to attend.
+40,I was planning to attend.,905,5,s,I was planning to attend.
+40,I was planning to attend.,968,6,space,I was planning to attend.
+40,I was planning to attend.,1186,7,p,I was planning to attend.
+40,I was planning to attend.,1342,8,l,I was planning to attend.
+40,I was planning to attend.,1498,9,a,I was planning to attend.
+40,I was planning to attend.,1654,10,n,I was planning to attend.
+40,I was planning to attend.,1779,11,n,I was planning to attend.
+40,I was planning to attend.,2028,12,i,I was planning to attend.
+40,I was planning to attend.,2216,13,n,I was planning to attend.
+40,I was planning to attend.,2340,14,g,I was planning to attend.
+40,I was planning to attend.,2434,15,space,I was planning to attend.
+40,I was planning to attend.,2559,16,t,I was planning to attend.
+40,I was planning to attend.,2652,17,o,I was planning to attend.
+40,I was planning to attend.,2808,18,space,I was planning to attend.
+40,I was planning to attend.,2933,19,a,I was planning to attend.
+40,I was planning to attend.,3120,20,t,I was planning to attend.
+40,I was planning to attend.,3245,21,t,I was planning to attend.
+40,I was planning to attend.,3370,22,e,I was planning to attend.
+40,I was planning to attend.,3526,23,n,I was planning to attend.
+40,I was planning to attend.,3588,24,d,I was planning to attend.
+40,I was planning to attend.,4275,25,period,I was planning to attend.
+41,This looks fine.,0,0,Shift_L,This looks fine.
+41,This looks fine.,125,1,T,This looks fine.
+41,This looks fine.,342,2,h,This looks fine.
+41,This looks fine.,530,3,i,This looks fine.
+41,This looks fine.,654,4,s,This looks fine.
+41,This looks fine.,717,5,space,This looks fine.
+41,This looks fine.,967,6,l,This looks fine.
+41,This looks fine.,1154,7,o,This looks fine.
+41,This looks fine.,1279,8,o,This looks fine.
+41,This looks fine.,1467,9,k,This looks fine.
+41,This looks fine.,1622,10,s,This looks fine.
+41,This looks fine.,1684,11,space,This looks fine.
+41,This looks fine.,1934,12,f,This looks fine.
+41,This looks fine.,2059,13,i,This looks fine.
+41,This looks fine.,2246,14,n,This looks fine.
+41,This looks fine.,2371,15,e,This looks fine.
+41,This looks fine.,2589,16,period,This looks fine.
+42,See you soon!,0,0,Shift_L,See you soon!
+42,See you soon!,124,1,S,See you soon!
+42,See you soon!,436,2,e,See you soon!
+42,See you soon!,592,3,e,See you soon!
+42,See you soon!,717,4,space,See you soon!
+42,See you soon!,1591,5,y,See you soon!
+42,See you soon!,1684,6,o,See you soon!
+42,See you soon!,1871,7,u,See you soon!
+42,See you soon!,2121,8,space,See you soon!
+42,See you soon!,3088,9,s,See you soon!
+42,See you soon!,3338,10,o,See you soon!
+42,See you soon!,3555,11,m,See you soon!
+42,See you soon!,3680,12,m,See you soon!
+42,See you soon!,4055,13,BackSpace,See you soon!
+42,See you soon!,4867,14,BackSpace,See you soon!
+42,See you soon!,5272,15,o,See you soon!
+42,See you soon!,5584,16,n,See you soon!
+42,See you soon!,6207,17,Shift_L,See you soon!
+42,See you soon!,6332,18,exclam,See you soon!
+43,Can you help me here?,0,0,Shift_L,Can you help me here?
+43,Can you help me here?,124,1,C,Can you help me here?
+43,Can you help me here?,374,2,a,Can you help me here?
+43,Can you help me here?,468,3,n,Can you help me here?
+43,Can you help me here?,624,4,space,Can you help me here?
+43,Can you help me here?,904,5,y,Can you help me here?
+43,Can you help me here?,1029,6,o,Can you help me here?
+43,Can you help me here?,1248,7,u,Can you help me here?
+43,Can you help me here?,1466,8,space,Can you help me here?
+43,Can you help me here?,1621,9,h,Can you help me here?
+43,Can you help me here?,1746,10,e,Can you help me here?
+43,Can you help me here?,1903,11,l,Can you help me here?
+43,Can you help me here?,2028,12,p,Can you help me here?
+43,Can you help me here?,2277,13,space,Can you help me here?
+43,Can you help me here?,2433,14,m,Can you help me here?
+43,Can you help me here?,2527,15,e,Can you help me here?
+43,Can you help me here?,2588,16,space,Can you help me here?
+43,Can you help me here?,2808,17,h,Can you help me here?
+43,Can you help me here?,2901,18,e,Can you help me here?
+43,Can you help me here?,3120,19,r,Can you help me here?
+43,Can you help me here?,3276,20,e,Can you help me here?
+43,Can you help me here?,3744,21,Shift_L,Can you help me here?
+43,Can you help me here?,3775,22,question,Can you help me here?
+44,This is good I think.,0,0,Shift_L,This is good I think.
+44,This is good I think.,125,1,T,This is good I think.
+44,This is good I think.,312,2,h,This is good I think.
+44,This is good I think.,529,3,i,This is good I think.
+44,This is good I think.,717,4,s,This is good I think.
+44,This is good I think.,842,5,space,This is good I think.
+44,This is good I think.,1154,6,i,This is good I think.
+44,This is good I think.,1247,7,s,This is good I think.
+44,This is good I think.,1404,8,space,This is good I think.
+44,This is good I think.,1809,9,g,This is good I think.
+44,This is good I think.,2371,10,o,This is good I think.
+44,This is good I think.,2526,11,o,This is good I think.
+44,This is good I think.,2682,12,d,This is good I think.
+44,This is good I think.,2776,13,space,This is good I think.
+44,This is good I think.,3026,14,i,This is good I think.
+44,This is good I think.,3526,15,BackSpace,This is good I think.
+44,This is good I think.,3681,16,Shift_L,This is good I think.
+44,This is good I think.,3774,17,I,This is good I think.
+44,This is good I think.,3993,18,space,This is good I think.
+44,This is good I think.,4211,19,t,This is good I think.
+44,This is good I think.,4305,20,h,This is good I think.
+44,This is good I think.,4461,21,i,This is good I think.
+44,This is good I think.,4680,22,n,This is good I think.
+44,This is good I think.,4805,23,k,This is good I think.
+44,This is good I think.,5428,24,period,This is good I think.
+45,I am trying again.,0,0,Shift_L,I am trying again.
+45,I am trying again.,218,1,I,I am trying again.
+45,I am trying again.,468,2,space,I am trying again.
+45,I am trying again.,561,3,a,I am trying again.
+45,I am trying again.,654,4,m,I am trying again.
+45,I am trying again.,811,5,space,I am trying again.
+45,I am trying again.,1060,6,t,I am trying again.
+45,I am trying again.,1279,7,r,I am trying again.
+45,I am trying again.,1371,8,y,I am trying again.
+45,I am trying again.,1621,9,i,I am trying again.
+45,I am trying again.,1840,10,n,I am trying again.
+45,I am trying again.,1934,11,g,I am trying again.
+45,I am trying again.,2028,12,space,I am trying again.
+45,I am trying again.,2340,13,a,I am trying again.
+45,I am trying again.,2402,14,g,I am trying again.
+45,I am trying again.,2496,15,a,I am trying again.
+45,I am trying again.,2652,16,i,I am trying again.
+45,I am trying again.,2838,17,n,I am trying again.
+45,I am trying again.,3151,18,period,I am trying again.
+46,Is she done yet?,0,0,Shift_L,Is she done yet?
+46,Is she done yet?,30,1,I,Is she done yet?
+46,Is she done yet?,436,2,s,Is she done yet?
+46,Is she done yet?,561,3,space,Is she done yet?
+46,Is she done yet?,779,4,s,Is she done yet?
+46,Is she done yet?,872,5,h,Is she done yet?
+46,Is she done yet?,1029,6,e,Is she done yet?
+46,Is she done yet?,1122,7,space,Is she done yet?
+46,Is she done yet?,1279,8,d,Is she done yet?
+46,Is she done yet?,1404,9,o,Is she done yet?
+46,Is she done yet?,1621,10,n,Is she done yet?
+46,Is she done yet?,1716,11,e,Is she done yet?
+46,Is she done yet?,1809,12,space,Is she done yet?
+46,Is she done yet?,2059,13,y,Is she done yet?
+46,Is she done yet?,2151,14,e,Is she done yet?
+46,Is she done yet?,2214,15,t,Is she done yet?
+46,Is she done yet?,2620,16,Shift_L,Is she done yet?
+46,Is she done yet?,2713,17,question,Is she done yet?
+47,I will be back Friday.,0,0,Shift_L,I will be back Friday.
+47,I will be back Friday.,125,1,I,I will be back Friday.
+47,I will be back Friday.,374,2,space,I will be back Friday.
+47,I will be back Friday.,562,3,w,I will be back Friday.
+47,I will be back Friday.,686,4,i,I will be back Friday.
+47,I will be back Friday.,904,5,l,I will be back Friday.
+47,I will be back Friday.,1029,6,l,I will be back Friday.
+47,I will be back Friday.,1279,7,space,I will be back Friday.
+47,I will be back Friday.,1497,8,b,I will be back Friday.
+47,I will be back Friday.,1591,9,e,I will be back Friday.
+47,I will be back Friday.,1684,10,space,I will be back Friday.
+47,I will be back Friday.,2028,11,b,I will be back Friday.
+47,I will be back Friday.,2089,12,a,I will be back Friday.
+47,I will be back Friday.,2371,13,c,I will be back Friday.
+47,I will be back Friday.,2434,14,k,I will be back Friday.
+47,I will be back Friday.,2589,15,space,I will be back Friday.
+47,I will be back Friday.,2901,16,Shift_L,I will be back Friday.
+47,I will be back Friday.,2963,17,F,I will be back Friday.
+47,I will be back Friday.,3151,18,r,I will be back Friday.
+47,I will be back Friday.,3401,19,i,I will be back Friday.
+47,I will be back Friday.,3618,20,d,I will be back Friday.
+47,I will be back Friday.,3838,21,a,I will be back Friday.
+47,I will be back Friday.,3930,22,y,I will be back Friday.
+47,I will be back Friday.,4710,23,period,I will be back Friday.
+48,Thanks for your concern.,0,0,Shift_L,Thanks for your concern.
+48,Thanks for your concern.,280,1,T,Thanks for your concern.
+48,Thanks for your concern.,500,2,h,Thanks for your concern.
+48,Thanks for your concern.,623,3,a,Thanks for your concern.
+48,Thanks for your concern.,748,4,n,Thanks for your concern.
+48,Thanks for your concern.,904,5,k,Thanks for your concern.
+48,Thanks for your concern.,1029,6,s,Thanks for your concern.
+48,Thanks for your concern.,1092,7,space,Thanks for your concern.
+48,Thanks for your concern.,1372,8,f,Thanks for your concern.
+48,Thanks for your concern.,1497,9,p,Thanks for your concern.
+48,Thanks for your concern.,1622,10,r,Thanks for your concern.
+48,Thanks for your concern.,2527,11,BackSpace,Thanks for your concern.
+48,Thanks for your concern.,2651,12,BackSpace,Thanks for your concern.
+48,Thanks for your concern.,3276,13,o,Thanks for your concern.
+48,Thanks for your concern.,3681,14,r,Thanks for your concern.
+48,Thanks for your concern.,3837,15,space,Thanks for your concern.
+48,Thanks for your concern.,4773,16,y,Thanks for your concern.
+48,Thanks for your concern.,4991,17,o,Thanks for your concern.
+48,Thanks for your concern.,5210,18,u,Thanks for your concern.
+48,Thanks for your concern.,5460,19,r,Thanks for your concern.
+48,Thanks for your concern.,5553,20,space,Thanks for your concern.
+48,Thanks for your concern.,5740,21,c,Thanks for your concern.
+48,Thanks for your concern.,5835,22,o,Thanks for your concern.
+48,Thanks for your concern.,6052,23,n,Thanks for your concern.
+48,Thanks for your concern.,6333,24,c,Thanks for your concern.
+48,Thanks for your concern.,6583,25,e,Thanks for your concern.
+48,Thanks for your concern.,6770,26,r,Thanks for your concern.
+48,Thanks for your concern.,6863,27,n,Thanks for your concern.
+48,Thanks for your concern.,7207,28,period,Thanks for your concern.
+49,Hope you guys are doing fine.,0,0,Shift_L,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,281,1,H,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,717,2,o,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,905,3,p,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,1092,4,e,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,1217,5,space,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,1560,6,y,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,1653,7,o,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,1872,8,u,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,2090,9,space,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,2277,10,g,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,2496,11,u,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,2652,12,y,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,2838,13,s,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,2933,14,space,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,3182,15,a,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,3463,16,r,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,3680,17,e,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,3775,18,space,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,3900,19,d,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,4025,20,o,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,4180,21,i,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,4399,22,n,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,4617,23,g,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,4742,24,space,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,5023,25,f,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,5085,26,i,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,5273,27,n,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,5397,28,e,Hope you guys are doing fine.
+49,Hope you guys are doing fine.,5616,29,period,Hope you guys are doing fine.
