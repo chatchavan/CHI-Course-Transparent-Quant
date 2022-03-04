@@ -1,0 +1,13 @@
+---
+title: "Session 3 Uncertainty visualizations"
+author: "Xiaoying Pu, Lace Padilla"
+date: "3/3/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggdist)
+```
+
