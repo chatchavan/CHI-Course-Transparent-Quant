@@ -120,7 +120,7 @@ This is a non-parametric test which we will skip for now. Although, there exists
 This is the linear model equivalent for the paired sample t-test
 
 ```{r dataset1-lm}
-dataset1.m2.freqt =
+dataset1.lm.freqt =
   lm(
     effectiveness ~ condition - 1, 
     data = exp1.data
@@ -129,7 +129,7 @@ dataset1.m2.freqt =
 
 
 ```{r dataset1-bayesian-t-test-formula}
-dataset1.m2.bayesiant.formula <- bf(
+dataset1.brm.bayesiant.formula <- bf(
     effectiveness ~ condition - 1,
     family = student()
   )
@@ -138,15 +138,15 @@ dataset1.m2.bayesiant.formula <- bf(
 
 ```{r dataset1-bayesian-t-test-get-prior}
 
-get_prior(dataset1.m2.bayesiant.formula, data = exp1.data)
+get_prior(dataset1.brm.bayesiant.formula, data = exp1.data)
 
 ```
 
 ```{r dataset1-bayesian-t-test-run}
 
 if(IF_RUN_MODEL){
-  dataset1.m2 = 
-  brm(dataset1.m2.bayesiant.formula,
+  dataset1.brm.bayesiant = 
+  brm(dataset1.brm.bayesiant.formula,
       prior = c(
       prior(normal(0, 1), class = "b"), # there's a lot of data so even fairly "strong" priors are going to not matter so much here
       prior(student_t(3, 0, 1), class = "sigma")),
@@ -155,11 +155,11 @@ if(IF_RUN_MODEL){
     backend = "cmdstanr", #Fumeng: I have to use this as my backend, 'rstan' backend doesn't work on my laptops...
     chains = 4, 
     cores = 4,
-    file = "02-bayesian_stats/rds/dataset1.m2.bayesiant.rds"
+    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
   )
 
 } else{
-    dataset1.m2 <- readRDS(file = "02-bayesian_stats/rds/dataset1.m2.bayesiant.rds")
+    dataset1.brm.bayesiant <- readRDS(file = "02-bayesian_stats/rds/dataset1.brm2.bayesiant.rds")
 }
 
 
@@ -171,8 +171,8 @@ Next, we visualise the results, along with a side-by-side comparison of the freq
 
 ```{r dataset1-t-test-compare, echo = FALSE, warning = FALSE}
 bind_rows(
-  tidy.wrapper(dataset1.m2.freqt),
-  tidy.wrapper(dataset1.m2.bayesiant)
+  tidy.wrapper(dataset1.lm.freqt),
+  tidy.wrapper(dataset1.brm.bayesiant)
 ) %>%
   ggplot() +
   geom_pointrange(
@@ -229,20 +229,20 @@ y_{i} &\sim \mathrm{T}(\nu, \mu, \sigma) \\
 $$
 ```{r dataset2-model1-formula}
 
-dataset2.m1.formula <- bf(
+dataset2.brm.student.formula <- bf(
     bf(change ~ condition, sigma ~ condition), 
     family = student()
   )
 
-get_prior(dataset2.m1.formula, data = dataset2)
+get_prior(dataset2.brm.student.formula, data = dataset2)
 
 ```
 
-```{r, eval = FALSE}
+```{r}
 
 if(IF_RUN_MODEL){
-  dataset2.m1 = brm(
-  dataset2.m1.formula,
+  dataset2.brm.student = brm(
+  dataset2.brm.student.formula,
   prior = c(
     prior(normal(0, 2), class = "b"),
     prior(cauchy(0, 2), class = "b", dpar = "sigma"),
@@ -255,22 +255,22 @@ if(IF_RUN_MODEL){
   backend = "cmdstanr", #Fumeng: I have to use this as my backend, 'rstan' backend doesn't work on my laptops...
   chains = 4, 
   cores = 4,
-  file = "02-bayesian_stats/rds/dataset2.m1.rds")
+  file = "02-bayesian_stats/rds/dataset2.brm.student.rds")
   
 }else{
-  dataset2.m1 <- readRDS(file = "02-bayesian_stats/rds/dataset2.m1.rds")
+  dataset2.brm.student <- readRDS(file = "02-bayesian_stats/rds/dataset2.brm.student.rds")
 }
 
 ```
 
 ```{r}
-   summary(dataset2.m1)
+   summary(dataset2.brm.student)
 ```
 
 ```{r}
 
 posterior_samples <- tibble(condition = c(TRUE, FALSE)) %>%
-  add_fitted_draws(fit.brm, re_formula = NA, value = "posterior_change") %>%
+  add_fitted_draws(dataset2.brm.student, re_formula = NA, value = "posterior_change") %>%
   select(-.chain, -.iteration)
 
 
@@ -278,7 +278,7 @@ head(posterior_samples)
 
 ```
 ```{r plot-posterior_intervals}
-tidy.wrapper(dataset2.m1.brm) %>%
+tidy.wrapper(dataset2.brm.student) %>%
   ggplot() +
   geom_pointrange(
     aes(
@@ -310,8 +310,76 @@ posterior_samples %>%
 
 # Model 2
 
-Fumeng's I'm confused... It seems that Abhraneel has to generate some data in order to do poisson..
+Fumeng: I'm confused... It seems that Abhraneel has to generate some data in order to do poisson regression.
 I would say we use the generated data from Dataset 2 or remove this... 
+
+
+
+
+```{r}
+sim_trial = function(y) {
+  # let y be the actual number of trials that a participant will pump until
+  # p be the point of explosion for any given trial
+  p = sample(1:128, 1)
+  ifelse(p < y, p, y)
+}
+
+sim_exp = function(i, N = 10) {
+  trials = 1:N
+  map_dbl(trials, ~ sim_trial(i))
+}
+
+sim_ = function(x, iter = 1e3) {
+  # here x is the averahe number of pumps by a participant
+  # we can perform a naive grid search approach
+  # let y >= x
+  for (i in ceiling(x):128) {
+    pumps = map(
+      1:iter, 
+      ~ mean(sim_exp(i)) # simulates one experiment and calculates the average number of pumps for that experiment
+    ) # repeats the simulation many times
+    if ((mean(map_dbl(pumps, mean))) > x) {
+      return(i)
+    }
+  }
+}
+```
+
+
+```{r, eval = FALSE}
+df.gen = df %>%
+  mutate(
+    P10 = map(adjP10, sim_),
+    P20 = map(adjP20, sim_),
+    P30 = map(adjP30, sim_)
+  )
+
+saveRDS(df.gen, "~/Documents/Github/chi22-course/data/exp2-gen.rds")
+```
+
+
+```{r}
+df.gen = readRDS("~/Documents/Github/chi22-course/data/exp2-gen.rds") %>%
+  mutate(
+    P10 = map(P10, ~ unlist(ifelse(is.numeric(.), P10, 128))),
+    P20 = map(P20, ~ unlist(ifelse(is.numeric(.), P20, 128))),
+    P30 = map(P30, ~ unlist(ifelse(is.numeric(.), P30, 128)))
+  ) %>%
+  mutate(
+    trial_P10 = map(P10, ~ (sim_exp(.))),
+    trial_P20 = map(P20, ~ (sim_exp(.))),
+    trial_P30 = map(P30, ~ (sim_exp(.)))
+  ) %>%
+  pivot_longer(
+    cols = starts_with("trial"),
+    names_to = "trial",
+    names_prefix = "trial_P"
+  ) %>%
+  unnest(c(value)) %>%
+  group_by(participant) %>%
+  mutate(trial = row_number()) %>%
+  select(-c(starts_with("adjP"), "P10", "P20", "P30", "change", "orig"))
+```
 
 ```{r}
 # poisson analysis
