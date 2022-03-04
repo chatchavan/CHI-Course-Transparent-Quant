@@ -19,7 +19,7 @@ library(brms)
 Load the data
 
 ```{r}
-df = readr::read_csv("~/Documents/Github/chi22-course/data/exp2.csv") %>%
+df = readr::read_csv("data/exp2.csv") %>%
   mutate(condition = condition == 'expansive') %>%
   group_by(participant)
 

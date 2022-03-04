@@ -19,6 +19,7 @@ library(modelr)
 library(tidybayes)
 library(ggdist)
 library(brms)
+library(ggthemes)
 ```
 
 
@@ -31,7 +32,7 @@ In this document, we will outline the Bayesian analogs of the statistical tests 
 Load the data and helper functions
 
 ```{r}
-dataset = readr::read_csv("~/Documents/Github/chi22-course/data/blinded.csv")
+dataset = readr::read_csv("data/blinded.csv")
 
 tidy.wrapper = function(model) {
   if (class(model) == "lm") {
