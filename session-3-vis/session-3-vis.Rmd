@@ -8,6 +8,11 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(tidymodels)
+library(modelr)
 library(ggdist)
+library(distributional)
+
 ```
+
 
