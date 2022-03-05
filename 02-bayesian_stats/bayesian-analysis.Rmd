@@ -184,6 +184,9 @@ if(IF_RUN_MODEL){
 posterior_samples <- tibble(condition = c('graph', 'no_graph')) %>%
   add_fitted_draws(dataset1.brm.bayesiant, re_formula = NA)
 
+posterior_predictions <- tibble(condition = c('graph', 'no_graph')) %>%
+  add_predicted_draws(dataset1.brm.bayesiant, re_formula = NA, allow_new_levels = T)
+
 kable(head(posterior_samples))
 ```
 
@@ -193,15 +196,20 @@ kable(posterior_samples %>%
 ```
 
 ```{r fig.height=4, fig.width=10}
-posterior_samples %>%
-  ggplot(aes(x = .value, fill = condition)) +
+posterior_predictions %>%
+  ggplot(aes(x = .prediction, fill = condition)) +
   geom_histogram(
     exp1.data,
     alpha = .5,
     fill = 'gray50',
-    mapping = aes(x = effectiveness, y = (..count..) / sum(..count..))
+    mapping = aes(x = effectiveness, 
+                  y = (..count..) / sum(..count..),
+                  binwidth = 1)
   ) +
-  geom_histogram(color = NA, aes(y = (..count..) / sum(..count..)), binwidth = .1) +
+  geom_histogram(color = NA, 
+                 aes(y = (..count..) / sum(..count..)), 
+                 alpha = .5,
+                 binwidth = 1) +
   facet_wrap(condition ~ .) +
   scale_color_brewer(palette = "Set1") +
   scale_fill_brewer(palette = "Set1") +
@@ -239,11 +247,11 @@ bind_rows(tidy.wrapper(dataset1.lm.freqt),
 
 ```{r ordinal-logistic-regression}
 
-test <- brm(effectiveness ~ condition, 
-    data = exp1.data, 
-    family=cumulative("logit"), 
-    warmup = 2500,
-    iter = 3500,
+test <- brm(effectiveness ~ condition,
+    data = exp1.data,
+    family=cumulative("logit"),
+    warmup = 250,#2500
+    iter = 350,#3500
     backend = 'cmdstanr'
     )
 
@@ -280,7 +288,7 @@ dataset2 = readr::read_csv("02-bayesian_stats/data/exp2.csv") %>%
   mutate(condition = condition == 'expansive') %>%
   group_by(participant)
 
-dataset2
+kable(head(dataset2))
 ```
 
 
@@ -302,11 +310,11 @@ $$
 ```{r dataset2-model1-formula}
 
 dataset2.brm.student.formula <- bf(
-    bf(change ~ condition, sigma ~ condition), 
+    change ~ condition, sigma ~ condition, 
     family = student()
   )
 
-get_prior(dataset2.brm.student.formula, data = dataset2)
+kable(as_tibble(get_prior(dataset2.brm.student.formula, data = dataset2)))
 
 ```
 
@@ -335,47 +343,65 @@ if(IF_RUN_MODEL){
 
 ```
 
-```{r}
-   summary(dataset2.brm.student)
-```
 
 ```{r}
 
 posterior_samples <- tibble(condition = c(TRUE, FALSE)) %>%
-  add_fitted_draws(dataset2.brm.student, re_formula = NA) 
+  add_fitted_draws(dataset2.brm.student, re_formula = NA, allow_new_levels = T) 
 
 
-head(posterior_samples)
+posterior_predictions <- tibble(condition = c(TRUE, FALSE)) %>%
+  add_predicted_draws(dataset2.brm.student, re_formula = NA, allow_new_levels = T) 
+
+kable(head(posterior_samples))
+
+kable(head(posterior_predictions))
 
 ```
-```{r plot-posterior_intervals}
+
+
+```{r plot-posterior_intervals, fig.height=2, fig.width=10}
 posterior_samples %>%
   mean_qi() %>%
- mutate(term = if_else(condition, 'condition_graph',  'conditionno_graph')) %>%
   ggplot() +
-  geom_pointrange(
-    aes(
-      x = term, 
-      y = .value, 
-      ymin = .lower, 
-      ymax = .upper, 
-      color = term
-    ), position = position_dodge(width = 0.2)) +
-    scale_color_brewer(palette = "Set2") +
-    ylab('posterior change') + 
-    ggtitle('posterior confidence intervals')
+  geom_pointrange(aes(
+    x = condition,
+    y = .value,
+    ymin = .lower,
+    ymax = .upper,
+    color = condition
+  ),
+  position = position_dodge(width = 0.2)) +
+  scale_color_brewer(palette = "Set1") +
+  xlab('') + ylab('posterior change') +
+  ggtitle('posterior confidence intervals') +
+  #scale_x_reverse() +
+  scale_y_continuous(limits = c(0, 27)) +
+  coord_flip()
 
 ```
 
-```{r plot-posterior_distribution}
+```{r plot-posterior_distribution, fig.height=3, fig.width=10}
 
-posterior_samples %>%
-  mutate(term = if_else(condition, 'condition_graph',  'conditionno_graph')) %>%
-  ggplot(., aes(x = .value, fill = term)) +
-  geom_density(alpha = 0.5, color = NA) +
-  scale_fill_brewer(palette="Set2") +
-  ggtitle('posterior distribution') + 
-  coord_flip()
+posterior_predictions %>%
+  ggplot(., aes(x = .prediction, fill = condition)) +
+  geom_histogram(
+    dataset2,
+    mapping = aes(x = change, y = (..count..) / sum(..count..)),
+    alpha = 0.5,
+    fill = 'gray',
+    color = NA,
+    binwidth = 4
+  ) +
+  geom_histogram(alpha = 0.5,
+                 color = NA,
+                 aes(y = (..count..) / sum(..count..)),
+                 binwidth = 4) +
+  facet_grid(~ condition) +
+  scale_fill_brewer(palette = "Set1") +
+  xlab('posterior change') + ylab('freq') +
+  coord_cartesian(xlim = c(0, 100)) + 
+  ggtitle('posterior distribution') 
 
 ```
 
