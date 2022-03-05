@@ -2,9 +2,16 @@
 title: "chi22-course"
 author: "Abhraneel Sarma"
 date: "3/3/2022"
-output: html_document
+output: 
+  html_document:
+    highlight: tango
 ---
 
+<style>
+.sourceCode.r{
+  background-color:white
+}
+</style>
 
 
 ```{r setup, include=FALSE}
@@ -26,8 +33,9 @@ library(tidybayes)
 
 library(ggdist)
 library(ggplot2)
-
-theme_set(theme_ggdist())
+library(knitr)
+theme_set(theme_ggdist() + 
+            theme(strip.background = element_blank()))
 
 IF_RUN_MODEL <- T
 ```
@@ -75,7 +83,7 @@ TODO: explain the dataset here
 dataset = readr::read_csv("02-bayesian_stats/data/blinded.csv")
 # dataset = readr::read_csv("~/Documents/Github/chi22-course/data/blinded.csv")
 
-dataset
+kable(head(dataset))
 
 ```  
 
@@ -120,7 +128,7 @@ This is a non-parametric test which we will skip for now. Although, there exists
 This is the linear model equivalent for the paired sample t-test
 
 ```{r dataset1-lm}
-dataset1.lm.freqt =
+dataset1.lm.freqt <-
   lm(
     effectiveness ~ condition - 1, 
     data = exp1.data
@@ -138,18 +146,20 @@ dataset1.brm.bayesiant.formula <- bf(
 
 ```{r dataset1-bayesian-t-test-get-prior}
 
-get_prior(dataset1.brm.bayesiant.formula, data = exp1.data)
+kable(as.tibble(get_prior(dataset1.brm.bayesiant.formula, data = exp1.data)))
 
 ```
 
 ```{r dataset1-bayesian-t-test-run}
+dataset1.brm.bayesiant.priors = c(
+      prior(normal(0, 1), class = "b"), # there's a lot of data so even fairly "strong" priors are going to not matter so much here
+      prior(student_t(3, 0, 1), class = "sigma")
+      )
 
 if(IF_RUN_MODEL){
   dataset1.brm.bayesiant = 
   brm(dataset1.brm.bayesiant.formula,
-      prior = c(
-      prior(normal(0, 1), class = "b"), # there's a lot of data so even fairly "strong" priors are going to not matter so much here
-      prior(student_t(3, 0, 1), class = "sigma")),
+    prior = dataset1.brm.bayesiant.priors,
     data = exp1.data,
     seed = 99,
     backend = "cmdstanr", #Fumeng: I have to use this as my backend. 'rstan' backend doesn't work on my laptops...
@@ -163,27 +173,63 @@ if(IF_RUN_MODEL){
 }
 
 
-
-
 ```
 
+```{r}
+ summary(dataset1.brm.bayesiant)
+```
+
+```{r dataset1-t-test-posterior}
+
+posterior_samples <- tibble(condition = c('graph', 'no_graph')) %>%
+  add_fitted_draws(dataset1.brm.bayesiant, re_formula = NA)
+
+kable(head(posterior_samples))
+```
+
+```{r}
+kable(posterior_samples %>%
+  mean_qi())
+```
+
+```{r fig.height=4, fig.width=10}
+posterior_samples %>%
+  ggplot(aes(x = .value, fill = condition)) +
+  geom_histogram(
+    exp1.data,
+    alpha = .5,
+    fill = 'gray50',
+    mapping = aes(x = effectiveness, y = (..count..) / sum(..count..))
+  ) +
+  geom_histogram(color = NA, aes(y = (..count..) / sum(..count..)), binwidth = .1) +
+  facet_wrap(condition ~ .) +
+  scale_color_brewer(palette = "Set1") +
+  scale_fill_brewer(palette = "Set1") +
+  scale_x_continuous(breaks = 1:9) +
+  xlab('effectiveness') + ylab('frequency')
+
+```
 Next, we visualise the results, along with a side-by-side comparison of the frequentist estimates:
 
-```{r dataset1-t-test-compare, echo = FALSE, warning = FALSE}
-bind_rows(
-  tidy.wrapper(dataset1.lm.freqt),
-  tidy.wrapper(dataset1.brm.bayesiant)
-) %>%
+```{r dataset1-t-test-compare, fig.height=4, fig.width=10, warning=FALSE}
+
+bind_rows(tidy.wrapper(dataset1.lm.freqt),
+          tidy.wrapper(dataset1.brm.bayesiant)) %>%
   ggplot() +
   geom_pointrange(
     aes(
-      x = term, 
-      y = estimate, 
-      ymin = conf.low, 
-      ymax = conf.high, 
-      color = model
-    ), position = position_dodge(width = 0.2)) +
-    scale_color_brewer(palette = "Set2")
+      x = model,
+      y = estimate,
+      ymin = conf.low,
+      ymax = conf.high,
+      color = term
+    ),
+    position = position_dodge(width = 0.2)
+  ) +
+  scale_color_brewer(palette = "Set1") +
+  ylab('effectiveness') +
+  scale_y_continuous(breaks = 1:9, limits = c(1, 9)) +
+  coord_flip()
 ```
 
 
@@ -193,11 +239,37 @@ bind_rows(
 
 ```{r ordinal-logistic-regression}
 
+test <- brm(effectiveness ~ condition, 
+    data = exp1.data, 
+    family=cumulative("logit"), 
+    warmup = 2500,
+    iter = 3500,
+    backend = 'cmdstanr'
+    )
+
+# TODO priors
+
+summary(test)
 
 ```
 
+```{r}
+#TODO
+
+posterior_samples <- tibble(condition = c('graph', 'no_graph')) %>%
+     add_fitted_draws(test, re_formula = NA) 
 
 
+posterior_samples
+```
+```{r}
+
+posterior_samples %>% 
+  ggplot(., aes(x = .value)) +
+  geom_histogram() +
+  facet_grid(.~condition)
+
+```
 # Dataset 2
 
 
@@ -311,86 +383,86 @@ posterior_samples %>%
 
 
 
-# Model 2
+<!-- # Model 2 -->
 
-Fumeng: I'm confused... It seems that Abhraneel has to generate some data in order to do poisson regression.
-I would say we use the generated data from Dataset 2 or remove this... 
-
-
-
-```{r}
-sim_trial = function(y) {
-  # let y be the actual number of trials that a participant will pump until
-  # p be the point of explosion for any given trial
-  p = sample(1:128, 1)
-  ifelse(p < y, p, y)
-}
-
-sim_exp = function(i, N = 10) {
-  trials = 1:N
-  map_dbl(trials, ~ sim_trial(i))
-}
-
-sim_ = function(x, iter = 1e3) {
-  # here x is the averahe number of pumps by a participant
-  # we can perform a naive grid search approach
-  # let y >= x
-  for (i in ceiling(x):128) {
-    pumps = map(
-      1:iter, 
-      ~ mean(sim_exp(i)) # simulates one experiment and calculates the average number of pumps for that experiment
-    ) # repeats the simulation many times
-    if ((mean(map_dbl(pumps, mean))) > x) {
-      return(i)
-    }
-  }
-}
-```
+<!-- Fumeng: I'm confused... It seems that Abhraneel has to generate some data in order to do poisson regression. -->
+<!-- I would say we use the generated data from Dataset 2 or remove this...  -->
 
 
-```{r, eval = FALSE}
-df.gen = df %>%
-  mutate(
-    P10 = map(adjP10, sim_),
-    P20 = map(adjP20, sim_),
-    P30 = map(adjP30, sim_)
-  )
 
-saveRDS(df.gen, "~/Documents/Github/chi22-course/data/exp2-gen.rds")
-```
+<!-- ```{r} -->
+<!-- sim_trial = function(y) { -->
+<!--   # let y be the actual number of trials that a participant will pump until -->
+<!--   # p be the point of explosion for any given trial -->
+<!--   p = sample(1:128, 1) -->
+<!--   ifelse(p < y, p, y) -->
+<!-- } -->
+
+<!-- sim_exp = function(i, N = 10) { -->
+<!--   trials = 1:N -->
+<!--   map_dbl(trials, ~ sim_trial(i)) -->
+<!-- } -->
+
+<!-- sim_ = function(x, iter = 1e3) { -->
+<!--   # here x is the averahe number of pumps by a participant -->
+<!--   # we can perform a naive grid search approach -->
+<!--   # let y >= x -->
+<!--   for (i in ceiling(x):128) { -->
+<!--     pumps = map( -->
+<!--       1:iter,  -->
+<!--       ~ mean(sim_exp(i)) # simulates one experiment and calculates the average number of pumps for that experiment -->
+<!--     ) # repeats the simulation many times -->
+<!--     if ((mean(map_dbl(pumps, mean))) > x) { -->
+<!--       return(i) -->
+<!--     } -->
+<!--   } -->
+<!-- } -->
+<!-- ``` -->
 
 
-```{r}
-df.gen = readRDS("~/Documents/Github/chi22-course/data/exp2-gen.rds") %>%
-  mutate(
-    P10 = map(P10, ~ unlist(ifelse(is.numeric(.), P10, 128))),
-    P20 = map(P20, ~ unlist(ifelse(is.numeric(.), P20, 128))),
-    P30 = map(P30, ~ unlist(ifelse(is.numeric(.), P30, 128)))
-  ) %>%
-  mutate(
-    trial_P10 = map(P10, ~ (sim_exp(.))),
-    trial_P20 = map(P20, ~ (sim_exp(.))),
-    trial_P30 = map(P30, ~ (sim_exp(.)))
-  ) %>%
-  pivot_longer(
-    cols = starts_with("trial"),
-    names_to = "trial",
-    names_prefix = "trial_P"
-  ) %>%
-  unnest(c(value)) %>%
-  group_by(participant) %>%
-  mutate(trial = row_number()) %>%
-  select(-c(starts_with("adjP"), "P10", "P20", "P30", "change", "orig"))
-```
+<!-- ```{r, eval = FALSE} -->
+<!-- df.gen = df %>% -->
+<!--   mutate( -->
+<!--     P10 = map(adjP10, sim_), -->
+<!--     P20 = map(adjP20, sim_), -->
+<!--     P30 = map(adjP30, sim_) -->
+<!--   ) -->
 
-```{r}
-# poisson analysis
-fit.poiss = brm(
-  bf(value ~ condition), 
-  prior = c(prior(normal(0, 1), class = "b"), prior(student_t(3, 3.5, 1), class = "Intercept")), 
-  data = df.gen, family = poisson(), 
-  chains = 4, cores = 4)
-```
+<!-- saveRDS(df.gen, "~/Documents/Github/chi22-course/data/exp2-gen.rds") -->
+<!-- ``` -->
+
+
+<!-- ```{r} -->
+<!-- df.gen = readRDS("~/Documents/Github/chi22-course/data/exp2-gen.rds") %>% -->
+<!--   mutate( -->
+<!--     P10 = map(P10, ~ unlist(ifelse(is.numeric(.), P10, 128))), -->
+<!--     P20 = map(P20, ~ unlist(ifelse(is.numeric(.), P20, 128))), -->
+<!--     P30 = map(P30, ~ unlist(ifelse(is.numeric(.), P30, 128))) -->
+<!--   ) %>% -->
+<!--   mutate( -->
+<!--     trial_P10 = map(P10, ~ (sim_exp(.))), -->
+<!--     trial_P20 = map(P20, ~ (sim_exp(.))), -->
+<!--     trial_P30 = map(P30, ~ (sim_exp(.))) -->
+<!--   ) %>% -->
+<!--   pivot_longer( -->
+<!--     cols = starts_with("trial"), -->
+<!--     names_to = "trial", -->
+<!--     names_prefix = "trial_P" -->
+<!--   ) %>% -->
+<!--   unnest(c(value)) %>% -->
+<!--   group_by(participant) %>% -->
+<!--   mutate(trial = row_number()) %>% -->
+<!--   select(-c(starts_with("adjP"), "P10", "P20", "P30", "change", "orig")) -->
+<!-- ``` -->
+
+<!-- ```{r} -->
+<!-- # poisson analysis -->
+<!-- fit.poiss = brm( -->
+<!--   bf(value ~ condition),  -->
+<!--   prior = c(prior(normal(0, 1), class = "b"), prior(student_t(3, 3.5, 1), class = "Intercept")),  -->
+<!--   data = df.gen, family = poisson(),  -->
+<!--   chains = 4, cores = 4) -->
+<!-- ``` -->
 
 
 
