@@ -13,22 +13,155 @@ library(modelr)
 library(tidybayes)
 library(ggdist)
 library(distributional)
+library(ordinal)
+library(ggrepel)
+library(glue)
+
 theme_set(theme_tidybayes())
 ```
 
 
-## Recap: Dataset 1 Blinded with Science
+## Dataset 1 Blinded with Science
+
+```{r}
+(df1 <- read_csv("data/blinded.csv") %>%
+  filter(experiment == 1) %>%
+  mutate(
+    condition = factor(condition), 
+    participant_id = paste0("P", str_pad(row_number(), 2, pad = "0")))
+)
+```
+
+We modeled how `condition` (graph or no graph) affected `effectiveness`, a Likert scale rating from 1 to 9.
+
+```{r}
+df1 %>%
+  arrange(effectiveness) %>%
+  count(effectiveness, condition) %>%
+  pivot_wider(names_from = condition, values_from = n, values_fill = 0)
+```
+
+
 
 ## Dataset 1, frequentist land 
 
 
-```{r dat1-frequentist-model2}
+### Wilcoxon 
 
+TODO: what vis can we create for the wilcoxon test (non-parametric so can't plot pretty t distributions)
+
+```{r}
+df1 %>%
+  count(condition, effectiveness, name = "n") %>%
+  ggplot(aes(x = effectiveness, y = n, color = condition)) + 
+  geom_point()
+```
+
+```{r}
+df1 %>%
+  mutate(rank = rank(effectiveness)) %>%
+  ggplot(aes(x = rank)) + 
+  geom_histogram() + 
+  facet_grid(~ condition) + 
+  scale_x_continuous()
+```
+
+### t-test
+
+Baseline: table/textual reporting
+
+```{r dat1-frequentist-model2}
+m_t_test <- t.test(
+  effectiveness ~ condition, 
+  data = df1, paired = FALSE, conf.int = TRUE)
+```
+
+
+```{r dat1-frequentist-model2}
+m_t_test
+```
+
+t-test is equivalent to a linear model with a slope and intercept $y_i = \beta_0 + \beta_1 x_i$ (`1 + condition` below) so using `lm` because the output is easier to wrangle (good explainer: https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis)
+
+```{r}
+m_t_test <- lm(effectiveness ~ 1 + condition, data = df1)
+```
+
+
+```{r dat1-frequentist-model2}
+m_t_test %>%
+  tidy()
+
+tidy(m_t_test) %>%
+  ggplot(aes(x = estimate, y = term)) + 
+  geom_point()
+
+tidy(m_t_test) %>%
+  ggplot(aes(xdist = dist_student_t(
+    df = df.residual(m_t_test), 
+    mu = estimate, sigma = std.error), y = term)) + 
+  stat_pointinterval()
+```
+
+EXERCISE: does it make sense? what encoding do you prefer?
+
+```{r dat1-frequentist-model2}
+df1 %>%
+  data_grid(condition) %>%
+  augment(m_t_test, newdata = ., se_fit = TRUE) %>%
+  ggplot(aes(y = condition)) +
+  geom_jitter(aes(x = effectiveness, y = condition), data =df1, height = 0.05, alpha = .5) + 
+  stat_halfeye( # EXERCIESE: change to stat_dots
+    aes(xdist =dist_student_t(
+      df = df.residual(m_t_test), 
+      mu = .fitted, sigma = .se.fit)),
+    scale = 0.7, 
+    position = position_nudge(y = 0.1)) + 
+  NULL
+```
+EXERCISE: Direct label of conditions and geoms
+
+```{r}
+(coefficients <- m_t_test %>%
+  tidy() %>%
+  mutate(term = c("intercept", "slope")) %>%
+  select(term, estimate) %>% 
+  deframe()
+)
+```
+
+
+```{r}
+df1 %>% 
+  ggplot(aes(x = ifelse(condition == "graph", 0, 1), y = effectiveness)) + 
+  geom_vline(xintercept = 0, color = "#8c96c6") + 
+  geom_abline(
+    intercept = coefficients["intercept"], 
+    slope =  coefficients["slope"],
+    color = "#8c96c6") + 
+  geom_count(aes(alpha = rescale(..prop.., to = c(0.3, 1))), color = "gray85",) + 
+  geom_point() + 
+  geom_label_repel(data = tibble(x =1.9, y = 8),
+                   mapping = aes(x = x, y = y),
+                   label = glue("slope: b = {format(round(coefficients[\"slope\"], 2), nsmall=2)}\nintercept: a = {format(round(coefficients[\"intercept\"], 2), nsmall=2)}"), color = "#8c96c6", 
+                   box.padding = 0.5) + 
+  geom_point(data = tibble(x = 0, y = coefficients["intercept"]),
+                   mapping = aes(x, y),
+                    color = "#8c96c6") + 
+  labs(
+    title = "What this data really looks like",
+    subtitle = "dont encode count as size of points but that's kind of the point") + 
+  xlab("condition") +
+  scale_x_continuous(breaks = c(0,1), labels = c("graph (x = 0)", "no graph (x = 1)"), limits = c(-0.5, 2)) 
 ```
 
 
 ```{r dat1-frequentist-model3}
-
+m_olr <- 
+  dataset %>% 
+  mutate(effectiveness = ordered(effectiveness, levels = as.character(1:9))) %>% 
+  ordinal::clm(effectiveness ~ condition,
+      data = .)
 ```
 
 
