@@ -45,7 +45,7 @@ theme_set(theme_tidybayes())
 
 
 
-## Recap: Dataset 2 Power Pose
+## Dataset 2 Power Pose
 
 Load the dataframe. Data dictionary/column description at https://github.com/yvonnejansen/posture/blob/master/data/exp2_column-description.csv 
 
@@ -80,7 +80,7 @@ df2 %>%
 ```{r}
 
 # TODO: change to load rds
-fit.brm <- readRDS("dat2_bayesian_t.rds")
+fit.brm <- readRDS("data/dataset2.brm.student.rds")
 fit.brm
 get_variables(fit.brm)
 ```
@@ -100,7 +100,7 @@ get_variables(fit.brm)
 
 
 ```{r}
-df2_range <- range(df2$change)
+df2_range <- c(min(df2$change - 10), max(df2$change + 10))
 ```
 
 
@@ -132,7 +132,10 @@ ggplot() +
 
 ```
 
-(Rethinking: mind what these all mean)
+(Rethinking: think about what these all mean)
+
+- How wide are the intervals?
+
 
 ```{r}
 ggplot(mapping = aes(fill = condition)) + 
@@ -145,6 +148,32 @@ ggplot(mapping = aes(fill = condition)) +
   stat_pointinterval(
     aes(x = .epred, y = condition), 
     data = means) + 
-  labs(title = "Rainplot")
+  labs(title = "Rainplot") + 
+  xlim(df2_range)
+```
+
+
+
+```{r}
+ggplot() + 
+  stat_slab(aes(xdist = dist_cauchy(0, 2)))
+
+ggplot() + 
+  stat_slab(aes(xdist = dist_exponential(30)))
+```
+
+```{r}
+grid %>% 
+  add_epred_draws(fit.brm, dpar = c("mu", "sigma", "nu")) %>%
+  sample_draws(30) %>%
+  ggplot(aes(y = condition)) + 
+  stat_slab(aes(xdist = dist_student_t(nu, mu, sigma)),
+                 slab_color="gray65", alpha = 0.1, fill = NA) +
+  geom_point(aes(x = change), data = df2, shape = 21, fill = "#9ECAE1",  size = 2) + 
+  xlim(df2_range)
+```
+
+```{r}
+
 ```
 
