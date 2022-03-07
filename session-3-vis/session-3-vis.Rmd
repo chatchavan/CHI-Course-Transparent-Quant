@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(tidymodels)
 library(modelr)
+library(brms)
 library(tidybayes)
 library(ggdist)
 library(distributional)
@@ -219,23 +220,22 @@ cumu_df1 %>%
 
 
 ```{r dat1-frequentist-model3}
-m_olr <- 
-  df1 %>% 
+m_olr_freq <- df1 %>% 
   mutate(effectiveness = ordered(effectiveness, levels = as.character(1:9))) %>% 
   ordinal::clm(effectiveness ~ condition, data = .)
 ```
 
 
 ```{r}
-glance(m_olr)
+glance(m_olr_freq)
 
-tidy(m_olr)
+tidy(m_olr_freq)
 ```
 
 ```{r}
-(condition_no_graph <- tidy(m_olr) %>% slice_tail())
+(condition_no_graph <- tidy(m_olr_freq) %>% slice_tail())
 
-tidy(m_olr) %>%
+tidy(m_olr_freq) %>%
   dplyr::slice(-n()) %>%
   crossing(condition = c("graph", "no_graph")) %>%
   mutate(estimate = 
@@ -253,7 +253,7 @@ tidy(m_olr) %>%
 ```{r}
 # TODO: how to show uncertainty with this?
 
-broom::augment(m_olr, type.predict = "prob", se_fit = TRUE) %>%
+broom::augment(m_olr_freq, type.predict = "prob", se_fit = TRUE) %>%
   mutate(effectiveness = as.integer(as.character(effectiveness))) %>%
   group_by(effectiveness, condition) %>%
   slice_head()  %>%
@@ -267,14 +267,37 @@ broom::augment(m_olr, type.predict = "prob", se_fit = TRUE) %>%
 
 ## Dataset 1, Bayesian land
 
+
+### Dataset 1, Bayesian t-test
+
+
+
 ```{r dat1-bayesian-model2}
+dummy
+df1 %>%
+  data_grid(condition, effectiveness) %>%
+  add_epred_draws(dummy, newdata = . ,dpar = TRUE)
 
 ```
 
+### Dataset 1, Bayesian OLR
+
+There're starter values and stuff, not bothered just yet https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes
 
 ```{r dat1-bayesian-model3}
+# m_olr_bayes <- brm(
+#   bf(effectiveness ~ condition), 
+#   prior = c(
+#     prior(normal(0, 10), class = Intercept),
+#   ),
+#   family = cumulative(),
+#   data = df1,
+#   seed = 99, chains = 4, cores = 4,
+#   file = "data/m_olr_bayes.rds"
+# )
 
 ```
+
 
 
 
@@ -311,9 +334,26 @@ df2 %>%
 ## Dataset 2 results
 
 ```{r}
+if (!file.exists("data/dataset2.brm.student.rds")){
+fit.brm <- brm(
+   bf(
+    change ~ condition, sigma ~ condition, 
+    family = student()
+  ),
+  prior = c(
+    prior(normal(0, 2), class = "b"),
+    prior(cauchy(0, 2), class = "b", dpar = "sigma"),
+    prior(exponential(0.03), class = "nu"),
+    prior(student_t(3, 0, 5), class = "Intercept"),
+    prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
+  ), 
+  data = df2,
+  seed = 99, chains = 4, cores = 4,
+  file = "data/dataset2.brm.student.rds")
+} else {
+  fit.brm <- readRDS("data/dataset2.brm.student.rds")
+}
 
-# TODO: change to load rds
-fit.brm <- readRDS("data/dataset2.brm.student.rds")
 fit.brm
 get_variables(fit.brm)
 ```
@@ -332,7 +372,7 @@ get_variables(fit.brm)
 
 
 ```{r}
-df2_range <- c(min(df2$change - 10), max(df2$change + 10))
+df2_range <- c(min(df2$change - 20), max(df2$change + 20))
 ```
 
 
@@ -380,7 +420,7 @@ ggplot(mapping = aes(fill = condition)) +
   stat_pointinterval(
     aes(x = .epred, y = condition), 
     data = means) + 
-  labs(title = "Rainplot") + 
+  labs(title = "Rainplot") +
   xlim(df2_range)
 ```
 
@@ -391,7 +431,7 @@ ggplot() +
   stat_slab(aes(xdist = dist_cauchy(0, 2)))
 
 ggplot() + 
-  stat_slab(aes(xdist = dist_exponential(30)))
+  stat_slab(aes(xdist = dist_exponential(1/30)))
 ```
 
 ```{r}
@@ -401,8 +441,9 @@ grid %>%
   ggplot(aes(y = condition)) + 
   stat_slab(aes(xdist = dist_student_t(nu, mu, sigma)),
                  slab_color="gray65", alpha = 0.1, fill = NA) +
-  geom_point(aes(x = change), data = df2, shape = 21, fill = "#9ECAE1",  size = 2) + 
-  xlim(df2_range)
+  geom_point(aes(x = change), data = df2, shape = 21, fill = "#9ECAE1",  size = 2) +
+  xlim(df2_range) + 
+  NULL
 ```
 
 ```{r}
