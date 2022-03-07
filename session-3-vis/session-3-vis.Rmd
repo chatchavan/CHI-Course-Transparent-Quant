@@ -16,6 +16,7 @@ library(distributional)
 library(ordinal)
 library(ggrepel)
 library(glue)
+library(rethinking)
 
 theme_set(theme_tidybayes())
 ```
@@ -141,27 +142,126 @@ df1 %>%
     color = "#8c96c6") + 
   geom_count(aes(alpha = rescale(..prop.., to = c(0.3, 1))), color = "gray85",) + 
   geom_point() + 
-  geom_label_repel(data = tibble(x =1.9, y = 8),
+  geom_label_repel(data = tibble(x =1.8, y = 1.8 * 0.18 + 6.57),
                    mapping = aes(x = x, y = y),
-                   label = glue("slope: b = {format(round(coefficients[\"slope\"], 2), nsmall=2)}\nintercept: a = {format(round(coefficients[\"intercept\"], 2), nsmall=2)}"), color = "#8c96c6", 
+                   label = glue("y = {format(round(coefficients[\"intercept\"], 2), nsmall=2)} + {format(round(coefficients[\"slope\"], 2), nsmall=2)}x"), color = "#8c96c6", 
                    box.padding = 0.5) + 
   geom_point(data = tibble(x = 0, y = coefficients["intercept"]),
                    mapping = aes(x, y),
                     color = "#8c96c6") + 
   labs(
-    title = "What this data really looks like",
+    title = "What t-test/lm is about",
     subtitle = "dont encode count as size of points but that's kind of the point") + 
   xlab("condition") +
-  scale_x_continuous(breaks = c(0,1), labels = c("graph (x = 0)", "no graph (x = 1)"), limits = c(-0.5, 2)) 
+  scale_x_continuous(breaks = c(0,1), labels = c("graph (x = 0)", "no graph (x = 1)"), limits = c(-0.5, 2.7)) 
 ```
+### Ordinal linear regression
+
+https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes
+
+```{r}
+df1 %>%
+  count(condition, effectiveness, name = "n") %>%
+  ggplot(aes(x = effectiveness, y = n, color = condition)) + 
+  geom_point() + 
+  geom_line() + 
+  NULL
+```
+
+```{r}
+(cumu_df1 <- df1 %>%
+  count(condition, effectiveness, name = "n") %>%
+  add_row(condition = "graph", effectiveness = 2, n = 0) %>%
+  complete(condition, effectiveness, fill = list(n = 0)) %>%
+  group_by(condition) %>%
+  mutate(
+    pr_k = n / sum(n),
+    cum_pr_k = cumsum(pr_k),
+    cum_pr_k_1 = cum_pr_k - (pr_k),
+    logit_cum_pr_k = rethinking::logit(cum_pr_k))
+)
+```
+```{r}
+cumu_df1 %>%
+  filter(!is.infinite(logit_cum_pr_k)) %>%
+  ggplot(aes(x = effectiveness, y = logit_cum_pr_k, color = condition, label = round(logit_cum_pr_k, 2))) + 
+  geom_vline(xintercept = 6) + 
+  geom_label_repel(data = cumu_df1 %>% filter(effectiveness == 6)) + 
+  geom_point() + 
+  geom_line() + 
+  scale_x_continuous(breaks = 1:9) + 
+  ylab("log-cumulative-odds")
+```
+
+
+```{r}
+cumu_df1 %>%
+  ggplot(aes(x = effectiveness, y = cum_pr_k)) + 
+  geom_point() +
+  geom_line() +
+  geom_segment(aes(
+    x = effectiveness, 
+    xend = effectiveness,
+    y = cum_pr_k, 
+    yend = cum_pr_k_1),
+    linetype = "dotted") +
+  geom_segment(aes(
+    x = effectiveness - 1, 
+    xend = effectiveness,
+    y = cum_pr_k_1, 
+    yend = cum_pr_k_1),
+    linetype = "dotted") +
+  scale_x_continuous(breaks = 1:9) + 
+  facet_grid(~condition)
+```
+
+
 
 
 ```{r dat1-frequentist-model3}
 m_olr <- 
-  dataset %>% 
+  df1 %>% 
   mutate(effectiveness = ordered(effectiveness, levels = as.character(1:9))) %>% 
-  ordinal::clm(effectiveness ~ condition,
-      data = .)
+  ordinal::clm(effectiveness ~ condition, data = .)
+```
+
+
+```{r}
+glance(m_olr)
+
+tidy(m_olr)
+```
+
+```{r}
+(condition_no_graph <- tidy(m_olr) %>% slice_tail())
+
+tidy(m_olr) %>%
+  dplyr::slice(-n()) %>%
+  crossing(condition = c("graph", "no_graph")) %>%
+  mutate(estimate = 
+           ifelse(condition == "no_graph", 
+                  estimate + condition_no_graph$estimate, 
+                  estimate)) %>%
+  mutate(.upper = estimate + 1.96 * std.error, 
+         .lower = estimate - 1.96 * std.error)  %>%
+  mutate(condition = ifelse(condition == "graph", 0, 1)) %>%
+  ggplot(aes(x = condition, y = estimate, group = term)) + 
+  geom_lineribbon(aes(ymin = .lower, ymax = .upper, color = term), alpha = 0.4) + 
+  scale_color_viridis_d()
+```
+
+```{r}
+# TODO: how to show uncertainty with this?
+
+broom::augment(m_olr, type.predict = "prob", se_fit = TRUE) %>%
+  mutate(effectiveness = as.integer(as.character(effectiveness))) %>%
+  group_by(effectiveness, condition) %>%
+  slice_head()  %>%
+  ggplot(aes(x = effectiveness, y = .fitted, color = condition)) + 
+  geom_point() + 
+  geom_line(aes(effectiveness, pr_k), data=cumu_df1) + 
+  scale_x_continuous(breaks = 1:9)
+
 ```
 
 
@@ -220,7 +320,6 @@ get_variables(fit.brm)
 
 ```{r}
 (grid <- df2 %>% data_grid(condition))
-
 
 (means <- grid %>% 
   add_epred_draws(fit.brm) 
