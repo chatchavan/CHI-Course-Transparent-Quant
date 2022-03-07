@@ -9,7 +9,7 @@ output:
 
 <style>
 .sourceCode.r{
-  background-color:white
+  background-color:#f7f8f9ff
 }
 </style>
 
@@ -32,8 +32,10 @@ library(brms)
 library(tidybayes)
 
 library(ggdist)
+library(bayesplot)
 library(ggplot2)
 library(knitr)
+
 theme_set(theme_ggdist() + 
             theme(strip.background = element_blank()))
 
@@ -167,60 +169,46 @@ if(IF_RUN_MODEL){
     cores = 4,
     file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
   )
-
 } else{
     dataset1.brm.bayesiant <- readRDS(file = "02-bayesian_stats/rds/dataset1.brm2.bayesiant.rds")
 }
-
 
 ```
 
 ```{r}
  summary(dataset1.brm.bayesiant)
 ```
-
-```{r dataset1-t-test-posterior}
-
-posterior_samples <- tibble(condition = c('graph', 'no_graph')) %>%
-  add_fitted_draws(dataset1.brm.bayesiant, re_formula = NA)
-
-posterior_predictions <- tibble(condition = c('graph', 'no_graph')) %>%
-  add_predicted_draws(dataset1.brm.bayesiant, re_formula = NA, allow_new_levels = T)
-
-kable(head(posterior_samples))
-```
-
-```{r}
-kable(posterior_samples %>%
-  mean_qi())
-```
-
-```{r fig.height=4, fig.width=10}
-posterior_predictions %>%
-  ggplot(aes(x = .prediction, fill = condition)) +
-  geom_histogram(
-    exp1.data,
-    alpha = .5,
-    fill = 'gray50',
-    mapping = aes(x = effectiveness, 
-                  y = (..count..) / sum(..count..),
-                  binwidth = 1)
-  ) +
-  geom_histogram(color = NA, 
-                 aes(y = (..count..) / sum(..count..)), 
-                 alpha = .5,
-                 binwidth = 1) +
-  facet_wrap(condition ~ .) +
-  scale_color_brewer(palette = "Set1") +
-  scale_fill_brewer(palette = "Set1") +
-  scale_x_continuous(breaks = 1:9) +
-  xlab('effectiveness') + ylab('frequency')
+```{r dataset1-diagnotics-1}
+color_scheme_set(scheme = "purple")
+plot(dataset1.brm.bayesiant)
 
 ```
-Next, we visualise the results, along with a side-by-side comparison of the frequentist estimates:
+
+```{r dataset1-posterior-diagnotics-2}
+
+  dataset1.bayesiant.y <- dataset1.brm.bayesiant$data$effectiveness
+  dataset1.bayesiant.yrep <- posterior_predict(dataset1.brm.bayesiant, draws = 50)
+       
+  kable(head(as_tibble(dataset1.bayesiant.yrep[,1:11])))            
+```
+
+
+```{r dataset1-posterior-diagnotics-3, fig.height=4, fig.width=8}
+ppc_hist(y = dataset1.bayesiant.y,
+         yrep = dataset1.bayesiant.yrep[1:8, ],
+         binwidth = .5)
+
+ppc_dens_overlay(y = dataset1.bayesiant.y,
+                 yrep = dataset1.bayesiant.yrep[1:30, ])
+  
+  
+```
+
+
+
+Compared to the frequentist estimates:
 
 ```{r dataset1-t-test-compare, fig.height=4, fig.width=10, warning=FALSE}
-
 bind_rows(tidy.wrapper(dataset1.lm.freqt),
           tidy.wrapper(dataset1.brm.bayesiant)) %>%
   ggplot() +
@@ -238,6 +226,51 @@ bind_rows(tidy.wrapper(dataset1.lm.freqt),
   ylab('effectiveness') +
   scale_y_continuous(breaks = 1:9, limits = c(1, 9)) +
   coord_flip()
+```
+
+
+
+
+```{r dataset1-t-test-posterior-fitted}
+
+dataset1.bayesiant.posterior_fitted <- tibble(condition = c('graph', 'no_graph')) %>%
+  add_fitted_draws(dataset1.brm.bayesiant, re_formula = NA, allow_new_levels = F) %>%
+  ungroup() 
+  
+#fitted_values <- fitted(dataset1.brm.bayesiant)
+
+kable(head(dataset1.bayesiant.posterior_fitted))
+```
+
+
+```{r}
+dataset1.bayesiant.posterior_comparison <-
+  dataset1.bayesiant.posterior_fitted %>%
+  select(-c(.chain, .iteration, .row)) %>%
+  spread(key = condition, value = .value) %>%
+  mutate(diff = graph - no_graph) 
+```
+
+```{r dataset1.bayesiant.diffci, fig.height=2, fig.width=10}
+
+
+kable(dataset1.bayesiant.posterior_comparison %>%
+  select(diff) %>%
+  mean_qi() 
+)
+
+dataset1.bayesiant.posterior_comparison %>%
+  select(diff) %>%
+  mean_qi() %>%
+ggplot() +
+  geom_point(aes(x = diff, y = 'graph - no graph'), size = 2) + 
+  geom_errorbarh(
+    aes(xmin = .lower, xmax = .upper, y = 'graph - no graph'),
+    height = 0
+  ) +
+  geom_vline(aes(xintercept = 0), linetype = "dashed", color = "gray") + 
+  coord_cartesian(ylim = c(0, 2), xlim = c(-1, 1))  +
+  xlab('difference') + ylab('')
 ```
 
 
@@ -270,6 +303,8 @@ posterior_samples <- tibble(condition = c('graph', 'no_graph')) %>%
 
 posterior_samples
 ```
+
+
 ```{r}
 
 posterior_samples %>% 
@@ -304,21 +339,23 @@ y_{i} &\sim \mathrm{T}(\nu, \mu, \sigma) \\
 \sigma &= \sigma_{a} + \sigma_{b}*x_i \\
 \beta &\sim \mathrm{N}(\mu_{0}, \sigma_{0}) \\
 \sigma_a, \sigma_b &\sim \mathrm{Cauchy}(0, 2) \\
-\nu &\sim \mathrm{exp}(30)
+\nu &\sim \mathrm{exp}(1/30)
 \end{align}
 $$
+
 ```{r dataset2-model1-formula}
 
 dataset2.brm.student.formula <- bf(
-    change ~ condition, sigma ~ condition, 
+    change ~ condition, 
+    sigma ~ condition, 
     family = student()
   )
 
-kable(as_tibble(get_prior(dataset2.brm.student.formula, data = dataset2)))
+kable(head(as_tibble(get_prior(dataset2.brm.student.formula, data = dataset2))))
 
 ```
 
-```{r}
+```{r dataset2-bayesiant}
 
 if(IF_RUN_MODEL){
   dataset2.brm.student = brm(
@@ -326,83 +363,88 @@ if(IF_RUN_MODEL){
   prior = c(
     prior(normal(0, 2), class = "b"),
     prior(cauchy(0, 2), class = "b", dpar = "sigma"),
-    prior(exponential(30), class = "nu"),
+    prior(exponential(0.033), class = "nu"), # Do I misunderstand something or this prior is really exp(30)?
+    #prior(cauchy(0, 1), class = "nu"),
     prior(student_t(3, 0, 5), class = "Intercept"),
     prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
   ), 
   data = dataset2,
   seed = 99,
-  backend = "cmdstanr", #Fumeng: I have to use this as my backend, 'rstan' backend doesn't work on my laptops...
+  backend = "cmdstanr", #Fumeng: I have to use this as my backend. 'rstan' backend doesn't work on my laptops...
   chains = 4, 
   cores = 4,
   file = "02-bayesian_stats/rds/dataset2.brm.student.rds")
-  
 }else{
   dataset2.brm.student <- readRDS(file = "02-bayesian_stats/rds/dataset2.brm.student.rds")
+  # dataset2.brm.student <- readRDS(file = "session-3-vis/data/dataset2.brm.student.rds")
 }
 
 ```
 
 
 ```{r}
+  summary(dataset2.brm.student)
+```
 
-posterior_samples <- tibble(condition = c(TRUE, FALSE)) %>%
-  add_fitted_draws(dataset2.brm.student, re_formula = NA, allow_new_levels = T) 
+```{r dataset2-diagnotics-1, fig.height=8, fig.width=10}
 
-
-posterior_predictions <- tibble(condition = c(TRUE, FALSE)) %>%
-  add_predicted_draws(dataset2.brm.student, re_formula = NA, allow_new_levels = T) 
-
-kable(head(posterior_samples))
-
-kable(head(posterior_predictions))
+plot(dataset2.brm.student)
 
 ```
 
+```{r dataset2-posterior-diagnotics-2}
 
-```{r plot-posterior_intervals, fig.height=2, fig.width=10}
-posterior_samples %>%
+dataset2.student.y <- dataset2.brm.student$data$change
+dataset2.student.yrep <- posterior_predict(dataset2.brm.student, draws = 50)
+
+min(dataset2.student.yrep)
+max(dataset2.student.yrep)
+```
+
+
+
+```{r dataset2-posterior-diagnotics-3, fig.height=3, fig.width=10}
+ppc_hist(y = dataset2.student.y,
+         yrep = dataset2.student.yrep[100:107,], binwidth = 10)
+
+
+ppc_dens_overlay(y = dataset2.student.y,
+         yrep = dataset2.student.yrep[100:130,])
+
+
+ppc_stat(y = dataset2.student.y,
+         yrep = dataset2.student.yrep)
+```
+
+
+
+```{r dataset2-student-posterior-fitted}
+
+dataset2.student.posterior_fitted_comparison <- tibble(condition = c(TRUE, FALSE)) %>%
+  add_fitted_draws(dataset2.brm.student, re_formula = NA, allow_new_levels = F) %>%
+  ungroup() %>%
+  select(-c(.chain, .iteration, .row)) %>% 
+  spread(key = condition, value = .value) %>%
+  mutate(diff = `TRUE` - `FALSE`) 
+  
+
+kable(head(dataset2.student.posterior_fitted_comparison))
+```
+
+
+```{r dataset2.studenyt.diffci, fig.height=2, fig.width=10}
+dataset2.student.posterior_fitted_comparison %>%
+  select(diff) %>%
   mean_qi() %>%
-  ggplot() +
-  geom_pointrange(aes(
-    x = condition,
-    y = .value,
-    ymin = .lower,
-    ymax = .upper,
-    color = condition
-  ),
-  position = position_dodge(width = 0.2)) +
-  scale_color_brewer(palette = "Set1") +
-  xlab('') + ylab('posterior change') +
-  ggtitle('posterior confidence intervals') +
-  #scale_x_reverse() +
-  scale_y_continuous(limits = c(0, 27)) +
-  coord_flip()
-
-```
-
-```{r plot-posterior_distribution, fig.height=3, fig.width=10}
-
-posterior_predictions %>%
-  ggplot(., aes(x = .prediction, fill = condition)) +
-  geom_histogram(
-    dataset2,
-    mapping = aes(x = change, y = (..count..) / sum(..count..)),
-    alpha = 0.5,
-    fill = 'gray',
-    color = NA,
-    binwidth = 4
+ggplot() +
+  geom_point(aes(x = diff, y = 'TRUE - FALSE'), size = 2) + 
+  geom_errorbarh(
+    aes(xmin = .lower, xmax = .upper, y = 'TRUE - FALSE'),
+    height = 0
   ) +
-  geom_histogram(alpha = 0.5,
-                 color = NA,
-                 aes(y = (..count..) / sum(..count..)),
-                 binwidth = 4) +
-  facet_grid(~ condition) +
-  scale_fill_brewer(palette = "Set1") +
-  xlab('posterior change') + ylab('freq') +
-  coord_cartesian(xlim = c(0, 100)) + 
-  ggtitle('posterior distribution') 
-
+  geom_vline(aes(xintercept = 0), linetype = "dashed", color = "gray") + 
+  coord_cartesian(ylim = c(0, 2), xlim = c(-5, 5))  +
+  xlab('difference') + ylab('') 
 ```
 
 
