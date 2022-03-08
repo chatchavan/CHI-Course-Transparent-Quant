@@ -1,7 +1,6 @@
 ---
 title: "chi22-course"
-author: "Abhraneel Sarma"
-date: "3/3/2022"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   html_document:
     highlight: tango
@@ -9,8 +8,12 @@ output:
 
 <style>
 .sourceCode.r{
-  background-color:#f7f8f9ff
+  background-color:#f7f8f9ff;
+  font-family: Courier New;
+  font-weight: bold
 }
+
+
 </style>
 
 
@@ -40,6 +43,10 @@ theme_set(theme_ggdist() +
             theme(strip.background = element_blank()))
 
 IF_RUN_MODEL <- T
+
+set.seed(99) 
+
+DARK_PURPLE <- '#351c75'
 ```
 
 
@@ -138,6 +145,14 @@ dataset1.lm.freqt <-
 ```
 
 
+```{r dataset1-distribution}
+
+  exp1.data %>%
+     ggplot(., aes(x = effectiveness)) +
+  geom_histogram(fill = '#351c75', color = NA)
+
+```
+
 ```{r dataset1-bayesian-t-test-formula}
 dataset1.brm.bayesiant.formula <- bf(
     effectiveness ~ condition - 1,
@@ -152,54 +167,80 @@ kable(as.tibble(get_prior(dataset1.brm.bayesiant.formula, data = exp1.data)))
 
 ```
 
-```{r dataset1-bayesian-t-test-run}
+```{r dataset1-bayesian-t-test-priors}
 dataset1.brm.bayesiant.priors = c(
       prior(normal(0, 1), class = "b"), # there's a lot of data so even fairly "strong" priors are going to not matter so much here
       prior(student_t(3, 0, 1), class = "sigma")
       )
 
-if(IF_RUN_MODEL){
-  dataset1.brm.bayesiant = 
+```
+
+```{r dataset1-bayesian-t-test-run-prior-predictive-check, fig.height=4, fig.width=9}
+dataset1.brm.bayesiant.priorchecks <-
+  brm(
+    dataset1.brm.bayesiant.formula,
+    prior = dataset1.brm.bayesiant.priors,
+    data = exp1.data,
+    backend = "cmdstanr",
+    sample_prior = "only",
+    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks.rds"
+  )
+
+
+dataset1.bayesiant.yprior <-
+  posterior_predict(dataset1.brm.bayesiant.priorchecks)
+
+ggplot() +
+  geom_density(aes(x = dataset1.bayesiant.yprior),
+               color = '#351c75',
+               alpha = .5,
+               size = 1) +
+  xlab('prior draws') +
+  ggtitle('prior preditive check')
+```
+
+```{r dataset1-bayesian-t-test-run}
+dataset1.brm.bayesiant = 
   brm(dataset1.brm.bayesiant.formula,
     prior = dataset1.brm.bayesiant.priors,
     data = exp1.data,
-    seed = 99,
-    backend = "cmdstanr", #Fumeng: I have to use this as my backend. 'rstan' backend doesn't work on my laptops...
-    chains = 4, 
-    cores = 4,
+    #You may not need this if rstan works with your computer
+    backend = "cmdstanr", 
+    #Save the model
     file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
   )
-} else{
-    dataset1.brm.bayesiant <- readRDS(file = "02-bayesian_stats/rds/dataset1.brm2.bayesiant.rds")
-}
-
 ```
 
-```{r}
+```{r dataset1-bayesian-t-summary}
  summary(dataset1.brm.bayesiant)
 ```
+
+
 ```{r dataset1-diagnotics-1}
 color_scheme_set(scheme = "purple")
 plot(dataset1.brm.bayesiant)
-
 ```
 
 ```{r dataset1-posterior-diagnotics-2}
 
-  dataset1.bayesiant.y <- dataset1.brm.bayesiant$data$effectiveness
+  dataset1.bayesiant.y <- exp1.data$effectiveness
   dataset1.bayesiant.yrep <- posterior_predict(dataset1.brm.bayesiant, draws = 50)
        
   kable(head(as_tibble(dataset1.bayesiant.yrep[,1:11])))            
 ```
 
 
-```{r dataset1-posterior-diagnotics-3, fig.height=4, fig.width=8}
+```{r dataset1-posterior-diagnotics-3, fig.height=3, fig.width=10}
 ppc_hist(y = dataset1.bayesiant.y,
          yrep = dataset1.bayesiant.yrep[1:8, ],
          binwidth = .5)
 
 ppc_dens_overlay(y = dataset1.bayesiant.y,
                  yrep = dataset1.bayesiant.yrep[1:30, ])
+
+ppc_stat_grouped(y = dataset1.bayesiant.y,
+                 yrep = dataset1.bayesiant.yrep,
+                 group = exp1.data$condition)
   
   
 ```
@@ -233,44 +274,43 @@ bind_rows(tidy.wrapper(dataset1.lm.freqt),
 
 ```{r dataset1-t-test-posterior-fitted}
 
-dataset1.bayesiant.posterior_fitted <- tibble(condition = c('graph', 'no_graph')) %>%
-  add_fitted_draws(dataset1.brm.bayesiant, re_formula = NA, allow_new_levels = F) %>%
-  ungroup() 
-  
-#fitted_values <- fitted(dataset1.brm.bayesiant)
+dataset1.bayesiant.posterior_epred <- tibble(condition = c('graph', 'no_graph')) %>%
+  add_epred_draws(dataset1.brm.bayesiant, re_formula = NA, allow_new_levels = FALSE) %>%
+  ungroup()
 
-kable(head(dataset1.bayesiant.posterior_fitted))
+kable(head(dataset1.bayesiant.posterior_epred))
 ```
 
 
-```{r}
-dataset1.bayesiant.posterior_comparison <-
-  dataset1.bayesiant.posterior_fitted %>%
-  select(-c(.chain, .iteration, .row)) %>%
-  spread(key = condition, value = .value) %>%
-  mutate(diff = graph - no_graph) 
-```
+```{r dataset1-bayesiant-posterior_comparison}
+dataset1.bayesiant.posterior_comparison <- dataset1.bayesiant.posterior_epred %>%
+  select(-c(.chain, .iteration, .row)) %>% 
+  compare_levels(variable = .epred, by = condition)
 
-```{r dataset1.bayesiant.diffci, fig.height=2, fig.width=10}
+kable(head(dataset1.bayesiant.posterior_comparison))
 
 
 kable(dataset1.bayesiant.posterior_comparison %>%
-  select(diff) %>%
-  mean_qi() 
-)
+           mean_qi(.epred))
+
+```
+
+```{r dataset1.bayesiant.diffci, fig.height=1, fig.width=5}
 
 dataset1.bayesiant.posterior_comparison %>%
-  select(diff) %>%
-  mean_qi() %>%
-ggplot() +
-  geom_point(aes(x = diff, y = 'graph - no graph'), size = 2) + 
+  median_qi(.epred) %>%
+  ggplot() +
+  geom_point(aes(x = .epred, y = condition), color = DARK_PURPLE, size = 3) +
   geom_errorbarh(
-    aes(xmin = .lower, xmax = .upper, y = 'graph - no graph'),
+    aes(xmin = .lower, xmax = .upper, y = condition),
+    color = DARK_PURPLE,
+    alpha = .5,
+    size = 2,
     height = 0
   ) +
-  geom_vline(aes(xintercept = 0), linetype = "dashed", color = "gray") + 
+  geom_vline(aes(xintercept = 0), linetype = "dashed", color = "gray") +
   coord_cartesian(ylim = c(0, 2), xlim = c(-1, 1))  +
-  xlab('difference') + ylab('')
+  xlab('') + ylab('')
 ```
 
 
@@ -278,40 +318,145 @@ ggplot() +
 ## Model 3. Ordinal Logistic Regression
 
 
-```{r ordinal-logistic-regression}
+```{r bayesian-ordinal-logistic-regression-formula}
 
-test <- brm(effectiveness ~ condition,
+
+dataset1.brm.olr.formula <- 
+   bf(
+    effectiveness ~ condition,
+    family = cumulative("logit")
+  )
+```
+
+```{r bayesian-ordinal-logistic-regression-prior}
+
+get_prior(dataset1.brm.olr.formula, data = exp1.data)
+
+dataset1.brm.olr.priors = c(
+      prior(normal(0, 1), class = "b"),
+      prior(student_t(3, 0, 1), class = "Intercept")
+)
+
+```
+
+```{r bayesian-ordinal-logistic-regression-prior-checks, fig.height=4, fig.width=8}
+
+dataset1.brm.olr.priorchecks <- brm(
+    effectiveness ~ condition,
+    prior = dataset1.brm.olr.priors,
     data = exp1.data,
-    family=cumulative("logit"),
-    warmup = 250,#2500
-    iter = 350,#3500
-    backend = 'cmdstanr'
+    family= cumulative("logit"),
+    backend = 'cmdstanr',
+    sample_prior = 'only',
+    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks.rds"
     )
 
-# TODO priors
 
-summary(test)
+
+dataset1.olr.yprior <-
+  posterior_predict(dataset1.brm.olr.priorchecks)
+
+
+ggplot() +
+  geom_histogram(aes(x = dataset1.olr.yprior),
+               fill = '#351c75',
+               alpha = .5,
+               size = 1) +
+  scale_x_continuous(breaks = 1:9, limits = c(1,9)) + 
+  xlab('prior draws') +
+  ggtitle('prior predictive check')
+
+```
+
+```{r bayesian-ordinal-logistic-regression-run-1}
+
+dataset1.brm.olr1 = 
+  brm(dataset1.brm.olr.formula,
+    prior = dataset1.brm.olr.priors,
+    data = exp1.data,
+    backend = "cmdstanr",
+    file = "02-bayesian_stats/rds/dataset1.brm.olr1.rds"
+  )
+
+summary(dataset1.brm.olr1)
+
+```
+
+```{r bayesian-ordinal-logistic-regression-run-2}
+
+dataset1.brm.olr2 = 
+  brm(dataset1.brm.olr.formula,
+    prior = dataset1.brm.olr.priors,
+    data = exp1.data,
+    backend = "cmdstanr",
+    warmup = 1500,
+    iter = 2500,
+    control = list(adapt_delta = 0.99, max_treedepth = 15),
+    file = "02-bayesian_stats/rds/dataset1.brm.olr2.rds"
+  )
+
+summary(dataset1.brm.olr2)
 
 ```
 
 ```{r}
-#TODO
-
-posterior_samples <- tibble(condition = c('graph', 'no_graph')) %>%
-     add_fitted_draws(test, re_formula = NA) 
-
-
-posterior_samples
+plot(dataset1.brm.olr2)
 ```
 
 
-```{r}
+```{r dataset1-olr-posterior-checks, fig.height=3, fig.width=10}
 
-posterior_samples %>% 
-  ggplot(., aes(x = .value)) +
-  geom_histogram() +
-  facet_grid(.~condition)
+dataset1.olr.y <- exp1.data$effectiveness
+dataset1.olr.yrep <- posterior_predict(dataset1.brm.olr2)
 
+ppc_hist(y = dataset1.olr.y,
+         yrep = dataset1.olr.yrep[1000:1007,], binwidth = .5)
+
+ppc_dens_overlay(y = dataset1.olr.y,
+         yrep = dataset1.olr.yrep[2000:2030,])
+
+
+ppc_stat_grouped(y = dataset1.olr.y,
+         yrep = dataset1.olr.yrep, group = exp1.data$condition)
+
+```
+
+```{r dataset1-olr-epred-draws}
+
+dataset1.olr.posterior_epred <-
+  tibble(condition = c('graph', 'no_graph')) %>%
+  add_epred_draws(dataset1.brm.olr2,
+                  re_formula = NA,
+                  allow_new_levels = FALSE) %>%
+  ungroup()
+
+kable(head(dataset1.olr.posterior_epred))
+
+dataset1.olr.posterior_comparison <-
+  dataset1.olr.posterior_epred %>%
+  select(-c(.chain, .iteration, .row)) %>%
+  group_by(.category) %>%
+  compare_levels(variable = .epred, by = condition)
+
+kable(head(dataset1.olr.posterior_comparison %>%
+             mean_qi()))
+```
+
+```{r dataset1-olr-comparison, fig.height=3, fig.width=10}
+dataset1.olr.posterior_comparison %>%
+  mean_qi(.epred) %>%
+  ggplot() +
+  geom_point(aes(y = .epred, x = .category), size = 3, color = DARK_PURPLE) +
+  geom_errorbar(
+    aes(ymin = .lower, ymax = .upper, x = .category),
+    width = 0,
+    size = 2,
+    color = DARK_PURPLE,
+    alpha = .5
+  ) +
+  geom_hline(aes(yintercept = 0), linetype = "dashed", color = "gray") +
+  xlab('') + ylab('no_graph - graph') +
+  theme(axis.title.y = element_text(angle = 0, vjust = .5))
 ```
 # Dataset 2
 
@@ -326,6 +471,18 @@ dataset2 = readr::read_csv("02-bayesian_stats/data/exp2.csv") %>%
 kable(head(dataset2))
 ```
 
+
+```{r dataset2, fig.height=3, fig.width=7}
+dataset2 %>%
+  mutate(c = as.factor(condition)) %>%
+  ggplot(aes(x = change)) +
+  geom_histogram(aes(y = ..density..),
+                 binwidth = 6,
+                 fill = DARK_PURPLE,
+                 color = 'white') +
+  geom_density(size = 1, adjust = 1.5, color = 'lightgray') +
+  scale_x_continuous(limits = c(-200, 200)) 
+```
 
 
 ## Model 1
@@ -355,35 +512,63 @@ kable(head(as_tibble(get_prior(dataset2.brm.student.formula, data = dataset2))))
 
 ```
 
-```{r dataset2-bayesiant}
 
-if(IF_RUN_MODEL){
-  dataset2.brm.student = brm(
+```{r dataset2-bayesiant-prior-checkes}
+dataset2.brm.student.priorchecks = brm(
   dataset2.brm.student.formula,
   prior = c(
     prior(normal(0, 2), class = "b"),
     prior(cauchy(0, 2), class = "b", dpar = "sigma"),
-    prior(exponential(0.033), class = "nu"), # Do I misunderstand something or this prior is really exp(30)?
-    #prior(cauchy(0, 1), class = "nu"),
+    prior(exponential(0.033), class = "nu"),
     prior(student_t(3, 0, 5), class = "Intercept"),
     prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
-  ), 
+  ),
   data = dataset2,
-  seed = 99,
-  backend = "cmdstanr", #Fumeng: I have to use this as my backend. 'rstan' backend doesn't work on my laptops...
-  chains = 4, 
-  cores = 4,
-  file = "02-bayesian_stats/rds/dataset2.brm.student.rds")
-}else{
-  dataset2.brm.student <- readRDS(file = "02-bayesian_stats/rds/dataset2.brm.student.rds")
-  # dataset2.brm.student <- readRDS(file = "session-3-vis/data/dataset2.brm.student.rds")
-}
+  backend = "cmdstanr",
+  sample_prior = 'only',
+  file = "02-bayesian_stats/rds/dataset2.brm.student.priorchecks.rds"
+)
+
+# dataset2.student.yprior <-
+#   posterior_predict(dataset2.brm.student.priorchecks)
+
+# ggplot() +
+#   geom_density(
+#     aes(x = dataset2.student.yprior),
+#     color = '#351c75',
+#     alpha = .5,
+#     size = 1
+#   ) +
+#   xlab('prior draws') +
+#   ggtitle('prior preditive check')
 
 ```
 
 
-```{r}
-  summary(dataset2.brm.student)
+```{r dataset2-bayesiant}
+dataset2.brm.student = brm(
+ bf(change ~ condition, 
+ sigma ~ condition,
+ family = student()),
+ prior = c(
+   prior(normal(0, 2), class = "b"),
+   prior(cauchy(0, 2), class = "b", dpar = "sigma"),
+   prior(exponential(.033), class = "nu"),
+   prior(student_t(3, 0, 5), class = "Intercept"),
+   prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
+ ), 
+ data = dataset2,
+ backend = "cmdstanr",
+ file = "02-bayesian_stats/rds/dataset2.brm.student.rds"
+)
+
+get_priors(dataset2.brm.student)
+```
+
+
+```{r dataset2-brm-student-summary}
+summary(dataset2.brm.student)
+
 ```
 
 ```{r dataset2-diagnotics-1, fig.height=8, fig.width=10}
@@ -395,10 +580,11 @@ plot(dataset2.brm.student)
 ```{r dataset2-posterior-diagnotics-2}
 
 dataset2.student.y <- dataset2.brm.student$data$change
-dataset2.student.yrep <- posterior_predict(dataset2.brm.student, draws = 50)
+dataset2.student.yrep <- posterior_predict(dataset2.brm.student)
 
-min(dataset2.student.yrep)
-max(dataset2.student.yrep)
+dataset2.student.epred <- tibble(condition = c(TRUE, FALSE)) %>%
+  add_epred_draws(dataset2.brm.student, re_formula = NA, allow_new_levels = TRUE) %>%
+  ungroup()
 ```
 
 
@@ -409,42 +595,49 @@ ppc_hist(y = dataset2.student.y,
 
 
 ppc_dens_overlay(y = dataset2.student.y,
-         yrep = dataset2.student.yrep[100:130,])
+         yrep = dataset2.student.yrep[2000:2030,])
 
 
-ppc_stat(y = dataset2.student.y,
-         yrep = dataset2.student.yrep)
+ppc_stat_grouped(y = dataset2.student.y,
+         yrep = dataset2.student.yrep,
+         group = dataset2$condition,
+         binwidth = 5)
 ```
 
 
 
 ```{r dataset2-student-posterior-fitted}
 
-dataset2.student.posterior_fitted_comparison <- tibble(condition = c(TRUE, FALSE)) %>%
-  add_fitted_draws(dataset2.brm.student, re_formula = NA, allow_new_levels = F) %>%
-  ungroup() %>%
-  select(-c(.chain, .iteration, .row)) %>% 
-  spread(key = condition, value = .value) %>%
-  mutate(diff = `TRUE` - `FALSE`) 
-  
+dataset2.student.epred_comparison <- tibble(condition = c(TRUE, FALSE)) %>%
+ add_epred_draws(dataset2.brm.student, re_formula = NA, allow_new_levels = FALSE) %>%
+ ungroup() %>%
+ select(-c(.chain, .iteration, .row)) %>% 
+ compare_levels(variable = .epred, by = condition) %>%
+ rename(diff = .epred)
 
-kable(head(dataset2.student.posterior_fitted_comparison))
+
+kable(head(dataset2.student.epred_comparison))
+
+
 ```
 
-
-```{r dataset2.studenyt.diffci, fig.height=2, fig.width=10}
-dataset2.student.posterior_fitted_comparison %>%
+```{r dataset2.studenyt.diffci, fig.height=1, fig.width=5}
+dataset2.student.epred_comparison %>%
   select(diff) %>%
   mean_qi() %>%
 ggplot() +
-  geom_point(aes(x = diff, y = 'TRUE - FALSE'), size = 2) + 
+  geom_point(aes(x = diff, y = condition), size = 3, color = DARK_PURPLE) + 
   geom_errorbarh(
-    aes(xmin = .lower, xmax = .upper, y = 'TRUE - FALSE'),
-    height = 0
+    aes(xmin = .lower, xmax = .upper, y = condition),
+    height = 0,
+    color = DARK_PURPLE,
+    alpha = .5,
+    size = 2
   ) +
   geom_vline(aes(xintercept = 0), linetype = "dashed", color = "gray") + 
-  coord_cartesian(ylim = c(0, 2), xlim = c(-5, 5))  +
-  xlab('difference') + ylab('') 
+  coord_cartesian(ylim = c(0, 2), xlim = c(-5, 5))  + 
+  scale_y_discrete(label = c('expansive - not expansive')) + 
+  xlab('')  + ylab('')
 ```
 
 
