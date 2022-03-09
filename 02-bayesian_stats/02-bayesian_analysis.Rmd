@@ -1,5 +1,5 @@
 ---
-title: "Bayesian Dataset 2 - Transparent Practices for Qantitative Empirical Research"
+title: "Bayesian Dataset 2 - Transparent Practices for Quantitative Empirical Research"
 author: "Abhraneel Sarma"
 date: "3/3/2022"
 output: html_document
