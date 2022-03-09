@@ -166,6 +166,8 @@ We can see from the above plot that the responses are discrete. This is importan
 ```{r dataset1-bayesian-t-test-formula}
 dataset1.brm.bayesiant.formula <- bf(effectiveness ~ condition - 1,
                                      family = student())
+
+
 ```
 
 Let us take a minute to understand this code. It says that we are regressing the variable `condition` on `effectiveness`. The `- 1`  removes the intercept term. The family argument is used to specify the probability distribution of the likelihood --- in other words, what is the distribution of $P(y)$
@@ -262,13 +264,14 @@ dataset1.brm.bayesiant =
     # Here we use default parameters to simplify the lecture.
     # We save the model 
     # But if you have this file, brm only loads the model for this file
-    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
+    #file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
   )
 ```
 
 ### Step 3: Evaluate the fit
 
 After the compilation step of the model is complete, we can evaluate the fit and examine the result. Similar to `lm()`, the first step is to call the `summary()` function on the variable which contains the model compilation result:
+
 
 ```{r dataset1-bayesian-t-summary}
 summary(dataset1.brm.bayesiant)
@@ -308,13 +311,13 @@ ppc_hist(y = dataset1.bayesiant.y,
 ```
 An alternative approach would be to plot densities for each *draw* from the posterior predictive distribution superimposed with the density from the actual experimental data:
 
-```{r dataset1-posterior-diagnotics-3, fig.height=3, fig.width=10}
+```{r dataset1-posterior-diagnotics-4, fig.height=3, fig.width=10}
 ppc_dens_overlay(y = dataset1.bayesiant.y,
                  yrep = dataset1.bayesiant.yrep[1:30,])
 ```
 Finally, we look at whether our model is able to capture the summary statistics properly. Below we show the distribution of the estimated posterior mean for the two conditions, as well as the actual mean of the data in the two conditions. Since the actual mean appears to be centered around the estimated posterior distribution of the mean, we can conclude that it is roughly capturing the relevant information from the experimental data.
 
-```{r dataset1-posterior-diagnotics-3, fig.height=3, fig.width=10}
+```{r dataset1-posterior-diagnotics-5, fig.height=3, fig.width=10}
 ppc_stat_grouped(y = dataset1.bayesiant.y,
                  yrep = dataset1.bayesiant.yrep,
                  group = exp1.data$condition, binwidth = .1)
