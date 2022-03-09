@@ -1,12 +1,4 @@
-<style>
-.sourceCode.r{
-  background-color:#f7f8f9ff;
-  font-family: Courier New;
-  font-weight: bold
-}
 
-
-</style>
 
 # Introduction
 
