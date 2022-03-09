@@ -17,6 +17,7 @@ library(distributional)
 library(ordinal)
 library(ggrepel)
 library(glue)
+library(dabestr)
 library(rethinking)
 
 theme_set(theme_tidybayes())
@@ -50,6 +51,8 @@ df1 %>%
 
 ### Wilcoxon 
 
+- point and conf interval for 
+
 TODO: what vis can we create for the wilcoxon test (non-parametric so can't plot pretty t distributions)
 
 ```{r}
@@ -60,13 +63,20 @@ df1 %>%
 ```
 
 ```{r}
-df1 %>%
-  mutate(rank = rank(effectiveness)) %>%
-  ggplot(aes(x = rank)) + 
-  geom_histogram() + 
-  facet_grid(~ condition) + 
-  scale_x_continuous()
+m_wilcox <-  wilcox.test(
+    effectiveness ~ condition, 
+    data = df1, paired = FALSE, conf.int = TRUE)
+
+tidy(m_wilcox)
 ```
+
+
+```{r}
+tidy(m_wilcox) %>%
+  ggplot(aes(x = estimate, y = 0)) + 
+  geom_pointinterval(aes(xmin = conf.low, xmax = conf.high)) 
+```
+
 
 ### t-test
 
@@ -108,9 +118,12 @@ tidy(m_t_test) %>%
 EXERCISE: does it make sense? what encoding do you prefer?
 
 ```{r dat1-frequentist-model2}
-df1 %>%
+aug_df1 <- df1 %>%
   data_grid(condition) %>%
-  augment(m_t_test, newdata = ., se_fit = TRUE) %>%
+  augment(m_t_test, newdata = ., se_fit = TRUE) 
+
+
+aug_df1 %>%
   ggplot(aes(y = condition)) +
   geom_jitter(aes(x = effectiveness, y = condition), data =df1, height = 0.05, alpha = .5) + 
   stat_halfeye( # EXERCIESE: change to stat_dots
@@ -136,20 +149,28 @@ EXERCISE: Direct label of conditions and geoms
 ```{r}
 df1 %>% 
   ggplot(aes(x = ifelse(condition == "graph", 0, 1), y = effectiveness)) + 
-  geom_vline(xintercept = 0, color = "#8c96c6") + 
-  geom_abline(
-    intercept = coefficients["intercept"], 
-    slope =  coefficients["slope"],
-    color = "#8c96c6") + 
-  geom_count(aes(alpha = rescale(..prop.., to = c(0.3, 1))), color = "gray85",) + 
-  geom_point() + 
-  geom_label_repel(data = tibble(x =1.8, y = 1.8 * 0.18 + 6.57),
+  # geom_vline(xintercept = 0, color = "#8c96c6") + 
+  stat_lineribbon(aes(
+    x = ifelse(condition == "graph", 0, 1), y = NULL, 
+    ydist = dist_student_t(
+      df = df.residual(m_t_test), 
+      mu = .fitted, sigma = .se.fit)), 
+    data = aug_df1, alpha = 0.3, fill = "#8c96c6") +
+  # geom_abline(
+  #   intercept = coefficients["intercept"], 
+  #   slope =  coefficients["slope"],
+  #   color = "#8c96c6") + 
+  geom_count(aes(
+    # alpha = rescale(..prop.., to = c(0.3, 1))
+    ), color = "gray25",) + 
+  # geom_point() +
+  geom_label_repel(data = tibble(x =1, y = 1 * 0.18 + 6.57),
                    mapping = aes(x = x, y = y),
                    label = glue("y = {format(round(coefficients[\"intercept\"], 2), nsmall=2)} + {format(round(coefficients[\"slope\"], 2), nsmall=2)}x"), color = "#8c96c6", 
-                   box.padding = 0.5) + 
-  geom_point(data = tibble(x = 0, y = coefficients["intercept"]),
-                   mapping = aes(x, y),
-                    color = "#8c96c6") + 
+                   box.padding = 2) + 
+  # geom_point(data = tibble(x = 0, y = coefficients["intercept"]),
+  #                  mapping = aes(x, y),
+  #                   color = "#8c96c6") + 
   labs(
     title = "What t-test/lm is about",
     subtitle = "dont encode count as size of points but that's kind of the point") + 
@@ -250,17 +271,32 @@ tidy(m_olr_freq) %>%
   scale_color_viridis_d()
 ```
 
+
+
+`?predict.clm`
+
+Alternative: 
+https://mjskay.github.io/tidybayes/articles/tidy-brms.html
+
+
 ```{r}
 # TODO: how to show uncertainty with this?
+# TODO: `newdata =` error
+# TODO: why won't augment with `se_fit` work?
 
-broom::augment(m_olr_freq, type.predict = "prob", se_fit = TRUE) %>%
-  mutate(effectiveness = as.integer(as.character(effectiveness))) %>%
-  group_by(effectiveness, condition) %>%
-  slice_head()  %>%
-  ggplot(aes(x = effectiveness, y = .fitted, color = condition)) + 
-  geom_point() + 
-  geom_line(aes(effectiveness, pr_k), data=cumu_df1) + 
-  scale_x_continuous(breaks = 1:9)
+as.data.frame(predict(m_olr_freq, type.predict = "prob", se.fit = TRUE)) %>%
+  bind_cols(df1 %>% select(effectiveness, condition))  %>%
+  group_by(effectiveness, condition) %>% 
+  slice_head() %>%
+  ungroup()   %>%
+  ggplot(aes(x = effectiveness, y = fit, fill = condition)) + 
+  geom_col(position = "dodge") + 
+  geom_pointinterval(
+    aes(ymin = fit - 1.96 * se.fit, ymax = fit + 1.96 * se.fit),
+    position = "dodge") + 
+  scale_x_continuous(breaks = 1:9) + 
+  ylab("Proportion")
+  
 
 ```
 
