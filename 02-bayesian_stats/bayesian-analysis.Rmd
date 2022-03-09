@@ -166,6 +166,8 @@ Then we write the formula using brm formula (`bf`) function.
 ```{r dataset1-bayesian-t-test-formula}
 dataset1.brm.bayesiant.formula <- bf(effectiveness ~ condition - 1,
                                      family = student())
+
+
 ```
 
 ### Step 1: Build the model (priors)
@@ -236,13 +238,15 @@ dataset1.brm.bayesiant =
     # Here we use default parameters to simplify the lecture.
     # We save the model 
     # But if you have this file, brm only loads the model for this file
-    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
+    #file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
   )
 
 ```
 
 
 ### Step 3: Evaluate the fit
+
+
 
 ```{r dataset1-bayesian-t-summary}
 summary(dataset1.brm.bayesiant)
