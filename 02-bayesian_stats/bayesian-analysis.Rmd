@@ -95,7 +95,7 @@ tidy.wrapper = function(model) {
 Let's first load and take a look at the data in a table:
 
 ```{r load-dataset}
-dataset = readr::read_csv("blinded.csv")
+dataset = readr::read_csv("02-bayesian_stats/data/blinded.csv")
 
 kable(head(dataset))
 ```
@@ -264,14 +264,13 @@ dataset1.brm.bayesiant =
     # Here we use default parameters to simplify the lecture.
     # We save the model 
     # But if you have this file, brm only loads the model for this file
-    #file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
+    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
   )
 ```
 
 ### Step 3: Evaluate the fit
 
 After the compilation step of the model is complete, we can evaluate the fit and examine the result. Similar to `lm()`, the first step is to call the `summary()` function on the variable which contains the model compilation result:
-
 
 ```{r dataset1-bayesian-t-summary}
 summary(dataset1.brm.bayesiant)
@@ -520,7 +519,8 @@ dataset1.brm.olr.priorchecks <- brm(
     chains = 3,
     cores = 3,
     backend = 'cmdstanr',
-    sample_prior = 'only'
+    sample_prior = 'only',
+    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks1.rds"
   )
 
 dataset1.olr.yprior <-  posterior_predict(dataset1.brm.olr.priorchecks, ndraws = 1000)
@@ -551,7 +551,7 @@ dataset1.brm.olr.priorchecks <- brm(
     warmup = 7500,
     backend = 'cmdstanr',
     sample_prior = 'only',
-    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks.rds"
+    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks2.rds"
     )
 
 dataset1.brm.olr.priorchecks
@@ -731,11 +731,10 @@ dataset2.brm.student.formula <- bf(change ~ condition,
                                    family = student())
 
 head(as_tibble(get_prior(dataset2.brm.student.formula, data = dataset2)))
-
 ```
 
 
-```{r dataset2-bayesiant-prior-checkes}
+```{r dataset2-bayesiant-prior-checkes, echo = FALSE, eval = FALSE}
 dataset2.brm.student.priorchecks = brm(
   dataset2.brm.student.formula,
   prior = c(
