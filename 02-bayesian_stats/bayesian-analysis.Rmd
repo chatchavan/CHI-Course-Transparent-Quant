@@ -95,7 +95,7 @@ tidy.wrapper = function(model) {
 Let's first load and take a look at the data in a table:
 
 ```{r load-dataset}
-dataset = readr::read_csv("data/blinded.csv")
+dataset = readr::read_csv("blinded.csv")
 
 kable(head(dataset))
 ```
@@ -539,7 +539,7 @@ ggplot() +
 
 Our prior predictive check reveals that the model is assigning most of the probability mass to middle items in the likert scale. This is not necessarily a bad thing, and it might reflect how participants behave. However, it is possible that these priors are still diffuse, as noticed by the low number of `Bulk_ESS` and `Tail_ESS`. These may act as another diagnostic measure, and ideally you'd want these values to be at least greater than 1000. Let's us try a different prior
 
-```{r bayesian-ordinal-logistic-regression-prior-checks, fig.height=4, fig.width=8}
+```{r bayesian-ordinal-logistic-regression-prior-checks-1, fig.height=4, fig.width=8}
 dataset1.brm.olr.priors = c(prior(normal(0, 1), class = "b"),
                             prior(student_t(3, 0, 1.5), class = "Intercept"))
 
@@ -560,7 +560,7 @@ dataset1.brm.olr.priorchecks
 
 Changing the priors appear to improve `Bulk_ESS` and `Tail_ESS` slightly. Let's take a look at the prior predictive distribution:
 
-```{r bayesian-ordinal-logistic-regression-prior-checks, fig.height=4, fig.width=8}
+```{r bayesian-ordinal-logistic-regression-prior-checks-2, fig.height=4, fig.width=8}
 dataset1.olr.yprior <-
   posterior_predict(dataset1.brm.olr.priorchecks, ndraws = 1000)
 
