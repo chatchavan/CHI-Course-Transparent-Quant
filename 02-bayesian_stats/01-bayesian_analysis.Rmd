@@ -1,5 +1,5 @@
 ---
-title: "Bayesian Dataset 1 - Transparent Practices for Qantitative Empirical Research"
+title: "Bayesian Dataset 1 - Transparent Practices for Quantitative Empirical Research"
 author: "Abhraneel Sarma"
 date: "3/3/2022"
 output: html_document
@@ -65,8 +65,9 @@ tidy.wrapper = function(model) {
 }
 ```
 
-__Dataset:__  Experiment 1 of "Blinded with Science or Informed by Charts? A Replication Study" [(Dragicevic & Jansen, 2018)](https://doi.org/10.1109/TVCG.2017.2744298)  
-Study participants were shown a vignette of a report about drug effectiveness with vs. without a chart (2 conditions, between-subjects) and were ask to rate how they believe in the effectiveness (9-point Likert-style item).
+__Dataset:__  Experiment 1 from "Blinded with Science or Informed by Charts? A Replication Study" [(Dragicevic & Jansen, 2018)](https://doi.org/10.1109/TVCG.2017.2744298)  
+Study participants were shown a vignette of a report about drug effectiveness with vs. without a chart (2 conditions, between-subjects).
+They were asked to rate how they believe in the effectiveness (9-point Likert-style item).
 
 ### Let's first look at the data in a table
 

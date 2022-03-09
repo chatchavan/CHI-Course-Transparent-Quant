@@ -1,5 +1,5 @@
 ---
-title: "Frequentist Dataset 1 - Transparent Practices for Qantitative Empirical Research"
+title: "Frequentist Dataset 1 - Transparent Practices for Quantitative Empirical Research"
 author: "Chat Wacharamanotham"
 output: html_notebook
 ---
