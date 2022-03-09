@@ -26,6 +26,8 @@ theme_set(theme_tidybayes())
 
 ## Dataset 1 Blinded with Science
 
+### Load the data
+
 ```{r}
 (df1 <- read_csv("data/blinded.csv") %>%
   filter(experiment == 1) %>%
@@ -35,32 +37,44 @@ theme_set(theme_tidybayes())
 )
 ```
 
+
+### Explore the data with ggplot
+
 We modeled how `condition` (graph or no graph) affected `effectiveness`, a Likert scale rating from 1 to 9.
 
 ```{r}
 df1 %>%
-  arrange(effectiveness) %>%
-  count(effectiveness, condition) %>%
+  ggplot(aes(
+    x = effectiveness, 
+    y = condition)) +  # EXERCISE: add color
+  geom_point() +       # EXERCISE: change to jitter
+  scale_x_continuous(breaks = 1:9)
+```
+
+Try aggregation
+
+
+```{r}
+df1 %>%
+  count(effectiveness, condition, name = "n") %>%
   pivot_wider(names_from = condition, values_from = n, values_fill = 0)
 ```
 
-
-
-## Dataset 1, frequentist land 
-
-
-### Wilcoxon 
-
-- point and conf interval for 
-
-TODO: what vis can we create for the wilcoxon test (non-parametric so can't plot pretty t distributions)
+Visualize the aggregated dataset 
 
 ```{r}
 df1 %>%
   count(condition, effectiveness, name = "n") %>%
   ggplot(aes(x = effectiveness, y = n, color = condition)) + 
-  geom_point()
+  geom_point() +     # EXERCISE: change to line chart (geom_line)
+  # EXERCISE: point + line??
+  scale_x_continuous(breaks = 1:9)
 ```
+
+## Dataset 1, frequentist land 
+
+
+### Wilcoxon 
 
 ```{r}
 m_wilcox <-  wilcox.test(
@@ -70,11 +84,13 @@ m_wilcox <-  wilcox.test(
 tidy(m_wilcox)
 ```
 
+Reflection: is this point estimate and interval useful?
 
 ```{r}
 tidy(m_wilcox) %>%
   ggplot(aes(x = estimate, y = 0)) + 
-  geom_pointinterval(aes(xmin = conf.low, xmax = conf.high)) 
+  geom_pointinterval(aes(xmin = conf.low, xmax = conf.high)) +
+  scale_x_continuous(breaks = -1:9, limits = c(-1, 9))
 ```
 
 
@@ -82,59 +98,84 @@ tidy(m_wilcox) %>%
 
 Baseline: table/textual reporting
 
-```{r dat1-frequentist-model2}
+```{r }
 m_t_test <- t.test(
   effectiveness ~ condition, 
   data = df1, paired = FALSE, conf.int = TRUE)
 ```
 
 
-```{r dat1-frequentist-model2}
+```{r }
 m_t_test
 ```
 
 t-test is equivalent to a linear model with a slope and intercept $y_i = \beta_0 + \beta_1 x_i$ (`1 + condition` below) so using `lm` because the output is easier to wrangle (good explainer: https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis)
 
 ```{r}
-m_t_test <- lm(effectiveness ~ 1 + condition, data = df1)
+(m_t_test <- lm(effectiveness ~ 1 + condition, data = df1))
 ```
 
+Tidy view of the t-test results
 
-```{r dat1-frequentist-model2}
+```{r }
 m_t_test %>%
   tidy()
+```
 
+Point estimates
+
+```{r }
 tidy(m_t_test) %>%
   ggplot(aes(x = estimate, y = term)) + 
   geom_point()
-
-tidy(m_t_test) %>%
-  ggplot(aes(xdist = dist_student_t(
-    df = df.residual(m_t_test), 
-    mu = estimate, sigma = std.error), y = term)) + 
-  stat_pointinterval()
 ```
 
-EXERCISE: does it make sense? what encoding do you prefer?
+Add interval for uncertainty
 
-```{r dat1-frequentist-model2}
-aug_df1 <- df1 %>%
+```{r }
+tidy(m_t_test) %>%
+  ggplot(aes(xdist = dist_student_t( # EXERCISE: what does this mean?
+    df = df.residual(m_t_test), 
+    mu = estimate, sigma = std.error), y = term)) + 
+  stat_pointinterval() 
+  # scale_color_brewer()
+```
+Make predictions with `augment`
+
+```{r }
+(aug_df1 <- df1 %>%
   data_grid(condition) %>%
-  augment(m_t_test, newdata = ., se_fit = TRUE) 
+  augment(m_t_test, newdata = ., se_fit = TRUE)
+)
+```
 
+EXERCISE: why are the densities so narrow? Does it make sense? What encoding do you prefer?
 
+```{r }
 aug_df1 %>%
   ggplot(aes(y = condition)) +
-  geom_jitter(aes(x = effectiveness, y = condition), data =df1, height = 0.05, alpha = .5) + 
+  # geom_jitter( # EXERCIESE: add raw data
+  #   aes(
+  #     x = effectiveness, 
+  #     y = condition), 
+  #   data =df1, height = 0.05, alpha = .5) +  
   stat_halfeye( # EXERCIESE: change to stat_dots
     aes(xdist =dist_student_t(
       df = df.residual(m_t_test), 
       mu = .fitted, sigma = .se.fit)),
-    scale = 0.7, 
+    scale = 0.6, fill = "#8c96c6",
     position = position_nudge(y = 0.1)) + 
+  geom_label_repel(aes(.fitted, y = condition), data = aug_df1 %>% slice_tail(),
+                   label = "Confidence distribution of mu", box.padding = 1, 
+                   position = position_nudge(y = 0.1), max.overlaps = Inf) + 
+  # geom_label_repel( # EXERCISE: add labels for the raw data
+  #   aes(.fitted, y = condition), 
+  #   data = aug_df1 %>% slice_head(),
+  #   label = "Jittered raw data", box.padding = 1,
+  #   position = position_nudge_repel(y = -0.2)) +
   NULL
 ```
-EXERCISE: Direct label of conditions and geoms
+Show fit line with data
 
 ```{r}
 (coefficients <- m_t_test %>%
@@ -149,37 +190,30 @@ EXERCISE: Direct label of conditions and geoms
 ```{r}
 df1 %>% 
   ggplot(aes(x = ifelse(condition == "graph", 0, 1), y = effectiveness)) + 
-  # geom_vline(xintercept = 0, color = "#8c96c6") + 
   stat_lineribbon(aes(
     x = ifelse(condition == "graph", 0, 1), y = NULL, 
     ydist = dist_student_t(
       df = df.residual(m_t_test), 
       mu = .fitted, sigma = .se.fit)), 
     data = aug_df1, alpha = 0.3, fill = "#8c96c6") +
-  # geom_abline(
-  #   intercept = coefficients["intercept"], 
-  #   slope =  coefficients["slope"],
-  #   color = "#8c96c6") + 
-  geom_count(aes(
-    # alpha = rescale(..prop.., to = c(0.3, 1))
-    ), color = "gray25",) + 
-  # geom_point() +
-  geom_label_repel(data = tibble(x =1, y = 1 * 0.18 + 6.57),
-                   mapping = aes(x = x, y = y),
-                   label = glue("y = {format(round(coefficients[\"intercept\"], 2), nsmall=2)} + {format(round(coefficients[\"slope\"], 2), nsmall=2)}x"), color = "#8c96c6", 
-                   box.padding = 2) + 
-  # geom_point(data = tibble(x = 0, y = coefficients["intercept"]),
-  #                  mapping = aes(x, y),
-  #                   color = "#8c96c6") + 
+  geom_count(color = "gray45") + 
+  geom_label_repel(
+    data = tibble(x =0.7, y = 0.7 * 0.18 + 6.57),
+    mapping = aes(x = x, y = y),
+    label = glue("y = {format(round(coefficients[\"intercept\"], 2), nsmall=2)} + {format(round(coefficients[\"slope\"], 2), nsmall=2)}x"), color = "#8c96c6", 
+    box.padding = 2) + 
   labs(
-    title = "What t-test/lm is about",
-    subtitle = "dont encode count as size of points but that's kind of the point") + 
+    title = "The t-test/lm fit line",
+    subtitle = "Is it good for discrete data?\nAlso, don't encode count as dot size") + 
   xlab("condition") +
-  scale_x_continuous(breaks = c(0,1), labels = c("graph (x = 0)", "no graph (x = 1)"), limits = c(-0.5, 2.7)) 
+  scale_x_continuous(breaks = c(0,1), labels = c("graph (x = 0)", "no graph (x = 1)"), limits = c(-0.5, 1.5)) 
 ```
+
 ### Ordinal linear regression
 
 https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes
+
+We've seen this before
 
 ```{r}
 df1 %>%
@@ -189,6 +223,8 @@ df1 %>%
   geom_line() + 
   NULL
 ```
+
+Building up to the ordinal linear regression model... introducing the cumulative proportions ("odds"), and cumulative log odds 
 
 ```{r}
 (cumu_df1 <- df1 %>%
@@ -203,6 +239,8 @@ df1 %>%
     logit_cum_pr_k = rethinking::logit(cum_pr_k))
 )
 ```
+
+
 ```{r}
 cumu_df1 %>%
   filter(!is.infinite(logit_cum_pr_k)) %>%
@@ -214,36 +252,35 @@ cumu_df1 %>%
   scale_x_continuous(breaks = 1:9) + 
   ylab("log-cumulative-odds")
 ```
-
+Once we have the estimates in the cumulative log odds space, can do inverse logit, and get proportions out of the cumulative proportions.
 
 ```{r}
 cumu_df1 %>%
   ggplot(aes(x = effectiveness, y = cum_pr_k)) + 
-  geom_point() +
   geom_line() +
   geom_segment(aes(
     x = effectiveness, 
     xend = effectiveness,
     y = cum_pr_k, 
     yend = cum_pr_k_1),
-    linetype = "dotted") +
+    color = "grey") +
   geom_segment(aes(
     x = effectiveness - 1, 
     xend = effectiveness,
     y = cum_pr_k_1, 
     yend = cum_pr_k_1),
-    linetype = "dotted") +
+    linetype = "dotted", color = "grey") +
+  geom_point() +
   scale_x_continuous(breaks = 1:9) + 
   facet_grid(~condition)
 ```
 
 
-
-
 ```{r dat1-frequentist-model3}
-m_olr_freq <- df1 %>% 
+(m_olr_freq <- df1 %>% 
   mutate(effectiveness = ordered(effectiveness, levels = as.character(1:9))) %>% 
   ordinal::clm(effectiveness ~ condition, data = .)
+)
 ```
 
 
@@ -255,7 +292,10 @@ tidy(m_olr_freq)
 
 ```{r}
 (condition_no_graph <- tidy(m_olr_freq) %>% slice_tail())
+```
+Showing estimates on the cumulative log odds scale
 
+```{r}
 tidy(m_olr_freq) %>%
   dplyr::slice(-n()) %>%
   crossing(condition = c("graph", "no_graph")) %>%
@@ -267,22 +307,15 @@ tidy(m_olr_freq) %>%
          .lower = estimate - 1.96 * std.error)  %>%
   mutate(condition = ifelse(condition == "graph", 0, 1)) %>%
   ggplot(aes(x = condition, y = estimate, group = term)) + 
+  facet_grid(~ term) + # EXERCISE: uncomment to see data better
   geom_lineribbon(aes(ymin = .lower, ymax = .upper, color = term), alpha = 0.4) + 
   scale_color_viridis_d()
 ```
 
-
-
-`?predict.clm`
-
-Alternative: 
-https://mjskay.github.io/tidybayes/articles/tidy-brms.html
-
+Going back to the data space... show predicted proportions and uncertainty
 
 ```{r}
-# TODO: how to show uncertainty with this?
-# TODO: `newdata =` error
-# TODO: why won't augment with `se_fit` work?
+# EXERCISE: how to show uncertainty with this?
 
 as.data.frame(predict(m_olr_freq, type.predict = "prob", se.fit = TRUE)) %>%
   bind_cols(df1 %>% select(effectiveness, condition))  %>%
@@ -291,13 +324,11 @@ as.data.frame(predict(m_olr_freq, type.predict = "prob", se.fit = TRUE)) %>%
   ungroup()   %>%
   ggplot(aes(x = effectiveness, y = fit, fill = condition)) + 
   geom_col(position = "dodge") + 
-  geom_pointinterval(
-    aes(ymin = fit - 1.96 * se.fit, ymax = fit + 1.96 * se.fit),
-    position = "dodge") + 
+  # geom_pointinterval(   # EXERCISE: put in the interval 
+  #   aes(ymin = fit - 1.96 * se.fit, ymax = fit + 1.96 * se.fit),
+  #   position = "dodge") + 
   scale_x_continuous(breaks = 1:9) + 
   ylab("Proportion")
-  
-
 ```
 
 
@@ -308,12 +339,47 @@ as.data.frame(predict(m_olr_freq, type.predict = "prob", se.fit = TRUE)) %>%
 
 
 
-```{r dat1-bayesian-model2}
-dummy
-df1 %>%
-  data_grid(condition, effectiveness) %>%
-  add_epred_draws(dummy, newdata = . ,dpar = TRUE)
+```{r }
+(m_t_test_bayesian <- readRDS("../02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"))
+```
 
+
+```{r }
+(grid_df1<- df1 %>%
+  data_grid(condition, effectiveness) 
+)
+
+(means_df1_t <- grid_df1 %>%
+  add_epred_draws(m_t_test_bayesian, newdata = . ,dpar = TRUE))
+
+(preds_df1_t <- grid_df1 %>%
+    add_predicted_draws(m_t_test_bayesian))
+```
+
+```{r}
+df1 %>%
+  ggplot(aes(x = effectiveness, y = condition)) + 
+  stat_interval(aes(x = .prediction), data = preds_df1_t) +
+  
+  # EXERCISE: change to density plot
+  stat_pointinterval(aes(x = .epred), data = means_df1_t,
+                     .width = c(.66, .95),
+                     position = position_nudge(y = -0.2)) +
+  geom_jitter(height = 0.1) +
+  scale_x_continuous(breaks = 1:9)+
+  scale_color_brewer()
+```
+
+
+```{r}
+means_df1_t %>%
+  sample_draws(30) %>%
+  ggplot(aes(y = condition)) + 
+  stat_slab(aes(xdist = dist_student_t(nu, mu, sigma)),
+                 slab_color="gray65", alpha = 0.05, fill = NA) +
+  geom_jitter(aes(x = effectiveness), data = df1, shape = 21, fill = "#9ECAE1",  size = 2, width = 0.1, height = 0.1) +
+  scale_x_continuous(breaks = 1:9)
+  NULL
 ```
 
 ### Dataset 1, Bayesian OLR
@@ -321,20 +387,67 @@ df1 %>%
 There're starter values and stuff, not bothered just yet https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes
 
 ```{r dat1-bayesian-model3}
-# m_olr_bayes <- brm(
-#   bf(effectiveness ~ condition), 
-#   prior = c(
-#     prior(normal(0, 10), class = Intercept),
-#   ),
-#   family = cumulative(),
-#   data = df1,
-#   seed = 99, chains = 4, cores = 4,
-#   file = "data/m_olr_bayes.rds"
-# )
-
+(m_olr_bayes <- readRDS("../02-bayesian_stats/rds/dataset1.brm.olr1.rds"))
 ```
 
 
+```{r}
+(means_df1_olr <- expand(df1, condition) %>%
+  add_epred_draws(m_olr_bayes) %>%
+   rename(effectiveness = .category)
+)
+```
+
+
+```{r}
+(preds_df1_olr <- expand(df1, condition) %>%
+    add_predicted_draws(m_olr_bayes) %>%
+    select(-c(.chain, .iteration)) %>%
+    drop_na()
+ )
+```
+EXERCISE: why does this look different from the frequentist version?
+
+```{r}
+(df1_prop <- df1 %>%
+  count(condition, effectiveness) %>%
+  group_by(condition) %>%
+  mutate(prop = n/sum(n))
+)
+
+means_df1_olr %>%
+  ggplot(aes(x = condition, y = .epred)) + 
+  stat_lineribbon()  + 
+  geom_point(aes(x = condition, y = prop), data = df1_prop) + 
+  scale_fill_brewer() + 
+  facet_grid(~ effectiveness) +
+  theme(axis.text.x = element_blank()) + 
+  xlab("Condition: graph - no graph") + 
+  ylab("Proportion")
+```
+```{r}
+(means_df1_olr_compare <- means_df1_olr %>%
+  group_by(effectiveness) %>%
+  compare_levels(variable = .epred, by = condition ) 
+)
+
+(df1_prop_diff <- df1_prop %>%
+  pivot_wider(id_col = effectiveness, names_from = condition, values_from = prop) %>%
+  drop_na() %>%
+  mutate(diff = no_graph - graph)
+)
+
+means_df1_olr_compare %>%
+  ggplot(aes(x = effectiveness, y = .epred)) + 
+  stat_interval(.width = c(0.95)) +  # EXERCISE: can you be more expressive with uncertainty?
+  geom_hline(                        # EXERCISE: add reference line y = 0
+    yintercept = 0, linetype = "dashed", color = "grey") + 
+  geom_point(aes(y = diff), data= df1_prop_diff) +  #EXERCISE: add raw data
+  scale_color_brewer() + 
+  ylab("no graph - graph") + 
+  labs(title = "Difference in proportions: no graph - graph") + 
+  NULL
+```
 
 
 ## Dataset 2 Power Pose
@@ -398,7 +511,7 @@ get_variables(fit.brm)
 (grid <- df2 %>% data_grid(condition))
 
 (means <- grid %>% 
-  add_epred_draws(fit.brm) 
+  add_epred_draws(fit.brm, dpar = TRUE) 
   )
 
 (preds <- grid %>% 
@@ -430,9 +543,10 @@ ggplot() +
   stat_interval(
     aes(x = .prediction, y = condition),
     data = preds) + 
-  stat_dots(
-    aes(x = change, y = condition), 
-    data = df2, alpha = 0.5, position = position_nudge(y = 0.1) , scale = 0.8) + 
+  geom_point(aes(x = change, y = condition), data = df2, alpha = .5) + 
+  # stat_dots(
+  #   aes(x = change, y = condition), 
+  #   data = df2, alpha = 0.5, position = position_nudge(y = 0.1) , scale = 0.8) + 
   stat_pointinterval(
     aes(x = .epred, y = condition), 
     data = means, position = position_nudge(y = -0.1)) +
@@ -461,18 +575,8 @@ ggplot(mapping = aes(fill = condition)) +
 ```
 
 
-
 ```{r}
-ggplot() + 
-  stat_slab(aes(xdist = dist_cauchy(0, 2)))
-
-ggplot() + 
-  stat_slab(aes(xdist = dist_exponential(1/30)))
-```
-
-```{r}
-grid %>% 
-  add_epred_draws(fit.brm, dpar = c("mu", "sigma", "nu")) %>%
+means %>%
   sample_draws(30) %>%
   ggplot(aes(y = condition)) + 
   stat_slab(aes(xdist = dist_student_t(nu, mu, sigma)),
@@ -480,9 +584,5 @@ grid %>%
   geom_point(aes(x = change), data = df2, shape = 21, fill = "#9ECAE1",  size = 2) +
   xlim(df2_range) + 
   NULL
-```
-
-```{r}
-
 ```
 
