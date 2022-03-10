@@ -16,7 +16,6 @@ output:
   font-weight: bold
 }
 
-
 </style>
 
 
@@ -29,6 +28,7 @@ render("02-bayesian_stats/bayesian-analysis.Rmd", md_document(variant = "gfm"), 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+rm(list = ls(all.names = TRUE)) 
 
 library(dplyr)
 library(tibble)
@@ -50,13 +50,14 @@ library(bayesplot)
 library(ggplot2)
 library(knitr)
 
+# set up the global theme
 theme_set(theme_ggdist() + 
           theme(strip.background = element_blank(),
                plot.title = element_text(vjust = .5)))
 
-IF_RUN_MODEL <- T
-
 set.seed(99) 
+
+BRM_BACKEND <- ifelse(require("cmdstanr"), 'cmdstanr', 'rstan')
 
 DARK_PURPLE <- '#351c75'
 ```
@@ -67,10 +68,9 @@ DARK_PURPLE <- '#351c75'
 In this document, we will outline the Bayesian analogs of the statistical analyses described [here](https://github.com/chatchavan/CHI-Course-Transparent-Quant/blob/master/frequentist.Rmd) (and in the previous course lecture).
 
 
-Helper functions.
+Helper functions. This function extracts results from different models and generate results of the same format to be used in visualizations
 
 ```{r helper}
-# this function extracts results from different models and generate results of the same format to be used in visualizations
 tidy.wrapper = function(model) {
   if (class(model) == "lm") {
     tidy(model, conf.int = TRUE) %>%
@@ -94,13 +94,13 @@ tidy.wrapper = function(model) {
 
 Let's first load and take a look at the data in a table:
 
-```{r load-dataset}
+```{r load-dataset, warning=FALSE, message=FALSE}
 dataset = readr::read_csv("blinded.csv")
 
-kable(head(dataset))
+head(dataset)
 ```
 
-Recall from the previous lecture that this dataset contains results from four experiments. In each experiment, participants are placed in either a *graph* or *no graph* condition, and asked to rate the effectiveness of the intervention on a nine-item likert scale. Next, we plot the data to show the distribution of these responses:
+Recall from the previous lecture that this dataset contains results from four experiments. In each experiment, participants are placed in either a *graph* or *no graph* condition, and asked to rate the effectiveness of the intervention on a nine-item Likert scale. Here, we plot the data to show the distribution of these responses:
 
 ```{r plot-dataset, fig.height = 3, fig.width = 7}
 dataset %>% 
@@ -133,20 +133,24 @@ exp1.data = dataset %>%
 head(exp1.data)
 ```
 
-# Models
 
 ## Model 1. Wilcoxon signed rank test
 
 The first model discussed in the previous lecture was the `Wilcoxon signed rank test`. This is a non-parametric test which we will skip for now. Although, there exists Bayesian non-parametric methods, they are more advanced for this lecture.
 
-## Model 2. T-test
 
-The second model discussed was the T-test. Although R contains a function (`t.test`) to perform this analysis, the t-test is essentially a linear a regression, and thus can be performed using the linear model function in R (`lm`). This is the linear model equivalent for the paired sample t-test:
+
+
+## Model 2. Students's t test
+
+The second model discussed was the T-test. Although R contains a function (`t.test`) to perform this analysis, the t-test is essentially a linear regression, and thus can be performed using the linear model function in R (`lm`). This is the linear model equivalent for the paired sample t-test:
+
+### Frequentist t-test
 
 ```{r dataset1-lm}
 dataset1.lm.freqt <-
   lm(
-    effectiveness ~ condition - 1, # we remove intercept, which is equivalent 
+    effectiveness ~ condition - 1, # we remove intercept
     data = exp1.data
   )
 ```
@@ -158,19 +162,30 @@ Before we implement a Bayesian model, let us take a look at the distribution of 
 ```{r dataset1-distribution}
   exp1.data %>%
      ggplot(., aes(x = effectiveness)) +
-  geom_histogram(fill = '#351c75', color = NA, binwidth = 0.5, center = 0) +
+  geom_histogram(fill = DARK_PURPLE, color = NA, binwidth = 0.5, center = 0) +
   scale_x_continuous(breaks = seq(0, 10, by = 1))
 ```
-We can see from the above plot that the responses are discrete. This is important to keep in mind when specifying a Bayesian model. Next, we will implement the Bayesian analog of the linear model described earlier. Here's what the model formula will look like when implemented using the brm formula (`bf` function):
+
+Let's also look how a student t distribution varies different parameter. Mu is location, sigma is dipsersion, and nu (df) control the tail.
+
+```{r draw-student-t, fig.height=4, fig.width=8}
+ggplot() +  xlim(-10, 10) + 
+  geom_function(color = "black", fun = function(x) dstudent_t(x, mu = 0, sigma = 1, df = 5) , size = 1) + 
+  geom_function(color = "gray80", fun = function(x) dstudent_t(x, mu = 0, sigma = 1, df = 50), size = 1) + 
+  geom_function(color = "gray60", fun = function(x) dstudent_t(x, mu = 0, sigma = 4, df = 5), size = 1) + 
+  geom_function(color = "gray40", fun = function(x) dstudent_t(x, mu = 2,  sigma = 1, df = 5), size = 1) +
+  xlab("x")
+
+```
+We can see from the above plot that the responses are discrete. This is important to keep in mind when specifying a Bayesian model. Next, we will implement the Bayesian analog of the linear model described earlier. Here's what the model formula will look like when implemented using the `brm` formula (`bf` function):
+
 
 ```{r dataset1-bayesian-t-test-formula}
 dataset1.brm.bayesiant.formula <- bf(effectiveness ~ condition - 1,
                                      family = student())
-
-
 ```
 
-Let us take a minute to understand this code. It says that we are regressing the variable `condition` on `effectiveness`. The `- 1`  removes the intercept term. The family argument is used to specify the probability distribution of the likelihood --- in other words, what is the distribution of $P(y)$
+Let us take a minute to understand this code. It says that we are regressing the variable `condition` on `effectiveness`. The `- 1`  removes the intercept term. The family argument is used to specify the probability distribution of the likelihood --- in other words, what is the distribution of $P(y)$.
 
 ### Step 1: Build the model (priors)
 
@@ -178,7 +193,7 @@ The blank ones are flat (uniform) priors. These are improper priors and usually 
 We can and should adjust other priors given by `brm`.
 
 ```{r dataset1-bayesian-t-test-get-prior}
-kable(as.tibble(get_prior(dataset1.brm.bayesiant.formula, data = exp1.data)))
+as_tibble(get_prior(dataset1.brm.bayesiant.formula, data = exp1.data))
 ```
 
 Next, we need to specify priors for the parameters in the model. We will discuss briefly how these prior distributions were obtained.
@@ -210,26 +225,29 @@ dataset1.brm.bayesiant.priorchecks <-
     dataset1.brm.bayesiant.formula,
     prior = dataset1.brm.bayesiant.priors,
     data = exp1.data,
-    backend = "cmdstanr",
+    backend = BRM_BACKEND,
     sample_prior = "only",
     file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks.rds"
   )
 
 # extract n = 100 draws from the prior predictive distribution
 dataset1.bayesiant.yprior <-
-  posterior_predict(dataset1.brm.bayesiant.priorchecks, ndraws = 100)
+  posterior_predict(dataset1.brm.bayesiant.priorchecks, ndraws = 30)
 
 # the following computes the probability density for each "draw"
 dataset1.bayesiant.ppc = dataset1.bayesiant.yprior %>%
   as_tibble() %>%
   mutate(.draw = row_number()) %>%
-  pivot_longer(cols = starts_with("V"), names_to = "participant", names_prefix = "V", values_to = ".value") %>%
+  pivot_longer(
+    cols = starts_with("V"),
+    names_to = "participant",
+    names_prefix = "V",
+    values_to = ".value"
+  ) %>%
   group_by(.draw) %>%
   summarise(.value = list(.value)) %>%
-  mutate(
-    dens.x = map(.value, ~ density(.)$x),
-    dens.y = map(.value, ~ density(.)$y)
-  )
+  mutate(dens.x = map(.value, ~ density(.)$x),
+         dens.y = map(.value, ~ density(.)$y))
 
 dataset1.bayesiant.ppc %>%
   select(-.value) %>%
@@ -237,9 +255,9 @@ dataset1.bayesiant.ppc %>%
   ggplot() +
   geom_line(
     aes(x = dens.x, y = dens.y, group = .draw),
-    color = '#351c75',
+    color = DARK_PURPLE,
     alpha = .1,
-    size = 1
+    size = .1
   ) +
   labs(y = "", x = 'Draws from the prior predictive distribution')
 ```
@@ -258,13 +276,12 @@ dataset1.brm.bayesiant =
     dataset1.brm.bayesiant.formula,
     prior = dataset1.brm.bayesiant.priors,
     data = exp1.data,
-    # You may not need this if rstan works with your computer.
-    backend = "cmdstanr",
+    backend = BRM_BACKEND,
     # There are many other parameters you can play with.
     # Here we use default parameters to simplify the lecture.
     # We save the model 
-    # But if you have this file, brm only loads the model for this file
-    #file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
+    # But if you have this file, brm only loads the model from this file
+    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
   )
 ```
 
@@ -285,10 +302,8 @@ First, we call `bayesplot` to draw posterior distributions and MCMC traces for e
 
 ```{r dataset1-diagnotics-1}
 color_scheme_set(scheme = "purple")
-plot(dataset1.brm.bayesiant)
+plot(dataset1.brm.bayesiant, newpage = T)
 ```
-
-### Step 3: Evaluate posterior predictions
 
 Next, we need to examine if the posterior distributions computed by our MCMC process resembles the data. Each draw from the posterior predictive distribution should roughly resemble a "hypothetical experiment" with the same experimental design. Thus, if our posterior predictive distribution looks very different from the data, it implies that something has gone awry in our model building step (Step 1).
 
@@ -309,7 +324,7 @@ ppc_hist(y = dataset1.bayesiant.y,
          yrep = dataset1.bayesiant.yrep[1:8,],
          binwidth = .5)
 ```
-An alternative approach would be to plot densities for each *draw* from the posterior predictive distribution superimposed with the density from the actual experimental data:
+An alternative approach would be to plot densities for each *draw* from the posterior predictive distribution superimposed with the density from the actual data:
 
 ```{r dataset1-posterior-diagnotics-4, fig.height=3, fig.width=10}
 ppc_dens_overlay(y = dataset1.bayesiant.y,
@@ -325,7 +340,7 @@ ppc_stat_grouped(y = dataset1.bayesiant.y,
 
 ### Step 3: Comparing posterior distributions
 
-Now that we have performed model diagnostics, we would like to interpret the results. The pertinent research question here is whether there is a difference in the effectiveness rating between the *graph* and *no graph* condition. We use conditional distributions to compare the mean difference between the two conditions. `add_epred_draws()` from tidybayes is the most convenient way… 
+Now that we have performed model diagnostics, we would like to interpret the results. The pertinent research question here is whether there is a difference in the effectiveness rating between the *graph* and *no graph* condition. We use conditional distributions to compare the mean difference between the two conditions. `add_epred_draws()` from tidybayes is the most convenient way. 
 
 ```{r dataset1-t-test-posterior-fitted}
 dataset1.bayesiant.posterior_epred <-
@@ -335,14 +350,14 @@ dataset1.bayesiant.posterior_epred <-
                   allow_new_levels = FALSE) %>%
   ungroup()
 
-kable(head(dataset1.bayesiant.posterior_epred))
+head(dataset1.bayesiant.posterior_epred)
 ```
 
-`add_epred_draws()` takes two arguments:
+Here `add_epred_draws()` takes two arguments:
 
-- newdata: is used to generate predictions. This variable should describe the experimental design. In this example, our experimental design consists of two conditions, *graph* and *no graph*, which is being passed as the first argument. 
+- *newdata*: is used to generate predictions. This variable should describe the experimental design. In this example, our experimental design consists of two conditions, *graph* and *no graph*, which is being passed as the first argument. 
 
-- object: the model fit object
+- *object*: the model fit object
 
 We then transform the data, subtract the two conditions from each other (using the `compare_levels()` function), and calculate the credible intervals (using `mean_qi()`).
 
@@ -352,7 +367,6 @@ dataset1.bayesiant.posterior_comparison <-
   select(-c(.chain, .iteration, .row)) %>%
   compare_levels(variable = .epred, by = condition)
 
-# just use head(dataset1.bayesiant.posterior_comparison) if you don't need to knit n html
 head(dataset1.bayesiant.posterior_comparison)
 
 dataset1.bayesiant.posterior_comparison %>%
@@ -403,9 +417,10 @@ bind_rows(tidy.wrapper(dataset1.lm.freqt),
 
 ## Model 3. Ordinal Logistic Regression
 
-A more appropriate to analyze ordianl data is to use ordinal logistic regression. In this section, we reanalyze the data using Bayesian Ordinal logistic regression.
+A more appropriate to analyze ordianl data is to use ordinal logistic regression. In this section, we reanalyze the data using Bayesian ordinal logistic regression.
 
 ### Step 1: Build the model (likelihood) 
+
 As always the first step is to specify the appropriate model formula:
 
 ```{r bayesian-ordinal-logistic-regression-formula}
@@ -416,31 +431,41 @@ dataset1.brm.olr.formula <-
 
 Before we go further into the model building step, it is important to understand what a ordinal regression model is *estimating*. The figure below shows the cumulative proportion of participants who responded at least $k$, i.e. $Pr(y_i \leq k)$, on the likert questionnaire.
 
-```{r}
+```{r ordinal-logistic-regression-cumulative-proportion, fig.height=4, fig.width=8}
 # figure from: Statistical rethinking with brms, ggplot2, and the tidyverse: Second edition by A Solomon Kurz
 p1 = exp1.data %>%
   count(effectiveness) %>%
   mutate(pr_k = n / nrow(exp1.data),
-         cum_pr_k = cumsum(pr_k)) %>% 
-  ggplot(aes(x = effectiveness, y = cum_pr_k, 
+         cum_pr_k = cumsum(pr_k)) %>%
+  ggplot(aes(x = effectiveness, y = cum_pr_k,
              fill = effectiveness)) +
   geom_line(color = "#b8925f") +
-  geom_point(colour = "#b8925f", size = 2.5, stroke = 1) +
+  geom_point(colour = "#b8925f",
+             size = 2.5,
+             stroke = 1) +
   scale_x_continuous("Effectiveness", breaks = 1:7) +
-  scale_y_continuous("Cumulative Proportion", breaks = seq(0, 1, by = 0.2), limits = c(0, 1)) +
+  scale_y_continuous("Cumulative Proportion",
+                     breaks = seq(0, 1, by = 0.2),
+                     limits = c(0, 1)) +
   theme(axis.ticks = element_blank(),
         legend.position = "none")
 
 p2 = exp1.data %>%
   count(effectiveness) %>%
   mutate(pr_k = n / nrow(exp1.data),
-         log_cum_odds = logit(cumsum(pr_k))) %>% 
-  ggplot(aes(x = effectiveness, y = log_cum_odds, 
+         log_cum_odds = logit(cumsum(pr_k))) %>%
+  ggplot(aes(x = effectiveness, y = log_cum_odds,
              fill = effectiveness)) +
   geom_line(color = "#b8925f") +
-  geom_point(colour = "#b8925f", size = 2.5, stroke = 1) +
+  geom_point(colour = "#b8925f",
+             size = 2.5,
+             stroke = 1) +
   scale_x_continuous("Effectiveness", breaks = 1:9) +
-  scale_y_continuous("Log-Cumulative Odds", breaks = seq(-5, 5, by = 1), limits = c(logit(0.005), logit(0.99))) +
+  scale_y_continuous(
+    "Log-Cumulative Odds",
+    breaks = seq(-5, 5, by = 1),
+    limits = c(logit(0.005), logit(0.99))
+  ) +
   theme(axis.ticks = element_blank(),
         legend.position = "none")
 
@@ -456,9 +481,9 @@ $$
 log(\frac{Pr(y_i <= k)}{1 - Pr(y_i <= k)}) = \alpha_k
 \end{align}
 $$
-Ordinal regression estimates this cumulative probability: $Pr(y_i \leq k)$. Once we have estimated the cumulative probaility, we can take the difference between successive items, $Pr(y_i = k) = Pr(y_i \leq k) - Pr(y_i \leq k - 1)$ to estimate the discrete probability for each outcome:
+Ordinal regression estimates this cumulative probability: $Pr(y_i \leq k)$. Once we have estimated the cumulative probability, we can take the difference between successive items, $Pr(y_i = k) = Pr(y_i \leq k) - Pr(y_i \leq k - 1)$ to estimate the discrete probability for each outcome:
 
-```{r}
+```{r ordinal-logistic-regression-cumulative-proportion-diff}
 # primary data
 exp1.data_plot = exp1.data %>%
   count(effectiveness) %>%
@@ -499,13 +524,13 @@ exp1.data_plot %>%
 
 The next step is to specify the prior distributions. Let us first look at the default prior distributions:
 
-```{r}
+```{r dataset1-olr-priors}
 as_tibble(get_prior(dataset1.brm.olr.formula, data = exp1.data))
 ```
 
 We notice that the difference parameter, `b` does not have a proper prior, so we should specify one. The Intercept term does have a prior, but since the distributions are going to be logit transformed it is difficult to intuitively determine whether these are strong or diffuse prior distributions. This is another important question that can be answered through prior predictive checks:
 
-```{r}
+```{r dataset1-olr-priorchecks}
 # priors
 dataset1.brm.olr.priors = c(
       	  prior(normal(0, 1), class = "b")
@@ -517,17 +542,16 @@ dataset1.brm.olr.priorchecks <- brm(
     prior = dataset1.brm.olr.priors,
     iter = 15000,
     warmup = 7500,
-    chains = 3,
-    cores = 3,
-    backend = 'cmdstanr',
-    sample_prior = 'only'
+    backend = BRM_BACKEND,
+    sample_prior = 'only',
+    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks1.rds"
   )
 
-dataset1.olr.yprior <-  posterior_predict(dataset1.brm.olr.priorchecks, ndraws = 1000)
+dataset1.olr.yprior <-  posterior_predict(dataset1.brm.olr.priorchecks, ndraws = 100)
 
 ggplot() +
   geom_histogram(aes(x = dataset1.olr.yprior),
-               fill = '#351c75',
+               fill = DARK_PURPLE,
                alpha = .5, size = 1,
                binwidth = 0.5, center = 0) +
  scale_x_continuous(breaks = 1:9, limits = c(0.5, 9.5)) + 
@@ -537,7 +561,7 @@ ggplot() +
  )
 ```
 
-Our prior predictive check reveals that the model is assigning most of the probability mass to middle items in the likert scale. This is not necessarily a bad thing, and it might reflect how participants behave. However, it is possible that these priors are still diffuse, as noticed by the low number of `Bulk_ESS` and `Tail_ESS`. These may act as another diagnostic measure, and ideally you'd want these values to be at least greater than 1000. Let's us try a different prior
+Our prior predictive check reveals that the model is assigning most of the probability mass to middle items in the Likert scale. This is not necessarily a bad thing, and it might reflect how participants behave. However, it is possible that these priors are still diffuse, as noticed by the low number of `Bulk_ESS` and `Tail_ESS`. These may act as another diagnostic measure, and ideally you'd want these values to be at least greater than 1000. Let's us try a different prior
 
 ```{r bayesian-ordinal-logistic-regression-prior-checks-1, fig.height=4, fig.width=8}
 dataset1.brm.olr.priors = c(prior(normal(0, 1), class = "b"),
@@ -549,12 +573,12 @@ dataset1.brm.olr.priorchecks <- brm(
     data = exp1.data,
     iter = 15000,
     warmup = 7500,
-    backend = 'cmdstanr',
+    backend = BRM_BACKEND,
     sample_prior = 'only',
-    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks.rds"
+    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks2.rds"
     )
 
-dataset1.brm.olr.priorchecks
+summary(dataset1.brm.olr.priorchecks)
 ```
 
 
@@ -562,7 +586,7 @@ Changing the priors appear to improve `Bulk_ESS` and `Tail_ESS` slightly. Let's 
 
 ```{r bayesian-ordinal-logistic-regression-prior-checks-2, fig.height=4, fig.width=8}
 dataset1.olr.yprior <-
-  posterior_predict(dataset1.brm.olr.priorchecks, ndraws = 1000)
+  posterior_predict(dataset1.brm.olr.priorchecks, ndraws = 100)
 
 
 ggplot() +
@@ -587,14 +611,14 @@ dataset1.brm.olr1 =
     dataset1.brm.olr.formula,
     prior = dataset1.brm.olr.priors,
     data = exp1.data,
-    backend = "cmdstanr",
+    backend = BRM_BACKEND,
     file = "02-bayesian_stats/rds/dataset1.brm.olr1.rds"
   )
 
 summary(dataset1.brm.olr1)
 ```
 
-Notice that we get a few error messages about divergent transitions. Here we adjust a few sampling parameters, namely `dapt_delta` and `max_treedepth` which are passed to the `control` argument, to help the MCMC sampler and avoid divergent transitions:
+Notice that we get a few error messages about divergent transitions. Here we adjust a few sampling parameters, namely `adapt_delta` and `max_treedepth` which are passed to the `control` argument, to help the MCMC sampler and avoid divergent transitions:
 
 ```{r bayesian-ordinal-logistic-regression-run-2}
 dataset1.brm.olr2 =
@@ -602,7 +626,7 @@ dataset1.brm.olr2 =
     dataset1.brm.olr.formula,
     prior = dataset1.brm.olr.priors,
     data = exp1.data,
-    backend = "cmdstanr",
+    backend = BRM_BACKEND,
     warmup = 1500,
     iter = 2500,
     control = list(adapt_delta = 0.99, max_treedepth = 15),
@@ -612,13 +636,15 @@ dataset1.brm.olr2 =
 summary(dataset1.brm.olr2)
 ```
 
-### Step 3: Evaluate the fit (MCMC traces)
+### Step 3: Evaluate the fit 
 
 We then perform the same model diagnostics steps that we had performed for the previous model.
 
 ```{r dataset1-brm-olr-mcmc}
-plot(dataset1.brm.olr2)
+plot(dataset1.brm.olr2, newpage = T)
 ```
+
+### Step 3: Evaluate the posterior predictions 
 
 ```{r dataset1-olr-posterior-checks, fig.height=3, fig.width=10}
 dataset1.olr.y <- exp1.data$effectiveness
@@ -633,7 +659,7 @@ ppc_dens_overlay(y = dataset1.olr.y,
 
 
 ppc_bars(y = dataset1.olr.y,
-        yrep = dataset1.olr.yrep)
+        yrep = dataset1.olr.yrep, binwidth = .5)
 
 
 ppc_stat_grouped(y = dataset1.olr.y,
@@ -735,11 +761,11 @@ dataset2.brm.student.formula <- bf(change ~ condition,
                                    family = student())
 
 head(as_tibble(get_prior(dataset2.brm.student.formula, data = dataset2)))
-
 ```
 
 
-```{r dataset2-bayesiant-prior-checkes}
+```{r dataset2-bayesiant-prior-checkes, echo = FALSE, eval = FALSE}
+# This breaks :-)
 dataset2.brm.student.priorchecks = brm(
   dataset2.brm.student.formula,
   prior = c(
@@ -750,23 +776,10 @@ dataset2.brm.student.priorchecks = brm(
     prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
   ),
   data = dataset2,
-  backend = "cmdstanr",
+  backend = BRM_BACKEND,
   sample_prior = 'only',
   file = "02-bayesian_stats/rds/dataset2.brm.student.priorchecks.rds"
 )
-# This breaks :-)
-# dataset2.student.yprior <-
-#   posterior_predict(dataset2.brm.student.priorchecks)
-
-# ggplot() +
-#   geom_density(
-#     aes(x = dataset2.student.yprior),
-#     color = '#351c75',
-#     alpha = .5,
-#     size = 1
-#   ) +
-#   xlab('prior draws') +
-#   ggtitle('prior preditive check')
 
 ```
 
@@ -786,7 +799,7 @@ dataset2.brm.student = brm(
    prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
  ), 
  data = dataset2,
- backend = "cmdstanr",
+ backend = BRM_BACKEND,
  file = "02-bayesian_stats/rds/dataset2.brm.student.rds"
 )
 
@@ -802,7 +815,7 @@ summary(dataset2.brm.student)
 ### Step 3: Evaluate the posterior predictions 
 
 ```{r dataset2-diagnotics-1, fig.height=8, fig.width=10}
-plot(dataset2.brm.student)
+plot(dataset2.brm.student, newpage = T)
 ```
 
 ```{r dataset2-posterior-diagnotics-2}
@@ -852,7 +865,7 @@ dataset2.student.epred_comparison <-
   rename(diff = .epred)
 
 
-kable(head(dataset2.student.epred_comparison))
+head(dataset2.student.epred_comparison)
 
 
 ```
@@ -876,3 +889,10 @@ dataset2.student.epred_comparison %>%
   xlab('')  + ylab('')
 ```
 
+
+# Packages Information
+```{r}
+
+sessionInfo()
+
+```
