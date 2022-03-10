@@ -18,8 +18,23 @@ They were asked to rate how they believe in the effectiveness (9-point Likert-st
 
 
 ```{r}
-source("dataset_blinded_with_science.R")
-dataset <- dataset_blinded_with_science()
+dataset <- 
+  read_csv("data/blinded.csv",
+           col_types = cols(
+             experiment = col_integer(),
+             condition = col_character(),
+             effectiveness = col_integer())) %>%
+
+    # select only experiment 1 (out of 4)
+    filter(experiment == "1") %>%
+    mutate(
+      condition = factor(condition),
+
+      # adding a synthetic participant ID to clearly communicate that this data 
+      # is from a between-subjects design
+      participant_id = str_c("P", str_pad(row_number(), 2, pad = "0"))) %>%
+
+    dplyr::select(participant_id, condition, effectiveness)
 ```
 The order of the difference is controlled by the order of the factor level of the `condition` column in the dataset. By default, the order is alphabetical. In this dataset, all statistical estimates below are in the followin form:
 
