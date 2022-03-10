@@ -115,3 +115,9 @@ confint(model_olr)
 ```
 
 
+# Packages Information
+```{r}
+
+sessionInfo()
+
+```
