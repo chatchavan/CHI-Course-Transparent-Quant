@@ -1,5 +1,6 @@
 ---
-title: "Frequentist - Likert-style question"
+title: "Frequentist Dataset 1 - Transparent Practices for Quantitative Empirical Research"
+author: "Chat Wacharamanotham"
 output: html_notebook
 ---
 
@@ -11,7 +12,10 @@ library(tidyverse)
 ```
 
 
-Dataset: Experiment 1 of "Blinded with Science" study  (between-subjects, 2 conditions)
+__Dataset:__  Experiment 1 from "Blinded with Science or Informed by Charts? A Replication Study" [(Dragicevic & Jansen, 2018)](https://doi.org/10.1109/TVCG.2017.2744298)  
+Study participants were shown a vignette of a report about drug effectiveness with vs. without a chart (2 conditions, between-subjects).
+They were asked to rate how they believe in the effectiveness (9-point Likert-style item).
+
 
 ```{r}
 source("dataset_blinded_with_science.R")

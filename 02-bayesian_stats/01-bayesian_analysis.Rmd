@@ -1,5 +1,5 @@
 ---
-title: "chi22-course"
+title: "Bayesian Dataset 1 - Transparent Practices for Quantitative Empirical Research"
 author: "Abhraneel Sarma"
 date: "3/3/2022"
 output: html_document
@@ -37,7 +37,7 @@ theme_set(theme_ggdist())
 
 ## Introduction
 
-In this document, we will outline the Bayesian analogs of the statistical analyses described [here](https://github.com/chatchavan/CHI-Course-Transparent-Quant/blob/master/frequentist.Rmd) (and in the previous course lecture).
+In this document, we will outline the Bayesian analogs of the statistical analyses described in the previous course lecture.
 
 ## Data
 
@@ -45,7 +45,6 @@ Load the data and helper functions.
 
 ```{r load-data-and-helper}
 dataset = readr::read_csv("./data/blinded.csv")
-# dataset = readr::read_csv("~/Documents/Github/chi22-course/data/blinded.csv")
 
 # this function extracts results from different models and generate results of the same format to be used in visualizations
 tidy.wrapper = function(model) {
@@ -66,7 +65,9 @@ tidy.wrapper = function(model) {
 }
 ```
 
-TODO: explain the dataset here
+__Dataset:__  Experiment 1 from "Blinded with Science or Informed by Charts? A Replication Study" [(Dragicevic & Jansen, 2018)](https://doi.org/10.1109/TVCG.2017.2744298)  
+Study participants were shown a vignette of a report about drug effectiveness with vs. without a chart (2 conditions, between-subjects).
+They were asked to rate how they believe in the effectiveness (9-point Likert-style item).
 
 ### Let's first look at the data in a table
 
