@@ -18,11 +18,10 @@ library(ordinal)
 library(ggrepel)
 library(glue)
 library(dabestr)
-library(rethinking)
+# library(rethinking) 
 
 theme_set(theme_tidybayes())
 ```
-
 
 ## Dataset 1 Blinded with Science
 
@@ -51,8 +50,7 @@ df1 %>%
   scale_x_continuous(breaks = 1:9)
 ```
 
-Try aggregation
-
+Alternative: try aggregation
 
 ```{r}
 df1 %>%
@@ -73,23 +71,24 @@ df1 %>%
 
 ## Dataset 1, frequentist land 
 
-
 ### Wilcoxon 
 
 ```{r}
-m_wilcox <-  wilcox.test(
+m_wilcox <- wilcox.test(
     effectiveness ~ condition, 
     data = df1, paired = FALSE, conf.int = TRUE)
 
 tidy(m_wilcox)
 ```
 
-Reflection: is this point estimate and interval useful?
+Reflection: is this interval surprising? Is this useful?
 
 ```{r}
 tidy(m_wilcox) %>%
   ggplot(aes(x = estimate, y = 0)) + 
-  geom_pointinterval(aes(xmin = conf.low, xmax = conf.high)) +
+  geom_point() + 
+  # EXERCISE: add intervals
+  # geom_pointinterval(aes(xmin = conf.low, xmax = conf.high)) +
   scale_x_continuous(breaks = -1:9, limits = c(-1, 9))
 ```
 
@@ -127,20 +126,27 @@ Point estimates
 ```{r }
 tidy(m_t_test) %>%
   ggplot(aes(x = estimate, y = term)) + 
-  geom_point()
+  geom_point() +
+  scale_x_continuous(breaks=-1:9) + 
+  scale_y_discrete(labels = c("Intercept (beta_0)", "condition: no graph"))
 ```
 
-Add interval for uncertainty
+Add interval for uncertainty. The _confidence distribution_ for the parameters follows the student-t distribution. https://mjskay.github.io/ggdist/articles/freq-uncertainty-vis.html
+
 
 ```{r }
 tidy(m_t_test) %>%
-  ggplot(aes(xdist = dist_student_t( # EXERCISE: what does this mean?
-    df = df.residual(m_t_test), 
-    mu = estimate, sigma = std.error), y = term)) + 
-  stat_pointinterval() 
-  # scale_color_brewer()
+  ggplot(aes(
+    xdist = dist_student_t( # EXERCISE: what does this mean?
+      df = df.residual(m_t_test), 
+      mu = estimate, 
+      sigma = std.error), 
+    y = term)) + 
+  stat_pointinterval() +
+  scale_x_continuous(breaks=-1:9) + 
+  scale_y_discrete(labels = c("Intercept (beta_0)", "condition: no graph"))
 ```
-Make predictions with `augment`
+That was for the paramters. Now we make predictions () with `augment`
 
 ```{r }
 (aug_df1 <- df1 %>%
@@ -154,12 +160,12 @@ EXERCISE: why are the densities so narrow? Does it make sense? What encoding do 
 ```{r }
 aug_df1 %>%
   ggplot(aes(y = condition)) +
-  # geom_jitter( # EXERCIESE: add raw data
+  # geom_jitter(            # EXERCIESE: add raw data
   #   aes(
   #     x = effectiveness, 
   #     y = condition), 
   #   data =df1, height = 0.05, alpha = .5) +  
-  stat_halfeye( # EXERCIESE: change to stat_dots
+  stat_halfeye(             # EXERCIESE: change to stat_dots
     aes(xdist =dist_student_t(
       df = df.residual(m_t_test), 
       mu = .fitted, sigma = .se.fit)),
@@ -209,6 +215,7 @@ df1 %>%
   scale_x_continuous(breaks = c(0,1), labels = c("graph (x = 0)", "no graph (x = 1)"), limits = c(-0.5, 1.5)) 
 ```
 
+
 ### Ordinal linear regression
 
 https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes
@@ -224,9 +231,11 @@ df1 %>%
   NULL
 ```
 
-Building up to the ordinal linear regression model... introducing the cumulative proportions ("odds"), and cumulative log odds 
+Building up to the ordinal linear regression model... introducing the cumulative proportions ("odds"), and cumulative log odds (computed with `logit()`)
 
 ```{r}
+logit <- function(x) log(x / (1 - x))
+
 (cumu_df1 <- df1 %>%
   count(condition, effectiveness, name = "n") %>%
   add_row(condition = "graph", effectiveness = 2, n = 0) %>%
@@ -236,7 +245,7 @@ Building up to the ordinal linear regression model... introducing the cumulative
     pr_k = n / sum(n),
     cum_pr_k = cumsum(pr_k),
     cum_pr_k_1 = cum_pr_k - (pr_k),
-    logit_cum_pr_k = rethinking::logit(cum_pr_k))
+    logit_cum_pr_k = logit(cum_pr_k))
 )
 ```
 
@@ -252,7 +261,7 @@ cumu_df1 %>%
   scale_x_continuous(breaks = 1:9) + 
   ylab("log-cumulative-odds")
 ```
-Once we have the estimates in the cumulative log odds space, can do inverse logit, and get proportions out of the cumulative proportions.
+Once we have the estimates in the cumulative log odds space, can do inverse logit (`brms::inv_logit_scaled()`), and get proportions out of the cumulative proportions.
 
 ```{r}
 cumu_df1 %>%
@@ -337,24 +346,38 @@ as.data.frame(predict(m_olr_freq, type.predict = "prob", se.fit = TRUE)) %>%
 
 ### Dataset 1, Bayesian t-test
 
-
+Load the model from last time....
 
 ```{r }
 (m_t_test_bayesian <- readRDS("../02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"))
 ```
 
+Get estimates for parameters and outcome predictions (1..9).
 
 ```{r }
 (grid_df1<- df1 %>%
   data_grid(condition, effectiveness) 
 )
+```
 
+
+```{r }
 (means_df1_t <- grid_df1 %>%
   add_epred_draws(m_t_test_bayesian, newdata = . ,dpar = TRUE))
+```
 
+```{r }
 (preds_df1_t <- grid_df1 %>%
     add_predicted_draws(m_t_test_bayesian))
 ```
+
+Visualize parameter uncertainty, predictive uncertainty, and raw data.
+
+EXERCISE:
+
+- (which visual element?) <- Parameter uncertainty
+- (which visual element?) <- Predictive uncertainty
+- (which visual element?) <- Raw data (with intrinsic uncertainty, too!)
 
 ```{r}
 df1 %>%
@@ -369,14 +392,15 @@ df1 %>%
   scale_x_continuous(breaks = 1:9)+
   scale_color_brewer()
 ```
-
+An alternative way of seeing the uncertainty, in Kruschke style. The bunch of density lines shows both parameter and predictive uncertainty. 
 
 ```{r}
 means_df1_t %>%
   sample_draws(30) %>%
   ggplot(aes(y = condition)) + 
-  stat_slab(aes(xdist = dist_student_t(nu, mu, sigma)),
-                 slab_color="gray65", alpha = 0.05, fill = NA) +
+  stat_slab(
+    aes(xdist = dist_student_t(nu, mu, sigma)),
+    slab_color="gray65", alpha = 0.05, fill = NA, scale = 0.7) +
   geom_jitter(aes(x = effectiveness), data = df1, shape = 21, fill = "#9ECAE1",  size = 2, width = 0.1, height = 0.1) +
   scale_x_continuous(breaks = 1:9)
   NULL
@@ -390,10 +414,11 @@ There're starter values and stuff, not bothered just yet https://bookdown.org/aj
 (m_olr_bayes <- readRDS("../02-bayesian_stats/rds/dataset1.brm.olr1.rds"))
 ```
 
+Get posterior estimates for the parameters and predictions (outcome on the scale of 1...9)
 
 ```{r}
 (means_df1_olr <- expand(df1, condition) %>%
-  add_epred_draws(m_olr_bayes) %>%
+  add_epred_draws(m_olr_bayes, dpar = TRUE) %>%
    rename(effectiveness = .category)
 )
 ```
@@ -403,7 +428,7 @@ There're starter values and stuff, not bothered just yet https://bookdown.org/aj
 (preds_df1_olr <- expand(df1, condition) %>%
     add_predicted_draws(m_olr_bayes) %>%
     select(-c(.chain, .iteration)) %>%
-    drop_na()
+   drop_na()
  )
 ```
 EXERCISE: why does this look different from the frequentist version?
@@ -425,6 +450,9 @@ means_df1_olr %>%
   xlab("Condition: graph - no graph") + 
   ylab("Proportion")
 ```
+EXERCISE (challenge): follow https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes to construct a stacked version
+
+
 ```{r}
 (means_df1_olr_compare <- means_df1_olr %>%
   group_by(effectiveness) %>%
@@ -448,6 +476,15 @@ means_df1_olr_compare %>%
   labs(title = "Difference in proportions: no graph - graph") + 
   NULL
 ```
+
+```{r}
+preds_df1_olr %>%
+  count(condition, .prediction) %>%
+  ggplot(aes(.prediction, n, fill = condition)) +
+  geom_col(position = "dodge")
+
+```
+
 
 
 ## Dataset 2 Power Pose
@@ -554,7 +591,7 @@ ggplot() +
 
 ```
 
-(Rethinking: think about what these all mean)
+(Reflection: think about what these all mean)
 
 - How wide are the intervals?
 

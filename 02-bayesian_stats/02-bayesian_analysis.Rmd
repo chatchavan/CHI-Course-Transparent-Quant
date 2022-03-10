@@ -1,5 +1,5 @@
 ---
-title: "chi22-course"
+title: "Bayesian Dataset 2 - Transparent Practices for Quantitative Empirical Research"
 author: "Abhraneel Sarma"
 date: "3/3/2022"
 output: html_document
@@ -16,6 +16,13 @@ library(brms)
 
 ## Data
 
+Data from experiment 2 of [Jansen & Hornbæk (2018)](https://doi.org/10.1145/3173574.3173588) ([data](https://github.com/yvonnejansen/posture))
+
+* Independent variable: Posture conditions (expansive vs. constrictive)
+* Dependent variable: BART measure of risk-taking. It is the percentage change of the average number of pumps before the balloon explodes between the the first 10 balloons (where the participant is still calibrating how the system behaves) vs. the last 10 balloons (where the participants can exercise their risk-taking)
+
+Note: For simplicity in this course, we omitted covariate analyses detailed in the original paper.
+
 Load the data
 
 ```{r}
@@ -28,7 +35,7 @@ df
 
 ## Model 1
 
-The first model is the BEST test model as described by Kruschke in the paper *Bayesian estimateion supersedes the t-test*. In this model, $\beta$ indicates the mean difference in the outcome variable between the two groups (in this case, the percent change in the BART scores). We fit different priors on $\beta$ and set different weights on these priors to obtain our posterior estimate.
+The first model is the model described by Kruschke in the paper [*Bayesian estimation supersedes the t-test*](https://doi.org/10.1037/a0029146). In this model, $\beta$ indicates the mean difference in the outcome variable between the two groups (in this case, the percent change in the BART scores). We fit different priors on $\beta$ and set different weights on these priors to obtain our posterior estimate.
 
 $$
 \begin{align}
@@ -52,7 +59,7 @@ fit.brm = brm(
     prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
   ), 
   seed = 99,
-  backend = "cmdstanr", #Fumeng: I have to use this as my backend, 'rstan' backend doesn't work on my laptops...
+  backend = "cmdstanr", #(TODO remove this comment?) Fumeng: I have to use this as my backend, 'rstan' backend doesn't work on my laptops...
   chains = 4, 
   cores = 4,
   data = df)
@@ -63,6 +70,9 @@ summary(fit.brm)
 
 
 ```{r}
+# TODO: write a fewnote why this simulated data is used. 
+# TODO: If Poisson model is not covered, move this code to a separate file. In the file name, indicate that it should not be provided to the course participants. Let Chat know.
+
 sim_trial = function(y) {
   # let y be the actual number of trials that a participant will pump until
   # p be the point of explosion for any given trial
@@ -100,11 +110,13 @@ df.gen = df %>%
     P30 = map(adjP30, sim_)
   )
 
+# TODO: fix the path to be relative to the project 
 saveRDS(df.gen, "~/Documents/Github/chi22-course/data/exp2-gen.rds")
 ```
 
 
 ```{r}
+# TODO: fix the path to be relative to the project 
 df.gen = readRDS("~/Documents/Github/chi22-course/data/exp2-gen.rds") %>%
   mutate(
     P10 = map(P10, ~ unlist(ifelse(is.numeric(.), P10, 128))),
