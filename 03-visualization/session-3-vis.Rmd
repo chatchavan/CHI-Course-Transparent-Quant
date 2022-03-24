@@ -18,7 +18,6 @@ library(ordinal)
 library(ggrepel)
 library(glue)
 library(dabestr)
-# library(rethinking) 
 
 theme_set(theme_tidybayes())
 ```
@@ -623,3 +622,9 @@ means %>%
   NULL
 ```
 
+# Packages Information
+```{r}
+
+sessionInfo()
+
+```

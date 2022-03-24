@@ -22,7 +22,7 @@ output:
 ```{r knit-github, eval=FALSE,echo=FALSE,include=FALSE}
 # compile for github, you can ignore this
 library(rmarkdown)
-render("02-bayesian_stats/bayesian-analysis.Rmd", md_document(variant = "gfm"), knit_root_dir = "/Users/fm/Documents/Github/CHI-Course-Transparent-Quant")
+render("bayesian-analysis.Rmd", md_document(variant = "gfm"), knit_root_dir = "/Users/fm/Documents/Github/CHI-Course-Transparent-Quant")
 ```
 
 
@@ -551,7 +551,7 @@ dataset1.brm.olr.priorchecks <- brm(
     warmup = 7500,
     backend = BRM_BACKEND,
     sample_prior = 'only',
-    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks1.rds"
+    file = "rds/dataset1.brm.bayesiant.priorchecks1.rds"
   )
 
 dataset1.olr.yprior <-  posterior_predict(dataset1.brm.olr.priorchecks, ndraws = 100)
@@ -582,7 +582,7 @@ dataset1.brm.olr.priorchecks <- brm(
     warmup = 7500,
     backend = BRM_BACKEND,
     sample_prior = 'only',
-    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks2.rds"
+    file = "rds/dataset1.brm.bayesiant.priorchecks2.rds"
     )
 
 summary(dataset1.brm.olr.priorchecks)
@@ -619,7 +619,7 @@ dataset1.brm.olr1 =
     prior = dataset1.brm.olr.priors,
     data = exp1.data,
     backend = BRM_BACKEND,
-    file = "02-bayesian_stats/rds/dataset1.brm.olr1.rds"
+    file = "rds/dataset1.brm.olr1.rds"
   )
 
 summary(dataset1.brm.olr1)
@@ -637,7 +637,7 @@ dataset1.brm.olr2 =
     warmup = 1500,
     iter = 2500,
     control = list(adapt_delta = 0.99, max_treedepth = 15),
-    file = "02-bayesian_stats/rds/dataset1.brm.olr2.rds"
+    file = "rds/dataset1.brm.olr2.rds"
   )
 
 summary(dataset1.brm.olr2)
@@ -721,7 +721,7 @@ dataset1.olr.posterior_comparison %>%
 Load the data.
 
 ```{r load-dataset-2}
-dataset2 = readr::read_csv("02-bayesian_stats/data/exp2.csv") %>%
+dataset2 = readr::read_csv("data/exp2.csv") %>%
   mutate(condition = condition == 'expansive') %>%
   group_by(participant)
 
@@ -785,7 +785,7 @@ dataset2.brm.student.priorchecks = brm(
   data = dataset2,
   backend = BRM_BACKEND,
   sample_prior = 'only',
-  file = "02-bayesian_stats/rds/dataset2.brm.student.priorchecks.rds"
+  file = "rds/dataset2.brm.student.priorchecks.rds"
 )
 
 ```
@@ -807,7 +807,7 @@ dataset2.brm.student = brm(
  ), 
  data = dataset2,
  backend = BRM_BACKEND,
- file = "02-bayesian_stats/rds/dataset2.brm.student.rds"
+ file = "rds/dataset2.brm.student.rds"
 )
 
 dataset2.brm.student$prior
