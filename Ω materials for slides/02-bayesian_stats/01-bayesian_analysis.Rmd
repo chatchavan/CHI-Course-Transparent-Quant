@@ -24,7 +24,7 @@ library(modelr)
 library(brms)
 library(tidybayes)
 
-library(rethinking)
+library(rethinking)   # devtools::install_github("rmcelreath/rethinking@slim")
 
 library(ggdist)
 library(ggplot2)
