@@ -27,7 +27,7 @@ theme_set(theme_ggdist() +
 Recall that the experiment shows participants the effectiveness of a certain drug, which is presented through either text ("No Graph" condition) or through a bar chart ("Graph" condition). Participants are asked to rate the effectiveness of a drug using a 9-item likert scale.
 
 ```{r}
-dataset = readr::read_csv("02-bayesian_stats/data/blinded.csv") %>%
+dataset = readr::read_csv("data/blinded.csv") %>%
   filter(experiment == 1) %>%
   mutate(condition = ifelse(condition == "graph", "Graph", "No Graph"))
 
@@ -88,7 +88,7 @@ p1 = dataset %>%
 p2 = dataset %>%
   ggplot() +
   geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
-  scale_y_continuous(breaks = 0, limits = seq(0, 1)) +
+  scale_y_continuous(breaks = 0, limits = c(0, 1)) +
   theme(
     axis.title.x = element_blank(), 
     axis.line.x = element_blank(),
@@ -100,16 +100,46 @@ p2 = dataset %>%
 plot_grid(p2, p1, ncol = 1)
 ```
 
-```{r}
+We can describe the data for this group using a t-distribution:
+
+```{r, warning = FALSE}
 df.graph = filter(dataset, condition == "Graph")
 N = nrow(df.graph)
 data_mu = mean(df.graph$effectiveness)
 data_sigma = sd(df.graph$effectiveness)
-likelihood = tibble(x = seq(0, 11, by = 0.02), y = gamlss.dist::dTF2(x, data_mu, data_sigma/sqrt(N)))
+likelihood = tibble(x = seq(0, 11, by = 0.02), y = gamlss.dist::dTF2(x, data_mu, data_sigma))
 
 p2 = ggplot() +
   geom_area(data = likelihood, aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
-  annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 2) +
+  annotate("text", label = "Likelihood =\nP(data | mean)\n~ t(nu. mu, sigma)", x = 9, y = 0.5) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_y_continuous(breaks = 0, limits = c(0, 1)) +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+A student's t distribution is defined using three parameters: $\nu$, $\mu$, and $\sigma$. In a Bayesian analysis, each of these parameters are represented using probability distributions. The following graph shows the sampling distribution of $\mu_{graph}$, the mean of the t-distribution which describes the responses of the participants in the graph condition:
+
+
+```{r, warning = FALSE}
+df.graph = filter(dataset, condition == "Graph")
+N = nrow(df.graph)
+data_mu = mean(df.graph$effectiveness)
+data_sigma = sd(df.graph$effectiveness)
+likelihood = tibble(x = seq(0, 11, by = 0.02), y = dnorm(x, data_mu, data_sigma/sqrt(N)))
+
+p2 = ggplot() +
+  geom_area(data = likelihood, aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 2) +
+  annotate("text", label = "Likelihood =\nP(D | \\mu_{graph}) ??", x = 8, y = 2) +
   geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
   scale_y_continuous(breaks = 0, limits = c(0, 3)) +
   scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
@@ -127,7 +157,7 @@ plot_grid(p2, p1, ncol = 1)
 ```{r, warning = FALSE}
 prior_mu = 5
 prior_sigma = 0.5
-prior = tibble(x = seq(0, 11, by = 0.02), y = gamlss.dist::dTF2(x, prior_mu, prior_sigma))
+prior = tibble(x = seq(0, 11, by = 0.02), y = dnorm(x, prior_mu, prior_sigma))
 
 p2 = ggplot() +
   geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.3, size = 0.5) +
@@ -167,7 +197,7 @@ get_post_sigma = function (data, prior_mu, prior_sigma) {
 ```{r, warning = FALSE}
 post_mu = get_post_mu(df.graph$effectiveness, prior_mu, prior_sigma)
 post_sigma = get_post_sigma(df.graph$effectiveness, prior_mu, prior_sigma)
-posterior = tibble(x = seq(0, 11, by = 0.01), y = gamlss.dist::dTF2(x, post_mu, post_sigma))
+posterior = tibble(x = seq(0, 11, by = 0.01), y = dnorm(x, post_mu, post_sigma))
 
 p2 = ggplot() +
   geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.1, size = 0.5) +
@@ -197,7 +227,7 @@ posterior1 = posterior
 df.nograph = filter(dataset, condition == "No Graph")
 post_mu2 = get_post_mu(df.nograph$effectiveness, prior_mu, prior_sigma)
 post_sigma2 = get_post_sigma(df.nograph$effectiveness, prior_mu, prior_sigma)
-posterior2 = tibble(x = seq(0, 11, by = 0.01), y = gamlss.dist::dTF2(x, post_mu2, post_sigma2))
+posterior2 = tibble(x = seq(0, 11, by = 0.01), y = dnorm(x, post_mu2, post_sigma2))
 
 p1 = dataset %>%
   ggplot() +
