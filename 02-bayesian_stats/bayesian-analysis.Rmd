@@ -95,7 +95,7 @@ tidy.wrapper = function(model) {
 Let's first load and take a look at the data in a table:
 
 ```{r load-dataset, warning=FALSE, message=FALSE}
-dataset = readr::read_csv("blinded.csv")
+dataset = readr::read_csv("data/blinded.csv")
 
 head(dataset)
 ```
@@ -227,7 +227,7 @@ dataset1.brm.bayesiant.priorchecks <-
     data = exp1.data,
     backend = BRM_BACKEND,
     sample_prior = "only",
-    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.priorchecks.rds"
+    file = "rds/dataset1.brm.bayesiant.priorchecks.rds"
   )
 
 # extract n = 100 draws from the prior predictive distribution
@@ -256,8 +256,8 @@ dataset1.bayesiant.ppc %>%
   geom_line(
     aes(x = dens.x, y = dens.y, group = .draw),
     color = DARK_PURPLE,
-    alpha = .1,
-    size = .1
+    alpha = .2,
+    size = .5
   ) +
   labs(y = "", x = 'Draws from the prior predictive distribution')
 ```
@@ -281,7 +281,7 @@ dataset1.brm.bayesiant =
     # Here we use default parameters to simplify the lecture.
     # We save the model 
     # But if you have this file, brm only loads the model from this file
-    file = "02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"
+    file = "rds/dataset1.brm.bayesiant.rds"
   )
 ```
 
@@ -391,6 +391,13 @@ dataset1.bayesiant.posterior_comparison %>%
   coord_cartesian(ylim = c(0, 2), xlim = c(-1, 1))  +
   xlab('') + ylab('')
 ```
+
+```{r}
+dataset1.bayesiant.posterior_comparison %>%
+  mutate(greater = .epred < 0) %>%
+  summarise(`Pr(graph > no_graph)` = mean(greater))
+```
+
 
 Finally, we compare the results obtained from the Bayesian model to the frequentist estimates:
 
