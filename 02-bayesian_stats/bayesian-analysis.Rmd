@@ -4,7 +4,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 author: Abhraneel Sarma and Fumeng Yang
 output: 
   html_document: 
-    highlight: tango
+    highlight: pygments
     toc: yes
     df_print: kable
 ---
@@ -253,9 +253,11 @@ dataset1.brm.bayesiant.priorchecks <-
     file = "rds/dataset1.brm.bayesiant.priorchecks.rds"
   )
 
+n_prior_draws <- 30
+
 # extract n = 100 draws from the prior predictive distribution
 dataset1.bayesiant.yprior <-
-  posterior_predict(dataset1.brm.bayesiant.priorchecks, ndraws = 30)
+  posterior_predict(dataset1.brm.bayesiant.priorchecks, ndraws = n_prior_draws)
 
 # the following computes the probability density for each "draw"
 dataset1.bayesiant.ppc = dataset1.bayesiant.yprior %>%
@@ -280,9 +282,27 @@ dataset1.bayesiant.ppc %>%
     aes(x = dens.x, y = dens.y, group = .draw),
     color = DARK_PURPLE,
     alpha = .5,
-    size = .5
+    size = .75
   ) +
   labs(y = "", x = 'Draws from the prior predictive distribution')
+
+
+# Fumeng -> Abhraneel: I rewrote it...
+# I actually don't immediately know how to implement density estimation per .draw
+
+# flatten it
+dim(dataset1.bayesiant.yprior) <- n_prior_draws * 123
+
+# create a new table and assign .draw number
+tibble(.value = dataset1.bayesiant.yprior,
+       .draw = rep(1:n_prior_draws, times = 123)) %>%
+  ggplot() +
+  geom_density(
+    aes(x = .value, group = .draw),
+    color = DARK_PURPLE,
+    alpha = .5,
+    size = .5
+  )
 ```
 
 Although, based on the above plot, it seems like the model is assigning some non-zero probability to values which are not possible (y <= 0 and y > 9), these are primarily a result of our choice of the likelihood function --- the `student t` distribution does not allow us to set bounds on the predictive distribution. Another reason for extreme values may be the use of a student's t prior for sigma with 3 degrees of freedom --- this distribution has fat tails and thus might result in predicting large values for the standard deviation parameter in our model.
@@ -328,16 +348,22 @@ color_scheme_set(scheme = "purple")
 plot(dataset1.brm.bayesiant, newpage = T)
 ```
 
+
+
 Next, we need to examine if the posterior distributions computed by our MCMC process resembles the data. Each draw from the posterior predictive distribution should roughly resemble a "hypothetical experiment" with the same experimental design. Thus, if our posterior predictive distribution looks very different from the data, it implies that something has gone awry in our model building step (Step 1).
 
 They are many ways you can draw from the posterior predictive distribution. Here we use `posterior_predict` from `brms`. 
 
 ```{r dataset1-posterior-diagnotics-2}
 dataset1.bayesiant.y <- exp1.data$effectiveness
+
 dataset1.bayesiant.yrep <-
   posterior_predict(dataset1.brm.bayesiant)
 
-head(as_tibble(dataset1.bayesiant.yrep[, 1:11]))
+dataset1.bayesiant.yrepgroup <-
+  posterior_predict(dataset1.brm.bayesiant, data.frame(condition = c('graph', 'no_graph')))
+
+head(as_tibble(dataset1.bayesiant.yrep[,1:11]))
 ```
 
 We use `bayesplot` to perform these diagnostic tests. First, we plot the first eight draws of posterior predictions and the original data. Again, there are many ways to do this (and these will be discussed in greater detail in Lecture 3).
@@ -361,8 +387,6 @@ ppc_stat_grouped(y = dataset1.bayesiant.y,
                  yrep = dataset1.bayesiant.yrep,
                  group = exp1.data$condition, binwidth = .1)
 ```
-
-
 
 
 ### Step 3: Comparing posterior distributions
@@ -418,6 +442,13 @@ dataset1.bayesiant.posterior_comparison %>%
   coord_cartesian(ylim = c(0, 2), xlim = c(-1, 1))  +
   xlab('') + ylab('')
 ```
+
+```{r}
+dataset1.bayesiant.posterior_comparison %>%
+  mutate(if_greater = .epred < 0) %>%
+  summarise(`Pr(graph > no_graph)` = mean(if_greater))
+```
+
 
 Finally, we compare the results obtained from the Bayesian model to the frequentist estimates:
 
