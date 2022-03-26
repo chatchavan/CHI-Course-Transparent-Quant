@@ -33,6 +33,7 @@ rm(list = ls(all.names = TRUE))
 library(dplyr)
 library(tibble)
 library(purrr)
+library(ggpubr)
 library(tidyr)
 library(forcats)
 library(gtools)
@@ -169,11 +170,31 @@ Before we implement a Bayesian model, let us take a look at the distribution of 
 Let's also look how a student t distribution varies different parameter. Mu is location, sigma is dipsersion, and nu (df) control the tail.
 
 ```{r draw-student-t, fig.height=4, fig.width=8}
-ggplot() +  xlim(-10, 10) + 
-  geom_function(color = "black", fun = function(x) dstudent_t(x, mu = 0, sigma = 1, df = 5) , size = 1) + 
-  geom_function(color = "gray80", fun = function(x) dstudent_t(x, mu = 0, sigma = 1, df = 50), size = 1) + 
-  geom_function(color = "gray60", fun = function(x) dstudent_t(x, mu = 0, sigma = 4, df = 5), size = 1) + 
-  geom_function(color = "gray40", fun = function(x) dstudent_t(x, mu = 2,  sigma = 1, df = 5), size = 1) +
+ggplot() +  xlim(-10, 10) +
+  geom_function(
+    color = "black",
+    fun = function(x)
+      dstudent_t(x, mu = 0, sigma = 1, df = 5) ,
+    size = 1
+  ) +
+  geom_function(
+    color = "gray80",
+    fun = function(x)
+      dstudent_t(x, mu = 0, sigma = 1, df = 50),
+    size = 1
+  ) +
+  geom_function(
+    color = "gray60",
+    fun = function(x)
+      dstudent_t(x, mu = 0, sigma = 4, df = 5),
+    size = 1
+  ) +
+  geom_function(
+    color = "gray40",
+    fun = function(x)
+      dstudent_t(x, mu = 2,  sigma = 1, df = 5),
+    size = 1
+  ) +
   xlab("x")
 
 ```
@@ -208,6 +229,8 @@ dataset1.brm.bayesiant.priors = c(
       prior(student_t(3, 0, 1), class = "sigma")
   )
 ```
+
+
 
 ### Step 1: Build the model (prior predictive checks)
 
@@ -256,8 +279,8 @@ dataset1.bayesiant.ppc %>%
   geom_line(
     aes(x = dens.x, y = dens.y, group = .draw),
     color = DARK_PURPLE,
-    alpha = .1,
-    size = .1
+    alpha = .5,
+    size = .5
   ) +
   labs(y = "", x = 'Draws from the prior predictive distribution')
 ```
@@ -332,11 +355,15 @@ ppc_dens_overlay(y = dataset1.bayesiant.y,
 ```
 Finally, we look at whether our model is able to capture the summary statistics properly. Below we show the distribution of the estimated posterior mean for the two conditions, as well as the actual mean of the data in the two conditions. Since the actual mean appears to be centered around the estimated posterior distribution of the mean, we can conclude that it is roughly capturing the relevant information from the experimental data.
 
+
 ```{r dataset1-posterior-diagnotics-5, fig.height=3, fig.width=10}
 ppc_stat_grouped(y = dataset1.bayesiant.y,
                  yrep = dataset1.bayesiant.yrep,
                  group = exp1.data$condition, binwidth = .1)
 ```
+
+
+
 
 ### Step 3: Comparing posterior distributions
 
@@ -469,7 +496,7 @@ p2 = exp1.data %>%
   theme(axis.ticks = element_blank(),
         legend.position = "none")
 
-cowplot::plot_grid(p1, p2)
+ggarrange(p1, p2)
 ```
 
 Since cumulative proportion is a value bounded between 0 and 1, linear regression models apply the logit function to apply the following transformation $f: [0, 1] \to (-Inf, Inf)$. Applying this transformation to the data gives the plot on the right.
@@ -599,6 +626,8 @@ ggplot() +
   xlab('prior draws') + ylab('')
 ```
 
+
+
 Although these priors may be improved, it is often a case of trial and error. For now, let us proceed with these priors.
 
 ### Step 2: Computing the posterior probability
@@ -667,6 +696,8 @@ ppc_stat_grouped(y = dataset1.olr.y,
                  group = exp1.data$condition)
 
 ```
+
+
 
 ### Step 3: Compare posterior distributions
 
