@@ -290,7 +290,7 @@ dataset1.bayesiant.ppc %>%
 # Fumeng -> Abhraneel: I rewrote it...
 # I actually don't immediately know how to implement density estimation per .draw
 
-# flatten it
+# flat it
 dim(dataset1.bayesiant.yprior) <- n_prior_draws * 123
 
 # create a new table and assign .draw number
@@ -386,6 +386,73 @@ Finally, we look at whether our model is able to capture the summary statistics 
 ppc_stat_grouped(y = dataset1.bayesiant.y,
                  yrep = dataset1.bayesiant.yrep,
                  group = exp1.data$condition, binwidth = .1)
+```
+
+
+
+```{r dataset1-bayesiant-pop, fig.height=6, fig.width=6}
+
+newdata <- tibble(condition = c('graph', 'no_graph'))
+prior_preds <-  newdata %>%
+      add_predicted_draws(dataset1.brm.bayesiant.priorchecks)   %>%
+      select(condition, .prediction)  %>% 
+      rename(prior_prediction = .prediction) 
+    
+
+posterior_preds <-  newdata %>%
+      add_predicted_draws(dataset1.brm.bayesiant)   %>%
+      select(condition, .prediction)  %>% 
+      rename(posterior_prediction = .prediction)
+
+
+g0 <- exp1.data %>%
+ggplot(mapping = aes(x = effectiveness, y = ..density..)) +
+  geom_point(
+    exp1.data,
+    mapping = aes(x = effectiveness, y = 0),
+    position = position_jitter(height = .02, width = .2),
+    size = .3,
+    color = 'darkgray'
+  ) +
+  coord_cartesian(xlim = c(-1, 12), ylim = c(-0.1, 0.4)) +
+  facet_wrap(condition ~., ncol = 1)
+
+
+g1 <- g0 + geom_histogram(
+    binwidth = 1,
+    fill = 'darkgray',
+    color = 'white',
+    alpha = .5
+  ) +
+  geom_density( color = 'darkgray', size = 1, adjust = 3) 
+    
+
+g2 <- g1 + geom_density(
+    prior_preds,
+    mapping = aes(x = prior_prediction),
+    color = 'forestgreen',
+    fill = NA,#'forestgreen',
+    alpha = .3,
+    size = 1,
+    adjust = 1.2
+  ) 
+
+g3 <- g2 + geom_density(
+    posterior_preds,
+    mapping = aes(x = posterior_prediction),
+    color = DARK_PURPLE,
+    fill = NA,#DARK_PURPLE,
+    alpha = .3,
+    size = 1,
+    adjust = 1.2
+  ) 
+
+
+  
+g0
+g1
+g2
+g3
 ```
 
 
