@@ -23,6 +23,26 @@ library(dabestr)
 theme_set(theme_tidybayes())
 ```
 
+## Introduction
+
+We will revisit Datasets 1 and 2 from last time, focusing on exploring the **visualizations** instead of the analysis. By the end of this tutorial, you will learn to:
+
+1.  Apply the **Grammar of Graphics** to build simple plots
+2.  Identify the types of **uncertainty** from model outputs and modify code to visualize outputs and uncertainty
+3.  Use resources to find options for making a plot more **expressive** and evaluate its **usability**
+
+### Pre-survey
+
+What makes a plot? How do you systematically describe a plot, like linguists using **grammar** to describe a language?
+
+Go to ==TODO== (survey link)
+
+It's OK if you're sure about your answers! It's all part of the plan 🤔
+
+\[Review survey response and adjust timing accordingly\]
+
+------------------------------------------------------------------------
+
 ## Dataset 1 Blinded with Science
 
 ### Load the data
@@ -36,10 +56,22 @@ theme_set(theme_tidybayes())
 )
 ```
 
-
 ### Explore the data with ggplot
 
 We modeled how `condition` (graph or no graph) affected `effectiveness`, a Likert scale rating from 1 to 9.
+
+To start out, create a scatterplot of bill length versus bill depth for the three species. Your plot should look like this:
+
+![](images/000005.png)
+
+This is the Grammar of Graphics specification:
+
+-   Visual channel encoding
+
+    -   x-axis \<- effectiveness
+    -   y-axis \<- condition
+
+-   Mark/geometry: point
 
 ```{r}
 df1 %>%
@@ -58,7 +90,7 @@ df1 %>%
   pivot_wider(names_from = condition, values_from = n, values_fill = 0)
 ```
 
-Visualize the aggregated dataset 
+Visualize the aggregated dataset
 
 ```{r}
 df1 %>%
@@ -69,9 +101,9 @@ df1 %>%
   scale_x_continuous(breaks = 1:9)
 ```
 
-## Dataset 1, frequentist land 
+## Dataset 1, frequentist land
 
-### Wilcoxon 
+### Wilcoxon
 
 ```{r}
 m_wilcox <- wilcox.test(
@@ -92,26 +124,24 @@ tidy(m_wilcox) %>%
   scale_x_continuous(breaks = -1:9, limits = c(-1, 9))
 ```
 
-
 ### t-test
 
 Baseline: table/textual reporting
 
 ```{r }
 m_t_test <- t.test(
-  effectiveness ~ condition, 
+  effectiveness ~ condition - 1, 
   data = df1, paired = FALSE, conf.int = TRUE)
 ```
-
 
 ```{r }
 m_t_test
 ```
 
-t-test is equivalent to a linear model with a slope and intercept $y_i = \beta_0 + \beta_1 x_i$ (`1 + condition` below) so using `lm` because the output is easier to wrangle (good explainer: https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis)
+t-test is equivalent to a linear model with a slope and intercept $y_i = \beta_0 + \beta_1 x_i$ (`1 + condition` below) so using `lm` because the output is easier to wrangle (good explainer: <https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis>)
 
 ```{r}
-(m_t_test <- lm(effectiveness ~ 1 + condition, data = df1))
+(m_t_test <- lm(effectiveness ~ - 1 + condition, data = df1))
 ```
 
 Tidy view of the t-test results
@@ -131,8 +161,7 @@ tidy(m_t_test) %>%
   scale_y_discrete(labels = c("Intercept (beta_0)", "condition: no graph"))
 ```
 
-Add interval for uncertainty. The _confidence distribution_ for the parameters follows the student-t distribution. https://mjskay.github.io/ggdist/articles/freq-uncertainty-vis.html
-
+Add interval for uncertainty. The *confidence distribution* for the parameters follows the student-t distribution. <https://mjskay.github.io/ggdist/articles/freq-uncertainty-vis.html>
 
 ```{r }
 tidy(m_t_test) %>%
@@ -146,6 +175,7 @@ tidy(m_t_test) %>%
   scale_x_continuous(breaks=-1:9) + 
   scale_y_discrete(labels = c("Intercept (beta_0)", "condition: no graph"))
 ```
+
 That was for the paramters. Now we make predictions () with `augment`
 
 ```{r }
@@ -180,7 +210,9 @@ aug_df1 %>%
   #   label = "Jittered raw data", box.padding = 1,
   #   position = position_nudge_repel(y = -0.2)) +
   NULL
+
 ```
+
 Show fit line with data
 
 ```{r}
@@ -191,7 +223,6 @@ Show fit line with data
   deframe()
 )
 ```
-
 
 ```{r}
 df1 %>% 
@@ -215,10 +246,9 @@ df1 %>%
   scale_x_continuous(breaks = c(0,1), labels = c("graph (x = 0)", "no graph (x = 1)"), limits = c(-0.5, 1.5)) 
 ```
 
-
 ### Ordinal linear regression
 
-https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes
+<https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes>
 
 We've seen this before
 
@@ -249,7 +279,6 @@ logit <- function(x) log(x / (1 - x))
 )
 ```
 
-
 ```{r}
 cumu_df1 %>%
   filter(!is.infinite(logit_cum_pr_k)) %>%
@@ -261,6 +290,7 @@ cumu_df1 %>%
   scale_x_continuous(breaks = 1:9) + 
   ylab("log-cumulative-odds")
 ```
+
 Once we have the estimates in the cumulative log odds space, can do inverse logit (`brms::inv_logit_scaled()`), and get proportions out of the cumulative proportions.
 
 ```{r}
@@ -284,14 +314,12 @@ cumu_df1 %>%
   facet_grid(~condition)
 ```
 
-
 ```{r dat1-frequentist-model3}
 (m_olr_freq <- df1 %>% 
   mutate(effectiveness = ordered(effectiveness, levels = as.character(1:9))) %>% 
   ordinal::clm(effectiveness ~ condition, data = .)
 )
 ```
-
 
 ```{r}
 glance(m_olr_freq)
@@ -302,6 +330,7 @@ tidy(m_olr_freq)
 ```{r}
 (condition_no_graph <- tidy(m_olr_freq) %>% slice_tail())
 ```
+
 Showing estimates on the cumulative log odds scale
 
 ```{r}
@@ -340,9 +369,7 @@ as.data.frame(predict(m_olr_freq, type.predict = "prob", se.fit = TRUE)) %>%
   ylab("Proportion")
 ```
 
-
 ## Dataset 1, Bayesian land
-
 
 ### Dataset 1, Bayesian t-test
 
@@ -360,7 +387,6 @@ Get estimates for parameters and outcome predictions (1..9).
 )
 ```
 
-
 ```{r }
 (means_df1_t <- grid_df1 %>%
   add_epred_draws(m_t_test_bayesian, newdata = . ,dpar = TRUE))
@@ -375,9 +401,9 @@ Visualize parameter uncertainty, predictive uncertainty, and raw data.
 
 EXERCISE:
 
-- (which visual element?) <- Parameter uncertainty
-- (which visual element?) <- Predictive uncertainty
-- (which visual element?) <- Raw data (with intrinsic uncertainty, too!)
+-   (which visual element?) \<- Parameter uncertainty
+-   (which visual element?) \<- Predictive uncertainty
+-   (which visual element?) \<- Raw data (with intrinsic uncertainty, too!)
 
 ```{r}
 df1 %>%
@@ -392,7 +418,8 @@ df1 %>%
   scale_x_continuous(breaks = 1:9)+
   scale_color_brewer()
 ```
-An alternative way of seeing the uncertainty, in Kruschke style. The bunch of density lines shows both parameter and predictive uncertainty. 
+
+An alternative way of seeing the uncertainty, in Kruschke style. The bunch of density lines shows both parameter and predictive uncertainty.
 
 ```{r}
 means_df1_t %>%
@@ -408,7 +435,7 @@ means_df1_t %>%
 
 ### Dataset 1, Bayesian OLR
 
-There're starter values and stuff, not bothered just yet https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes
+There're starter values and stuff, not bothered just yet <https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes>
 
 ```{r dat1-bayesian-model3}
 (m_olr_bayes <- readRDS("../02-bayesian_stats/rds/dataset1.brm.olr1.rds"))
@@ -423,7 +450,6 @@ Get posterior estimates for the parameters and predictions (outcome on the scale
 )
 ```
 
-
 ```{r}
 (preds_df1_olr <- expand(df1, condition) %>%
     add_predicted_draws(m_olr_bayes) %>%
@@ -431,6 +457,7 @@ Get posterior estimates for the parameters and predictions (outcome on the scale
    drop_na()
  )
 ```
+
 EXERCISE: why does this look different from the frequentist version?
 
 ```{r}
@@ -450,8 +477,8 @@ means_df1_olr %>%
   xlab("Condition: graph - no graph") + 
   ylab("Proportion")
 ```
-EXERCISE (challenge): follow https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes to construct a stacked version
 
+EXERCISE (challenge): follow <https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes> to construct a stacked version
 
 ```{r}
 (means_df1_olr_compare <- means_df1_olr %>%
@@ -485,21 +512,18 @@ preds_df1_olr %>%
 
 ```
 
-
-
 ## Dataset 2 Power Pose
 
-Load the dataframe. Data dictionary/column description at https://github.com/yvonnejansen/posture/blob/master/data/exp2_column-description.csv 
+Load the dataframe. Data dictionary/column description at <https://github.com/yvonnejansen/posture/blob/master/data/exp2_column-description.csv>
 
 ```{r}
 df2 <- read_csv("../02-bayesian_stats/data/exp2.csv")
 ```
 
-We only modeled two variables: `change` and `condition`. 
+We only modeled two variables: `change` and `condition`.
 
-- Each of the 80 participants were assigned to either "constrictive" or "expansive" conditions. 
-- `change` is "a normalized measure for how people’s behavior changed over the course of the experiment (∼10 min)". The experiment was done in three phases where participants pumped balloons. `change` $ = \frac{\text{mean adjusted # of pumps in Phase 3 - mean adjusted # of pumps in Phase 1}}{\text{mean adjusted # of pumps in Phase 3}}$
-
+-   Each of the 80 participants were assigned to either "constrictive" or "expansive" conditions.
+-   `change` is "a normalized measure for how people's behavior changed over the course of the experiment (∼10 min)". The experiment was done in three phases where participants pumped balloons. `change` \$ = \frac{\text{mean adjusted # of pumps in Phase 3 - mean adjusted # of pumps in Phase 1}}{\text{mean adjusted # of pumps in Phase 3}}\$
 
 ```{r}
 df2 %>%
@@ -515,7 +539,6 @@ df2 %>%
   xlab("Percent change") + 
   NULL
 ```
-
 
 ## Dataset 2 results
 
@@ -556,11 +579,9 @@ get_variables(fit.brm)
 )
 ```
 
-
 ```{r}
 df2_range <- c(min(df2$change - 20), max(df2$change + 20))
 ```
-
 
 ```{r}
 means %>%
@@ -573,7 +594,6 @@ means %>%
   stat_pointinterval() + 
   xlim(df2_range)
 ```
-
 
 ```{r}
 ggplot() + 
@@ -593,8 +613,7 @@ ggplot() +
 
 (Reflection: think about what these all mean)
 
-- How wide are the intervals?
-
+-   How wide are the intervals?
 
 ```{r}
 ggplot(mapping = aes(fill = condition)) + 
@@ -611,7 +630,6 @@ ggplot(mapping = aes(fill = condition)) +
   xlim(df2_range)
 ```
 
-
 ```{r}
 means %>%
   sample_draws(30) %>%
@@ -622,4 +640,3 @@ means %>%
   xlim(df2_range) + 
   NULL
 ```
-
