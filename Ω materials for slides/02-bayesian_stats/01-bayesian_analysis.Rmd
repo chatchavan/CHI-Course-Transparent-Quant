@@ -1,0 +1,450 @@
+---
+title: "Bayesian Dataset 1 - Transparent Practices for Quantitative Empirical Research"
+author: "Abhraneel Sarma"
+date: "3/3/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(tibble)
+library(purrr)
+library(tidyr)
+library(forcats)
+library(ggthemes)
+
+
+library(broom)
+library(broom.mixed)
+
+library(modelr)
+
+library(brms)
+library(tidybayes)
+
+library(rethinking)   # devtools::install_github("rmcelreath/rethinking@slim")
+
+library(ggdist)
+library(ggplot2)
+library(bayesplot)
+color_scheme_set("purple")
+
+theme_set(theme_ggdist())
+```
+
+
+## Introduction
+
+In this document, we will outline the Bayesian analogs of the statistical analyses described in the previous course lecture.
+
+## Data
+
+Load the data and helper functions.
+
+```{r load-data-and-helper}
+dataset = readr::read_csv("./data/blinded.csv")
+
+# this function extracts results from different models and generate results of the same format to be used in visualizations
+tidy.wrapper = function(model) {
+  if (class(model) == "lm") {
+    tidy(result_ttest, conf.int = TRUE) %>%
+      select(-c(statistic, p.value)) %>%
+      mutate(model = "Frequentist") %>%
+      select(model, everything())
+  } else if (class(model) == "brmsfit") {
+    tidy(result_ttest.bayesian) %>%
+      filter(effect == "fixed") %>%
+      select(c(term:conf.high)) %>%
+      mutate(model = "Bayesian") %>%
+      select(model, everything())
+  } else {
+    stop("unknown model class")
+  }
+}
+```
+
+__Dataset:__  Experiment 1 from "Blinded with Science or Informed by Charts? A Replication Study" [(Dragicevic & Jansen, 2018)](https://doi.org/10.1109/TVCG.2017.2744298)  
+Study participants were shown a vignette of a report about drug effectiveness with vs. without a chart (2 conditions, between-subjects).
+They were asked to rate how they believe in the effectiveness (9-point Likert-style item).
+
+### Let's first look at the data in a table
+
+```{r glance-dataset}
+
+    dataset
+
+```  
+
+
+```{r plot-dataset, fig.height = 3, fig.width = 7}
+dataset %>% 
+  mutate(effectiveness = fct_rev(factor(effectiveness, levels = 1:9))) %>%
+  
+  # stacked bar plot
+  ggplot(aes(x = condition, fill = effectiveness)) +
+  geom_bar(position = "stack", stat="count") +
+  
+  # plot data for different experiments as small multiples
+  facet_wrap( ~ experiment) +
+  
+  # grey color scale is robust for colorblind
+  scale_fill_brewer(palette="Greys", drop = FALSE) +
+  
+  # horizontal plot
+  coord_flip() +
+  
+  # legend
+  guides(fill = guide_legend(reverse = TRUE)) 
+```
+
+As we can see above, the original dataset contains results from four different experiments. For the purposes of this lecture, we will confine ourselves to the first experiment.
+
+```{r filter-data}
+exp1.data = dataset %>%
+  filter(experiment == 1)
+
+exp1.data
+```
+
+
+## Model 1. Wilcoxon signed rank test
+
+This is a non-parametric test which we will skip for now. Although, there exists Bayesian non-parametric methods, they are more advanced for this lecture
+
+## Model 2. t-test
+
+```{r freq-t-test}
+# this is the linear model equivalent for the paired sample t-test
+result_ttest =
+  lm(
+    effectiveness ~ condition - 1, 
+    data = exp1.data
+  )
+```
+
+```{r prior-selection }
+# prior selection
+as.tibble(
+  get_prior(
+    effectiveness ~ condition - 1,
+    family = student(),
+    data = exp1.data
+  )
+)
+```
+
+
+
+```{r, echo = FALSE}
+# this produces the default prior distributions
+x = seq(0, 100, by = 0.1)
+tibble(x = x, y = dgamma(x, 2, 0.1)) %>%
+  ggplot() +
+  geom_line(aes(x, y), color = "#b8925f", size = 2) +
+  labs(y = "Density") +
+  scale_y_continuous(limits = c(0, 0.04)) +
+  theme_minimal() +
+  theme(
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(size = 24),
+    axis.text = element_text(size = 20)
+  )
+
+
+x = seq(0, 20, by = 0.1)
+tibble(x = x, y = gamlss.dist::dTF(x, 0, 2.5, 3)) %>%
+  ggplot() +
+  geom_line(aes(x, y), color = "#b8925f", size = 2) +
+  labs(y = "Density") +
+  # scale_y_continuous(limits = c(0, 0.1)) +
+  theme_minimal() +
+  theme(
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(size = 24),
+    axis.text = element_text(size = 20)
+  )
+```
+
+```{r, echo = FALSE}
+# this produces slightly more sensible prior distributions
+x = seq(0, 10, by = 0.1)
+tibble(x = x, y = dnorm(x, 5, 1)) %>%
+  ggplot() +
+  geom_line(aes(x, y), color = "#b8925f", size = 2) +
+  labs(y = "Density") +
+  scale_x_continuous(breaks = seq(0, 10, by = 1)) +
+  theme_minimal() +
+  theme(
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(size = 24),
+    axis.text = element_text(size = 20)
+  )
+
+x = seq(0, 10, by = 0.1)
+tibble(x = x, y = gamlss.dist::dTF(x, 0, 1, 3)) %>%
+  ggplot() +
+  geom_line(aes(x, y), color = "#b8925f", size = 2) +
+  labs(y = "Density") +
+  # scale_y_continuous(limits = c(0, 0.1)) +
+  theme_minimal() +
+  theme(
+    axis.ticks = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.x = element_blank(),
+    axis.title.x = element_blank(),
+    axis.title.y = element_text(size = 24),
+    axis.text = element_text(size = 20)
+  )
+```
+
+
+```{r bayesian-t-test}
+result_ttest.bayesian = 
+  brm(
+    effectiveness ~ condition - 1,
+    prior = c(
+      prior(normal(0, 1), class = "b"), # there's a lot of data so even fairly "strong" priors are going to not matter so much here
+      prior(student_t(3, 0, 1), class = "sigma")
+    ),
+    family = student(),
+    # seed = 99,
+    # backend = "cmdstanr", #Fumeng: I have to use this as my backend, 'rstan' backend doesn't work on my laptops...
+    data = exp1.data,
+    chains = 3, cores = 3
+  )
+```
+
+Next, we visualise the results, along with a side-by-side comparison of the frequentist estimates:
+
+```{r t-test-compare, echo = FALSE, warning = FALSE}
+bind_rows(
+  tidy.wrapper(result_ttest),
+  tidy.wrapper(result_ttest.bayesian)
+) %>%
+  ggplot() +
+  geom_pointrange(
+    aes(
+      x = term, 
+      y = estimate, 
+      ymin = conf.low, 
+      ymax = conf.high, 
+      color = model
+    ), position = position_dodge(width = 0.2)) +
+    scale_color_brewer(palette = "Set2")
+```
+
+
+## Posterior predictive checks
+
+```{r}
+dataset1.bayesiant.posterior_fitted <- tibble(condition = c('graph', 'no_graph')) %>%
+  add_epred_draws(result_ttest.bayesian, re_formula = NA, allow_new_levels = FALSE) %>%
+  ungroup()
+
+head(dataset1.bayesiant.posterior_fitted)
+```
+
+
+```{r fig.height = 1, fig.width = 7}
+dataset1.bayesiant.posterior_comparison <- dataset1.bayesiant.posterior_fitted %>%
+  select(-c(.chain, .iteration, .row)) %>% 
+  compare_levels(variable = .epred, by = condition)
+
+dataset1.bayesiant.posterior_comparison %>%
+  mean_qi(.epred)
+
+dataset1.bayesiant.posterior_comparison %>%
+  mean_qi() %>%
+ggplot() +
+  geom_point(aes(x = .epred, y = 'graph - no graph'), size = 2) + 
+  geom_errorbarh( aes(xmin = .lower, xmax = .upper, y = 'graph - no graph'), height = 0) +
+  geom_vline(aes(xintercept = 0), linetype = "dashed", color = "gray") + 
+  coord_cartesian(ylim = c(0, 2), xlim = c(-1, 1))  +
+  xlab('Difference') + ylab('')
+```
+
+
+
+
+
+## Model 3. Ordinal Logistic Regression
+
+
+```{r}
+# figure from: Statistical rethinking with brms, ggplot2, and the tidyverse: Second edition by A Solomon Kurz
+exp1.data %>%
+  count(effectiveness) %>%
+  mutate(pr_k = n / nrow(exp1.data),
+         cum_pr_k = cumsum(pr_k)) %>% 
+  ggplot(aes(x = effectiveness, y = cum_pr_k, 
+             fill = effectiveness)) +
+  geom_linerange(aes(ymin = 0, ymax = cum_pr_k), alpha = 1/2, color = "#b8925f") +
+  geom_line(color = "#b8925f") +
+  geom_point(colour = "#b8925f", size = 2.5, stroke = 1) +
+  scale_x_continuous("Effectiveness", breaks = 1:7) +
+  scale_y_continuous("Cumulative Proportion", breaks = seq(0, 1, by = 0.2), limits = c(0, 1)) +
+  theme(axis.ticks = element_blank(),
+        legend.position = "none")
+```
+
+What is the model trying to estimate:
+
+```{r}
+# primary data
+exp1.data_plot = exp1.data %>%
+  count(effectiveness) %>%
+  mutate(pr_k = n / nrow(exp1.data)) %>%
+  add_row(effectiveness = 2, n = 0, pr_k = 0) %>%
+  arrange(effectiveness) %>%
+  mutate(cum_pr_k = cumsum(n / nrow(exp1.data))) %>% 
+  mutate(discrete_probability = ifelse(effectiveness == 1, cum_pr_k, cum_pr_k - pr_k))
+
+text = exp1.data_plot %>%
+  mutate(
+    text = effectiveness,
+    effectiveness = effectiveness + 0.25,
+    cum_pr_k = ifelse(cum_pr_k - 0.05 < 0.065, 0.05, cum_pr_k - 0.05)
+  )
+
+exp1.data_plot %>% 
+  ggplot(aes(x = effectiveness, y = cum_pr_k)) +
+  geom_line(aes(color = cum_pr_k), color = "#b8925f") +
+  geom_linerange(aes(ymin = 0, ymax = cum_pr_k), alpha = 1/2, color = "#b8925f") +
+  geom_linerange(aes(x = effectiveness,
+                     ymin = ifelse(effectiveness == 1, 0, discrete_probability), 
+                     ymax = cum_pr_k),
+                 color = "black") +
+  geom_point(colour = "#b8925f", size = 2.5, stroke = 1) +
+  # number annotation
+  geom_text(data = text, 
+            aes(label = text),
+            size = 4) +
+  scale_x_continuous("Effectiveness", breaks = 1:7) +
+  scale_y_continuous("Cumulative Proportion", breaks = seq(0, 1, by = 0.2), limits = c(0, 1)) +
+  theme(axis.ticks = element_blank(),
+        axis.title.y = element_text(angle = 90),
+        legend.position = "none")
+```
+
+
+### Build the model
+
+```{r}
+dataset1.brm.olr.formula = bf(effectiveness ~ condition, family = cumulative("logit"))
+
+# priors
+dataset1.brm.olr.priors = c(
+      	  prior(normal(0, 1), class = "b"),
+      		prior(student_t(3, 0, 2), class = "Intercept")
+)
+```
+
+### Prior predictive checks
+
+```{r}
+# priors
+dataset1.brm.olr.priors = c(
+      	  prior(normal(0, 1), class = "b"),
+      		prior(student_t(3, 0, 1.5), class = "Intercept")
+)
+
+dataset1.brm.olr.priorchecks <- brm(
+    dataset1.brm.olr.formula,
+    data = exp1.data,
+    prior = dataset1.brm.olr.priors,
+    iter = 15000,
+    warmup = 7500,
+    chains = 3,
+    cores = 3,
+    # backend = 'cmdstanr',
+    sample_prior = 'only'
+  )
+
+dataset1.olr.yprior <-  posterior_predict(dataset1.brm.olr.priorchecks, ndraws = 1000)
+
+ggplot() +
+  geom_histogram(aes(x = dataset1.olr.yprior),
+               fill = '#351c75',
+               alpha = .5, size = 1,
+               binwidth = 0.5, center = 0) +
+ scale_x_continuous(breaks = 1:9, limits = c(0.5, 9.5)) + 
+ labs(x = 'Prior predictive distribution',  y = "") +
+ theme(
+   axis.text.y = element_blank()
+ )
+```
+
+### Model implementation
+
+```{r, eval = FALSE}
+dataset1.brm.olr = brm(dataset1.brm.olr.formula,
+    prior = dataset1.brm.olr.priors,
+    data = exp1.data,
+    # backend = "cmdstanr",
+    file = "rds/dataset1.brm.ordinal",
+    warmup = 1500,  iter = 2500,
+    control = list(adapt_delta = 0.99, max_treedepth = 15)
+  )
+```
+
+```{r}
+dataset1.olr.y <- exp1.data$effectiveness
+dataset1.olr.yrep <- posterior_predict(result_olr.bayesian, draws = 200)
+# dataset1.olr.yrep
+```
+
+
+```{r, fig.width = 6, fig.height = 2}
+ppc_hist(y = dataset1.olr.y,
+         yrep = dataset1.olr.yrep[100:107,], binwidth = .5) +
+  scale_x_continuous(breaks = seq(1, 9, by = 1))
+```
+
+```{r, fig.width = 6, fig.height = 2}
+ppc_dens_overlay(y = dataset1.olr.y,
+         yrep = dataset1.olr.yrep[1:100,]) +
+  scale_x_continuous(breaks = seq(1, 9, by = 1))
+```
+
+
+```{r, fig.height = 2, fig.width = 7}
+dataset1.olr.posterior_fitted = tibble(condition = c('graph', 'no_graph')) %>%
+  add_epred_draws(result_olr.bayesian, re_formula = NA, allow_new_levels = FALSE) %>%
+  ungroup()
+
+head(dataset1.olr.posterior_fitted)
+```
+```{r}
+dataset1.olr.posterior_comparison <- dataset1.olr.posterior_fitted %>%
+  select(-c(.chain, .iteration, .row)) %>% 
+  group_by(.category) %>%
+  compare_levels(.epred, by = condition)
+
+dataset1.olr.posterior_comparison %>%
+  mean_qi() %>%
+  knitr::kable()
+```
+
+```{r}
+dataset1.olr.posterior_comparison %>%
+  mean_qi(.epred) %>%
+ggplot() +
+  geom_point(aes(x = .epred, y = .category), size = 2) + 
+  geom_errorbarh( aes(xmin = .lower, xmax = .upper, y = .category), height = 0) +
+  geom_vline(aes(xintercept = 0), linetype = "dashed", color = "gray") + 
+  # coord_cartesian(ylim = c(0, 2), xlim = c(-1, 1))  +
+  xlab('difference') + ylab('')
+```
+
+

@@ -1,0 +1,257 @@
+---
+title: "intro-BDA-example"
+author: "Abhraneel Sarma"
+date: '2022-03-23'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggdist)
+library(cowplot)
+
+theme_set(theme_ggdist() + 
+          theme(
+            strip.background = element_blank(),
+            plot.title = element_text(vjust = .5),
+            axis.line.y = element_blank(),
+            axis.title.y = element_blank(),
+            axis.ticks.y = element_blank(),
+            legend.position = 'none'
+          ))
+```
+
+Recall that the experiment shows participants the effectiveness of a certain drug, which is presented through either text ("No Graph" condition) or through a bar chart ("Graph" condition). Participants are asked to rate the effectiveness of a drug using a 9-item likert scale.
+
+```{r}
+dataset = readr::read_csv("data/blinded.csv") %>%
+  filter(experiment == 1) %>%
+  mutate(condition = ifelse(condition == "graph", "Graph", "No Graph"))
+
+head(dataset)
+```
+
+We can visualise the data as such. We want to perform a comparision between the two groups of observed data and determine:
+
+- whether they are different from each other
+- if they are different, what is the magnitude of this difference
+
+The Bayesian t-test allows us to answer these research questions. Like any other Bayesian data analysis, to implement this we need to perform three steps:
+
+- first we need to describe the distribution of the observed data (also known as the Likelihood)
+- next we need to define priors
+- finally, we will compute the posteriors
+
+We can then use the posteriors to compare between the two groups and answer the research questions. Let's us see how.
+
+This is what the participants' responses look like:
+
+```{r}
+p1 = dataset %>%
+  ggplot() +
+  geom_point(aes(y = effectiveness, x = condition, color = condition), position = position_dodge2(width = 0.5), alpha = 0.2) +
+  scale_colour_manual(values = c("#6405F9", "#FF7E50")) +
+  coord_flip() +
+  scale_y_continuous(breaks = seq(1, 9, by = 2), limits = c(0, 11)) +
+  labs(y = "Effectiveness")
+
+p2 = dataset %>%
+  ggplot() +
+  # geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_y_continuous(breaks = 0, limits = seq(0, 1)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+First, let's focus on the people in the "Graph" condition. We need to describe the observed data as a probability distribution. Since we are performing a t-test, we will use the Student's t distribution to describe the observed data.
+
+```{r, warning = FALSE}
+p1 = dataset %>%
+  filter(condition == "Graph") %>%
+  add_row(experiment = 1, condition = "No Graph", effectiveness = NULL) %>%
+  ggplot() +
+  geom_point(aes(y = effectiveness, x = condition), colour = "#6405F9", position = position_dodge2(width = 0.5), alpha = 0.2) +
+  coord_flip() +
+  scale_y_continuous(breaks = seq(1, 9, by = 2), limits = c(0, 11)) +
+  labs(y = "Effectiveness")
+
+p2 = dataset %>%
+  ggplot() +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_y_continuous(breaks = 0, limits = c(0, 1)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+We can describe the data for this group using a t-distribution:
+
+```{r, warning = FALSE}
+df.graph = filter(dataset, condition == "Graph")
+N = nrow(df.graph)
+data_mu = mean(df.graph$effectiveness)
+data_sigma = sd(df.graph$effectiveness)
+likelihood = tibble(x = seq(0, 11, by = 0.02), y = gamlss.dist::dTF2(x, data_mu, data_sigma))
+
+p2 = ggplot() +
+  geom_area(data = likelihood, aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  annotate("text", label = "Likelihood =\nP(data | mean)\n~ t(nu. mu, sigma)", x = 9, y = 0.5) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_y_continuous(breaks = 0, limits = c(0, 1)) +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+A student's t distribution is defined using three parameters: $\nu$, $\mu$, and $\sigma$. In a Bayesian analysis, each of these parameters are represented using probability distributions. The following graph shows the sampling distribution of $\mu_{graph}$, the mean of the t-distribution which describes the responses of the participants in the graph condition:
+
+
+```{r, warning = FALSE}
+df.graph = filter(dataset, condition == "Graph")
+N = nrow(df.graph)
+data_mu = mean(df.graph$effectiveness)
+data_sigma = sd(df.graph$effectiveness)
+likelihood = tibble(x = seq(0, 11, by = 0.02), y = dnorm(x, data_mu, data_sigma/sqrt(N)))
+
+p2 = ggplot() +
+  geom_area(data = likelihood, aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 2) +
+  annotate("text", label = "Likelihood =\nP(D | \\mu_{graph}) ??", x = 8, y = 2) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+```{r, warning = FALSE}
+prior_mu = 5
+prior_sigma = 0.5
+prior = tibble(x = seq(0, 11, by = 0.02), y = dnorm(x, prior_mu, prior_sigma))
+
+p2 = ggplot() +
+  geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.3, size = 0.5) +
+  geom_area(data = likelihood, aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
+  annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+```{r}
+get_post_mu = function (data, prior_mu, prior_sigma) {
+  data_mu = mean(data)
+  data_sigma = sd(data)
+  n = length(data)
+  ((prior_mu/prior_sigma^2) + ((n * data_mu)/data_sigma^2))/((1/prior_sigma^2) + (n/data_sigma^2))
+}
+
+get_post_sigma = function (data, prior_mu, prior_sigma) {
+  data_sigma = sd(data)
+  n = length(data)
+  sqrt(1/((1/prior_sigma^2) + (n/data_sigma^2)))
+}
+```
+
+
+```{r, warning = FALSE}
+post_mu = get_post_mu(df.graph$effectiveness, prior_mu, prior_sigma)
+post_sigma = get_post_sigma(df.graph$effectiveness, prior_mu, prior_sigma)
+posterior = tibble(x = seq(0, 11, by = 0.01), y = dnorm(x, post_mu, post_sigma))
+
+p2 = ggplot() +
+  geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.1, size = 0.5) +
+  geom_area(data = likelihood, aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  geom_area(data = posterior, aes(x, y), colour = "#6405F9", fill = "#6405F9", alpha = 0.3, size = 0.5) +
+  annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
+  annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
+  annotate("text", label = "Posterior =\nP(mean | data)", x = 7.8, y = 2) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+
+```{r}
+posterior1 = posterior
+
+df.nograph = filter(dataset, condition == "No Graph")
+post_mu2 = get_post_mu(df.nograph$effectiveness, prior_mu, prior_sigma)
+post_sigma2 = get_post_sigma(df.nograph$effectiveness, prior_mu, prior_sigma)
+posterior2 = tibble(x = seq(0, 11, by = 0.01), y = dnorm(x, post_mu2, post_sigma2))
+
+p1 = dataset %>%
+  ggplot() +
+  geom_point(aes(y = effectiveness, x = condition, color = condition), position = position_dodge2(width = 0.5), alpha = 0.2) +
+  scale_colour_manual(values = c("#6405F9", "#FF7E50")) +
+  coord_flip() +
+  scale_y_continuous(breaks = seq(1, 9, by = 2), limits = c(0, 11)) +
+  labs(y = "Effectiveness")
+
+p2 = ggplot() +
+  geom_area(data = posterior1, aes(x, y), colour = "#6405F9", fill = "#6405F9", alpha = 0.2, size = 0.5) +
+  geom_area(data = posterior2, aes(x, y), colour = "#FF7E50", fill = "#FF7E50", alpha = 0.2, size = 0.5) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+
