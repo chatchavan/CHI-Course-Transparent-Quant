@@ -1,0 +1,8 @@
+---
+title: "Posture dataset (frequentist, continuous dependent variable)"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
