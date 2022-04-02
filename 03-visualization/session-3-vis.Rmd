@@ -42,7 +42,7 @@ It's OK if you're sure about your answers! It's all part of the plan 🤔
 
 ------------------------------------------------------------------------
 
-## Dataset 1 Blinded with Science
+## Activity 1: exploring data
 
 ### Load the data
 
@@ -100,7 +100,19 @@ df1 %>%
   scale_x_continuous(breaks = 1:9)
 ```
 
-## Dataset 1, frequentist land
+|                         | Frequentist | Bayesian |
+|-------------------------|-------------|----------|
+| Table summary           |             |          |
+| Point estimate          |             |          |
+| Interval-parameter      |             |          |
+| Distribution-parameter  |             |          |
+| Interval-prediction     |             |          |
+| Distribution-prediction |             |          |
+
+
+## Activity 2: t-test
+
+<!--## Dataset 1, frequentist land-->
 
 ### Wilcoxon
 
@@ -212,37 +224,77 @@ aug_df1 %>%
 
 ```
 
-Show fit line with data
+Predictions?
 
 ```{r}
-(coefficients <- m_t_test %>%
-  tidy() %>%
-  mutate(term = c("intercept", "slope")) %>%
-  select(term, estimate) %>% 
-  deframe()
+(df1_grid <- df1 %>%
+  data_grid(condition))
+
+(t_mult <- qt(1 - 0.05/2, df.residual(m_t_test)))
+```
+
+```{r}
+(obj_pred <- predict(m_t_test, newdata = df1_grid, 
+                     se.fit=TRUE, interval = "prediction", level = 0.95))
+```
+
+Finding the standard error of the prediction
+
+```{r}
+(preds_df1_t_freq <- aug_df1 %>%
+  mutate(.se.pred = sqrt(.se.fit ^ 2 + mean(residuals(m_t_test)^2))) %>%
+  mutate(t_mult = t_mult, 
+         df = df.residual(m_t_test),
+         lower = .fitted - t_mult * obj_pred$residual.scale,
+         upper = .fitted + t_mult * obj_pred$residual.scale,
+         lower1 = .fitted - t_mult * .se.pred,
+         upper1 = .fitted + t_mult * .se.pred)
 )
 ```
 
 ```{r}
-df1 %>% 
-  ggplot(aes(x = ifelse(condition == "graph", 0, 1), y = effectiveness)) + 
-  stat_lineribbon(aes(
-    x = ifelse(condition == "graph", 0, 1), y = NULL, 
-    ydist = dist_student_t(
-      df = df.residual(m_t_test), 
-      mu = .fitted, sigma = .se.fit)), 
-    data = aug_df1, alpha = 0.3, fill = "#8c96c6") +
-  geom_count(color = "gray45") + 
-  geom_label_repel(
-    data = tibble(x =0.7, y = 0.7 * 0.18 + 6.57),
-    mapping = aes(x = x, y = y),
-    label = glue("y = {format(round(coefficients[\"intercept\"], 2), nsmall=2)} + {format(round(coefficients[\"slope\"], 2), nsmall=2)}x"), color = "#8c96c6", 
-    box.padding = 2) + 
-  labs(
-    title = "The t-test/lm fit line",
-    subtitle = "Is it good for discrete data?\nAlso, don't encode count as dot size") + 
-  xlab("condition") +
-  scale_x_continuous(breaks = c(0,1), labels = c("graph (x = 0)", "no graph (x = 1)"), limits = c(-0.5, 1.5)) 
+preds_df1_t_freq %>%
+  ggplot(aes(y = condition)) + 
+  stat_slab(
+    aes(xdist = dist_student_t(
+      df, .fitted, .se.pred)),
+    slab_color="gray65", fill = NA, scale = 0.7) +
+  geom_jitter(aes(x = effectiveness), data = df1, shape = 21, fill = "#9ECAE1",  size = 2, width = 0.1, height = 0.1) +
+  scale_x_continuous(breaks = 1:9)
+  NULL
+```
+
+<!--Show fit line with data-->
+
+```{r}
+# (coefficients <- m_t_test %>%
+#   tidy() %>%
+#   mutate(term = c("intercept", "slope")) %>%
+#   select(term, estimate) %>% 
+#   deframe()
+# )
+```
+
+```{r}
+# df1 %>% 
+#   ggplot(aes(x = ifelse(condition == "graph", 0, 1), y = effectiveness)) + 
+#   stat_lineribbon(aes(
+#     x = ifelse(condition == "graph", 0, 1), y = NULL, 
+#     ydist = dist_student_t(
+#       df = df.residual(m_t_test), 
+#       mu = .fitted, sigma = .se.fit)), 
+#     data = aug_df1, alpha = 0.3, fill = "#8c96c6") +
+#   geom_count(color = "gray45") + 
+#   geom_label_repel(
+#     data = tibble(x =0.7, y = 0.7 * 0.18 + 6.57),
+#     mapping = aes(x = x, y = y),
+#     label = glue("y = {format(round(coefficients[\"intercept\"], 2), nsmall=2)} + {format(round(coefficients[\"slope\"], 2), nsmall=2)}x"), color = "#8c96c6", 
+#     box.padding = 2) + 
+#   labs(
+#     title = "The t-test/lm fit line",
+#     subtitle = "Is it good for discrete data?\nAlso, don't encode count as dot size") + 
+#   xlab("condition") +
+#   scale_x_continuous(breaks = c(0,1), labels = c("graph (x = 0)", "no graph (x = 1)"), limits = c(-0.5, 1.5)) 
 ```
 
 ### Ordinal linear regression
@@ -257,6 +309,7 @@ df1 %>%
   ggplot(aes(x = effectiveness, y = n, color = condition)) + 
   geom_point() + 
   geom_line() + 
+  scale_x_continuous(breaks = 1:9) + 
   NULL
 ```
 
@@ -314,16 +367,22 @@ cumu_df1 %>%
 ```
 
 ```{r dat1-frequentist-model3}
-(m_olr_freq <- df1 %>% 
+# (m_olr_freq <- df1 %>% 
+#   mutate(effectiveness = ordered(effectiveness, levels = as.character(1:9))) %>% 
+#   ordinal::clm(effectiveness ~ condition, data = .)
+# )
+# 
+
+(m_polr <- df1 %>% 
   mutate(effectiveness = ordered(effectiveness, levels = as.character(1:9))) %>% 
-  ordinal::clm(effectiveness ~ condition, data = .)
+  MASS::polr(effectiveness ~ condition, data = ., Hess=TRUE) 
 )
+
 ```
 
 ```{r}
-glance(m_olr_freq)
-
 tidy(m_olr_freq)
+tidy(m_polr)
 ```
 
 ```{r}
@@ -342,11 +401,19 @@ tidy(m_olr_freq) %>%
                   estimate)) %>%
   mutate(.upper = estimate + 1.96 * std.error, 
          .lower = estimate - 1.96 * std.error)  %>%
-  mutate(condition = ifelse(condition == "graph", 0, 1)) %>%
+  mutate(condition = factor(ifelse(condition == "graph", 0, 1))) %>%
   ggplot(aes(x = condition, y = estimate, group = term)) + 
   facet_grid(~ term) + # EXERCISE: uncomment to see data better
   geom_lineribbon(aes(ymin = .lower, ymax = .upper, color = term), alpha = 0.4) + 
-  scale_color_viridis_d()
+  scale_color_viridis_d() 
+
+```
+ACHTUNG: the quest for PI
+
+```{r}
+predict(m_olr_freq,newdata = df1_grid, se.fit = TRUE, type = "prob")
+
+# augment doesn't work
 ```
 
 Going back to the data space... show predicted proportions and uncertainty
@@ -448,6 +515,11 @@ Get posterior estimates for the parameters and predictions (outcome on the scale
    rename(effectiveness = .category)
 )
 ```
+```{r}
+means_df1_olr %>%
+  group_by(.draw) %>%
+  filter(cur_group_id()== 1)
+```
 
 ```{r}
 (preds_df1_olr <- expand(df1, condition) %>%
@@ -455,6 +527,11 @@ Get posterior estimates for the parameters and predictions (outcome on the scale
     select(-c(.chain, .iteration)) %>%
    drop_na()
  )
+
+preds_df1_olr %>%
+  ungroup() %>%
+  expand(nesting(.draw))
+
 ```
 
 EXERCISE: why does this look different from the frequentist version?
@@ -511,138 +588,8 @@ preds_df1_olr %>%
 
 ```
 
-## Dataset 2 Power Pose
-
-Load the dataframe. Data dictionary/column description at <https://github.com/yvonnejansen/posture/blob/master/data/exp2_column-description.csv>
+## Packages Information
 
 ```{r}
-df2 <- read_csv("../02-bayesian_stats/data/exp2.csv")
-```
-
-We only modeled two variables: `change` and `condition`.
-
--   Each of the 80 participants were assigned to either "constrictive" or "expansive" conditions.
--   `change` is "a normalized measure for how people's behavior changed over the course of the experiment (∼10 min)". The experiment was done in three phases where participants pumped balloons. `change` \$ = \frac{\text{mean adjusted # of pumps in Phase 3 - mean adjusted # of pumps in Phase 1}}{\text{mean adjusted # of pumps in Phase 3}}\$
-
-```{r}
-df2 %>%
-  group_by(condition) %>%
-  count()
-```
-
-```{r}
-df2 %>%
-  ggplot(aes(x = change, color = condition)) +  
-  # geom_dots( alpha = 0.4) + 
-  geom_density(outline.type = "full") + 
-  xlab("Percent change") + 
-  NULL
-```
-
-## Dataset 2 results
-
-```{r}
-if (!file.exists("data/dataset2.brm.student.rds")){
-fit.brm <- brm(
-   bf(
-    change ~ condition, sigma ~ condition, 
-    family = student()
-  ),
-  prior = c(
-    prior(normal(0, 2), class = "b"),
-    prior(cauchy(0, 2), class = "b", dpar = "sigma"),
-    prior(exponential(0.03), class = "nu"),
-    prior(student_t(3, 0, 5), class = "Intercept"),
-    prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
-  ), 
-  data = df2,
-  seed = 99, chains = 4, cores = 4,
-  file = "data/dataset2.brm.student.rds")
-} else {
-  fit.brm <- readRDS("data/dataset2.brm.student.rds")
-}
-
-fit.brm
-get_variables(fit.brm)
-```
-
-```{r}
-(grid <- df2 %>% data_grid(condition))
-
-(means <- grid %>% 
-  add_epred_draws(fit.brm, dpar = TRUE) 
-  )
-
-(preds <- grid %>% 
-  add_predicted_draws(fit.brm)
-)
-```
-
-```{r}
-df2_range <- c(min(df2$change - 20), max(df2$change + 20))
-```
-
-```{r}
-means %>%
-  ggplot(aes(x = .epred, y = condition)) +
-  stat_pointinterval(.width = 0)+ 
-  xlim(df2_range)
-
-means %>%
-  ggplot(aes(x = .epred, y = condition)) +
-  stat_pointinterval() + 
-  xlim(df2_range)
-```
-
-```{r}
-ggplot() + 
-  stat_interval(
-    aes(x = .prediction, y = condition),
-    data = preds) + 
-  geom_point(aes(x = change, y = condition), data = df2, alpha = .5) + 
-  # stat_dots(
-  #   aes(x = change, y = condition), 
-  #   data = df2, alpha = 0.5, position = position_nudge(y = 0.1) , scale = 0.8) + 
-  stat_pointinterval(
-    aes(x = .epred, y = condition), 
-    data = means, position = position_nudge(y = -0.1)) +
-  scale_color_brewer()
-
-```
-
-(Reflection: think about what these all mean)
-
--   How wide are the intervals?
-
-```{r}
-ggplot(mapping = aes(fill = condition)) + 
-  stat_slab(
-    aes(x = .prediction, y = condition, thickness = stat(pdf * n)),
-    data = preds, scale = 0.5) + 
-  stat_dots(
-    aes(x = change, y = condition, side = "bottom"), 
-    data = df2, alpha = 0.5, scale = 0.7) + 
-  stat_pointinterval(
-    aes(x = .epred, y = condition), 
-    data = means) + 
-  labs(title = "Rainplot") +
-  xlim(df2_range)
-```
-
-```{r}
-means %>%
-  sample_draws(30) %>%
-  ggplot(aes(y = condition)) + 
-  stat_slab(aes(xdist = dist_student_t(nu, mu, sigma)),
-                 slab_color="gray65", alpha = 0.1, fill = NA) +
-  geom_point(aes(x = change), data = df2, shape = 21, fill = "#9ECAE1",  size = 2) +
-  xlim(df2_range) + 
-  NULL
-```
-
-# Packages Information
-```{r}
-
 sessionInfo()
-
 ```
