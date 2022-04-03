@@ -3,6 +3,9 @@ title: "Session 3 Uncertainty visualizations"
 author: "Xiaoying Pu, Lace Padilla"
 date: "3/3/2022"
 output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
 
 ```{r setup, include=FALSE}
@@ -24,15 +27,20 @@ theme_set(theme_tidybayes())
 
 ## Introduction
 
-We will revisit Datasets 1 and 2 from last time, focusing on exploring the **visualizations** instead of the analysis. By the end of this tutorial, you will learn to:
+We will revisit Datasets 1 and 2 from last time, focusing on exploring
+the **visualizations** instead of the analysis. By the end of this
+tutorial, you will learn to:
 
 1.  Apply the **Grammar of Graphics** to build simple plots
-2.  Identify the types of **uncertainty** from model outputs and modify code to visualize outputs and uncertainty
-3.  Use resources to find options for making a plot more **expressive** and evaluate its **usability**
+2.  Identify the types of **uncertainty** from model outputs and modify
+    code to visualize outputs and uncertainty
+3.  Use resources to find options for making a plot more **expressive**
+    and evaluate its **usability**
 
 ### Pre-survey
 
-What makes a plot? How do you systematically describe a plot, like linguists using **grammar** to describe a language?
+What makes a plot? How do you systematically describe a plot, like
+linguists using **grammar** to describe a language?
 
 Go to ==TODO== (survey link)
 
@@ -57,9 +65,11 @@ It's OK if you're sure about your answers! It's all part of the plan 🤔
 
 ### Explore the data with ggplot
 
-We modeled how `condition` (graph or no graph) affected `effectiveness`, a Likert scale rating from 1 to 9.
+We modeled how `condition` (graph or no graph) affected `effectiveness`,
+a Likert scale rating from 1 to 9.
 
-To start out, create a scatterplot of bill length versus bill depth for the three species. Your plot should look like this:
+To start out, create a scatterplot of bill length versus bill depth for
+the three species. Your plot should look like this:
 
 ![](images/000005.png)
 
@@ -100,49 +110,50 @@ df1 %>%
   scale_x_continuous(breaks = 1:9)
 ```
 
-
-
 ## Activity 2: t-test/simple linear regression
-
 
 |                         | Frequentist | Bayesian |
 |-------------------------|-------------|----------|
 | Table summary           |             |          |
 | Point estimate          |             |          |
 | Interval-parameter      |             |          |
-| Distribution-parameter  |             |          |
 | Interval-prediction     |             |          |
+| Distribution-parameter  |             |          |
 | Distribution-prediction |             |          |
-
-
-
 
 ### Frequentist and Bayesian models
 
-Baseline: table/textual reporting
-
-
-t-test is equivalent to a linear model estimating two means. Using `lm` because the output is easier to wrangle (good explainer: <https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis>)
+t-test is equivalent to a linear model estimating two means. Using `lm`
+because the output is easier to wrangle (good explainer:
+<https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis>)
 
 ```{r}
 (m_t_test <- lm(effectiveness ~ - 1 + condition, data = df1))
 ```
 
+The Bayesian t-test:
 
 ```{r}
 (m_t_test_bayesian <- readRDS("../02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"))
 ```
 
-
 ### Build CI and PI dataframes; table views
 
-For confidence interval (CI)
+Baseline: table/textual reporting
 
-- `estimate` column is for the estimates of the group means
-- `std.error` is the standard error
-- 95% CI is $t_{1 - 0.05/2, df}$, calculated as `qt(1 - 0.05/2, df)`. 
+For **confidence interval (CI) \~ parameter uncertainty**
 
-We won't calculate CI intervals directly. Instead we use `distributional::dist_student_t` and `ggdist` functions.
+-   `estimate` column is for the estimates of the group means
+-   `std.error` is the standard error. Math:
+    $\sqrt{MSE \left(\frac{1}{n} + \frac{(x_h - \bar{x})^2}{\sum{(x_i - \bar{x})^2}}\right)}$
+-   95% CI ($\alpha = 0.05$) is
+    $t_{1 - 0.05/2, df} \times \sqrt{MSE \left(\frac{1}{n} + \frac{(x_h - \bar{x})^2}{\sum{(x_i - \bar{x})^2}}\right)}$,
+    where the t-multiplier $t_{1 - 0.05/2, df}$ is calculated as
+    `qt(1 - 0.05/2, df)`.
+
+We won't calculate CI intervals directly. Instead we'll calculate the
+standard errors and use `distributional::dist_student_t` and `ggdist`
+functions later.
 
 ```{r}
 (means_t_freq <- m_t_test %>% 
@@ -151,14 +162,39 @@ We won't calculate CI intervals directly. Instead we use `distributional::dist_s
    select(-term)
 )
 ```
-For the Bayesian model, we get draws of all the parameters of the t-distribution (mu/.epred, sigma, nu). There is credible interval (CI) for Bayesian models, but we're not summarizing intervals yet
+
+For the Bayesian model, we get draws from the posterior predictive
+*expectations* (means) of all the parameters of the t-distribution
+(mu/.epred, sigma, nu). There is credible interval (CI) for Bayesian
+models, but we're not summarizing intervals yet.
 
 ```{r }
 (means_t_bayes <- data_grid(df1, condition) %>%
   add_epred_draws(m_t_test_bayesian, newdata = . ,dpar = TRUE))
 ```
 
-Prediction interval (PI). `.fitted` is the same as the `estimate` above.
+From a bunch of samples to a summary table:
+
+```{r }
+means_t_bayes %>%
+  median_qi(.epred, .width = c(0.95))
+```
+
+**Prediction interval (PI) \~ prediction uncertainty**
+
+For the frequentist model. `.fitted` is the same as the `estimate`
+above. `.se.pred` times the t-multiplier is the PI.
+
+NOTE on calculating the `se.pred`:
+<https://online.stat.psu.edu/stat501/lesson/3/3.3> gives a good
+explanation, and to translate the mathematical notation to R code:
+
+-   MSE is `sum(residuals(m_t_test))/df.residual(m_t_test)`
+-   Variance due to estimating the mean `.se.fit^2`
+-   Variance due to variation in the response variable
+    `residual.scale^2`
+-   The standard error of prediction is the square root of the two
+    variances combined
 
 ```{r}
 # predict() returns $residual.scale
@@ -168,25 +204,51 @@ preds_t_freq_obj <- predict(m_t_test, newdata = data_grid(df1, condition),
 (preds_t_freq <- m_t_test %>%
   augment(newdata = data_grid(df1, condition), se_fit = TRUE) %>%
   mutate(
-    .se.pred = sqrt(.se.fit ^ 2 + preds_t_freq_obj$residual.scale^2),
+    .se.pred = sqrt(.se.fit ^ 2 + preds_t_freq_obj$residual.scale^2), # NOTE
     df = preds_t_freq_obj$df
   ) 
 )
 ```
 
-```{r }
+Predictions for the Bayesian model: get draws from the posterior
+predictive distribution (different from `epred` from above!)
+
+```{r}
 (preds_t_bayes <- data_grid(df1, condition) %>%
     add_predicted_draws(m_t_test_bayesian))
+
+preds_t_bayes %>%
+  median_qi(.width = 0.95)
 ```
 
-#### Point estimates of the mean
+### Point estimates of the mean
+
+Frequentist `lm()` model, plot estimates of the mean effectiveness by
+condition:
+
+First, use "pseudo" Grammar of Graphics/ggplot to articulate what you
+want
+
+```
+geom_point
+  x <- estimate 
+  y <- condition
+```
 
 ```{r }
 means_t_freq %>%
   ggplot(aes(x = estimate, y = condition)) + 
   geom_point() +
   scale_x_continuous(breaks = 1:9, limits = c(1, 9)) + 
+  labs(title = "Frequentist lm(), estimated effectiveness by condition") +
   NULL
+```
+
+```
+geom_point
+  x <- estimate 
+  y <- condition
+  color <- model
 ```
 
 ```{r}
@@ -204,69 +266,115 @@ means_t_freq %>%
   scale_color_manual("Model", 
                      breaks = c("Bayesian", "Frequentist"), 
                      values  = c("#45829f", "#000000") ) +
+  labs(title = "Estimated effectiveness by condition") +
   NULL
 )
 
 # REFLECTION: what just happened? How is that legend generated?
+# TOOL! https://yjunechoe.github.io/posts/2022-03-10-ggplot2-delayed-aes-1/
 # layer_data(p_pt_est, i = 1)
 ```
 
+### Intervals - parameter and prediction
 
-#### Intervals - parameter and prediction
+Add interval for uncertainty. In the frequentist world, the *confidence
+distribution* for the parameters follows the student-t distribution.
+<https://mjskay.github.io/ggdist/articles/freq-uncertainty-vis.html>
 
-Add interval for uncertainty. In the frequentist world, the *confidence distribution* for the parameters follows the student-t distribution. <https://mjskay.github.io/ggdist/articles/freq-uncertainty-vis.html>
+We can use `distributional::dist_student_t` to speficy a student-t
+distribution, all we need are the three parameters we calculated earlier
 
-`distributional::dist_student_t` conveniently returns a student-t distribution, all we need are the three parameters we calculated earlier
+-   df: degree of freedom (N-2)
+-   mu: estimate/.fitted for the mean
+-   sigma: standard error
 
-- df: degree of freedom (N-2)
-- mu: estimate/.fitted for the mean
-- sigma: standard error
+Note: `dist_student_t` only works with `xdist` aesthetic from the
+`ggdist` package.
 
-Note: `dist_student_t` only works with `xdist` aesthetic from the ggdist package.
+    stat_pointinterval
+      xdist <- student_t(df, mu, sigma) 
+      y <- condition
+
+REFLECTION: how would you plot it if you aren't using
+`xdist`/`dist_student_t`?
+
+REFLECTION: why is it `stat_*`, not `geom_*`?
 
 ```{r }
 means_t_freq %>%
   ggplot(aes(
-    xdist = dist_student_t( # EXERCISE: what does this mean?
+    xdist = dist_student_t( 
       df = df.residual(m_t_test), 
       mu = estimate, 
       sigma = std.error), 
     y = condition)) + 
-  stat_pointinterval() +
-  scale_x_continuous("response", breaks = 1:9, limits = c(1, 9)) + 
+  # EXERCISE: add 0.66 as another CI level
+  stat_pointinterval(.width = c(0.66, 0.95)) +
+  scale_x_continuous("effectiveness", breaks = 1:9, limits = c(1, 9)) + 
+  labs(title = "Frequentist lm(), estimated effectiveness by condition",
+       subtitle = "Confidence interval widths: 0.66 and 0.95") +
   NULL
 ```
 
-The prediction distribution also follows the t-distribution, so we only need to change the `sigma` parameter. Show that PI is wider than the CI in the plot below!
+The prediction distribution also follows the t-distribution, so we only
+need to change the `sigma` parameter. Show that PI is wider than the CI
+in the plot below!
 
 ```{r}
 preds_t_freq %>%
   ggplot(aes(y = condition)) + 
   stat_interval(aes(
-    xdist = dist_student_t( # EXERCISE: what does this mean?
+    xdist = dist_student_t(
       df = df,
       mu = .fitted, 
       sigma = .se.pred) 
   )) + 
   # EXERCISE: put CI (dot and whisker) in this plot
-  # stat_pointinterval(aes(
-  #   xdist = dist_student_t( # EXERCISE: what does this mean?
-  #     df = df,
-  #     mu = .fitted,
-  #     sigma = .se.fit)),
-  #   position = position_nudge(y = -.2)) +
+  stat_pointinterval(aes(
+    xdist = dist_student_t( # EXERCISE: what does this mean?
+      df = df,
+      mu = .fitted,
+      sigma = .se.fit)),
+    position = position_nudge(y = -.2)) +
   # EXERCISE: put raw data in this plot
-  # geom_jitter(aes(x = effectiveness), height = 0.1, data = df1) + 
+  geom_jitter(aes(x = effectiveness), height = 0.1, data = df1) +
   scale_x_continuous("effectiveness", breaks = 1:11, limits = c(1, 11)) + 
-  scale_color_brewer() + 
+  scale_color_brewer("Predictive interval") + 
+  labs(title = "Frequentist lm(), estimated effectiveness by condition",
+       subtitle = "Confidence interval widths: 0.66 and 0.95") +
   NULL
   
 ```
 
+
+EXERCISE: Visualize parameter uncertainty, predictive uncertainty, and raw data.
+
+```
+  (which visual element?) <- (Parameter uncertainty)
+  (which visual element?) <- (Predictive uncertainty)
+  (which visual element?) <- Raw data (with intrinsic uncertainty,
+    too!)
+```
+
+```{r}
+df1 %>%
+  ggplot(aes(x = effectiveness, y = condition)) + 
+  stat_interval(aes(x = .prediction), data = preds_t_bayes) +
+  stat_pointinterval(aes(x = .epred), data = means_t_bayes,
+                     .width = c(.66, .95),
+                     position = position_nudge(y = -0.2)) +
+  geom_jitter(height = 0.1) +
+  scale_x_continuous(breaks = 1:9)+
+  scale_color_brewer("Predictive interval") + 
+  labs(title = "Bayesian lm(), estimated effectiveness by condition",
+       subtitle = "Credible interval widths: 0.66 and 0.95") +
+  NULL
+```
+
+
 #### Distribution
 
-
-EXERCISE: why are the densities so narrow? Does it make sense? What encoding do you prefer?
+EXERCISE:What encoding do you prefer? How to look for more options?
 
 ```{r }
 means_t_freq %>%
@@ -284,20 +392,20 @@ means_t_freq %>%
       sigma = std.error)),
     scale = 0.5, fill = "#8c96c6",
     position = position_nudge(y = 0.1)) + 
-  geom_label_repel(aes(.fitted, y = condition), data = aug_df1 %>% slice_tail(),
-                   label = "Confidence distribution of the mean", box.padding = 1, 
-                   position = position_nudge(y = 0.1), max.overlaps = Inf) + 
+  geom_label_repel(aes(estimate + 0.2, y = condition), data = means_t_freq %>% slice_tail(),
+                   label = "Confidence distribution of the mean", box.padding = 1,
+                   position = position_nudge(y = 0.3), max.overlaps = Inf) +
   # EXERCISE: add labels for the raw data
   geom_label_repel(
-    aes(.fitted, y = condition),
-    data = aug_df1 %>% slice_head(),
+    aes(x = estimate, y = condition),
+    data = means_t_freq %>% slice_head(),
     label = "Jittered raw data", box.padding = 1,
     position = position_nudge_repel(y = -0.2)) +
   scale_x_continuous(breaks = 0:10, limits = c(0, 10)) + 
+  labs(title = "Frequentist lm(), confidence distribution of effectiveness by condition") + 
   NULL
 
 ```
-
 
 ```{r}
 preds_t_freq %>%
@@ -313,7 +421,30 @@ preds_t_freq %>%
       x = effectiveness,
       y = condition),
     data = df1, height = 0.05, shape = 21, fill = "#9ECAE1",  size = 2) +
+    stat_pointinterval(            
+    aes(xdist =dist_student_t(
+      df = df.residual(m_t_test), 
+      mu = estimate, 
+      sigma = std.error)),
+    data = means_t_freq,
+    scale = 0.5, fill = "#8c96c6",
+    position = position_nudge(y = 0.1)) + 
   scale_x_continuous(breaks = 1:9) +
+  labs(title = "Frequentist lm(), effectiveness by condition") + 
+  NULL
+```
+An alternative way of seeing the uncertainty, in Kruschke style. The
+bunch of density lines shows both parameter and predictive uncertainty.
+
+```{r}
+means_df1_t %>%
+  sample_draws(30) %>%
+  ggplot(aes(y = condition)) + 
+  stat_slab(
+    aes(xdist = dist_student_t(nu, mu, sigma)),
+    slab_color="gray65", alpha = 0.05, fill = NA, scale = 0.7) +
+  geom_jitter(aes(x = effectiveness), data = df1, shape = 21, fill = "#9ECAE1",  size = 2, width = 0.1, height = 0.1) +
+  scale_x_continuous(breaks = 1:9)
   NULL
 ```
 
@@ -334,7 +465,9 @@ df1 %>%
   NULL
 ```
 
-Building up to the ordinal linear regression model... introducing the cumulative proportions ("odds"), and cumulative log odds (computed with `logit()`)
+Building up to the ordinal linear regression model... introducing the
+cumulative proportions ("odds"), and cumulative log odds (computed with
+`logit()`)
 
 ```{r}
 logit <- function(x) log(x / (1 - x))
@@ -364,7 +497,9 @@ cumu_df1 %>%
   ylab("log-cumulative-odds")
 ```
 
-Once we have the estimates in the cumulative log odds space, can do inverse logit (`brms::inv_logit_scaled()`), and get proportions out of the cumulative proportions.
+Once we have the estimates in the cumulative log odds space, can do
+inverse logit (`brms::inv_logit_scaled()`), and get proportions out of
+the cumulative proportions.
 
 ```{r}
 cumu_df1 %>%
@@ -422,8 +557,8 @@ tidy(m_polr) %>%
 
 ```
 
-
-Going back to the data space... show predicted proportions and uncertainty
+Going back to the data space... show predicted proportions and
+uncertainty
 
 ```{r}
 # EXERCISE: how to show uncertainty with this?
@@ -442,64 +577,19 @@ as.data.frame(predict(m_olr_freq, type.predict = "prob", se.fit = TRUE)) %>%
   ylab("Proportion")
 ```
 
-## Dataset 1, Bayesian land
 
-### Dataset 1, Bayesian t-test
-
-Load the model from last time....
-
-```{r }
-```
-
-Get estimates for parameters and outcome predictions (1..9).
-
-
-
-Visualize parameter uncertainty, predictive uncertainty, and raw data.
-
-EXERCISE:
-
--   (which visual element?) \<- Parameter uncertainty
--   (which visual element?) \<- Predictive uncertainty
--   (which visual element?) \<- Raw data (with intrinsic uncertainty, too!)
-
-```{r}
-df1 %>%
-  ggplot(aes(x = effectiveness, y = condition)) + 
-  stat_interval(aes(x = .prediction), data = preds_df1_t) +
-  
-  # EXERCISE: change to density plot
-  stat_pointinterval(aes(x = .epred), data = means_df1_t,
-                     .width = c(.66, .95),
-                     position = position_nudge(y = -0.2)) +
-  geom_jitter(height = 0.1) +
-  scale_x_continuous(breaks = 1:9)+
-  scale_color_brewer()
-```
-
-An alternative way of seeing the uncertainty, in Kruschke style. The bunch of density lines shows both parameter and predictive uncertainty.
-
-```{r}
-means_df1_t %>%
-  sample_draws(30) %>%
-  ggplot(aes(y = condition)) + 
-  stat_slab(
-    aes(xdist = dist_student_t(nu, mu, sigma)),
-    slab_color="gray65", alpha = 0.05, fill = NA, scale = 0.7) +
-  geom_jitter(aes(x = effectiveness), data = df1, shape = 21, fill = "#9ECAE1",  size = 2, width = 0.1, height = 0.1) +
-  scale_x_continuous(breaks = 1:9)
-  NULL
-```
 
 ### Dataset 1, Bayesian OLR
 
-There're starter values and stuff, not bothered just yet <https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes>
+There're starter values and stuff, not bothered just yet
+<https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes>
 
 ```{r dat1-bayesian-model3}
 (m_olr_bayes <- readRDS("../02-bayesian_stats/rds/dataset1.brm.olr1.rds"))
 ```
 
-Get posterior estimates for the parameters and predictions (outcome on the scale of 1...9)
+Get posterior estimates for the parameters and predictions (outcome on
+the scale of 1...9)
 
 ```{r}
 (means_df1_olr <- expand(df1, condition) %>%
@@ -507,6 +597,7 @@ Get posterior estimates for the parameters and predictions (outcome on the scale
    rename(effectiveness = .category)
 )
 ```
+
 ```{r}
 means_df1_olr %>%
   group_by(.draw) %>%
@@ -546,7 +637,9 @@ means_df1_olr %>%
   ylab("Proportion")
 ```
 
-EXERCISE (challenge): follow <https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes> to construct a stacked version
+EXERCISE (challenge): follow
+<https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes>
+to construct a stacked version
 
 ```{r}
 (means_df1_olr_compare <- means_df1_olr %>%
