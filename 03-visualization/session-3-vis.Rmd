@@ -21,6 +21,7 @@ library(ordinal)
 library(ggrepel)
 library(glue)
 library(dabestr)
+library(emmeans)
 
 theme_set(theme_tidybayes())
 ```
@@ -46,7 +47,7 @@ Go to ==TODO== (survey link)
 
 It's OK if you're sure about your answers! It's all part of the plan 🤔
 
-\[Review survey response and adjust timing accordingly\]
+(Review survey response and adjust timing accordingly)
 
 ------------------------------------------------------------------------
 
@@ -65,7 +66,7 @@ It's OK if you're sure about your answers! It's all part of the plan 🤔
 
 ### Explore the data with ggplot
 
-We modeled how `condition` (graph or no graph) affected `effectiveness`,
+Last time, we modeled how `condition` (graph or no graph) affected `effectiveness`,
 a Likert scale rating from 1 to 9.
 
 To start out, create a scatterplot of effectiveness vs. condition. Your
@@ -119,14 +120,16 @@ df1 %>%
   ggplot(aes(
     x = effectiveness, 
     y = condition,
-    color = condition)) +     # EXERCISE: add color
-  geom_point(position = jitterer) +       # EXERCISE: change to jitter
+    # EXERCISE: add color
+    color = condition)) +     
+  # EXERCISE: change to jitter
+  geom_point(position = jitterer) +       
   scale_x_continuous(breaks = 1:9)
 ```
 
 Common problem and how to fix:
 
-```{r}
+```{r eval=FALSE}
 df1 %>%
   ggplot() +  
   geom_point(
@@ -150,8 +153,7 @@ df1 %>%
 
 ### Frequentist and Bayesian models
 
-t-test is equivalent to a linear model estimating two means. Using `lm`
-because the output is easier to wrangle (good explainer:
+t-test is equivalent to a linear model estimating two means. For the frequentist version, we are using `lm` because the output is easier to wrangle (good explainer:
 <https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis>)
 
 ```{r}
@@ -166,7 +168,7 @@ The Bayesian t-test:
 
 ### Build CI and PI dataframes; table views
 
-Baseline: table/textual reporting
+Table is the most basic way of reporting the results.
 
 For **confidence interval (CI) \~ parameter uncertainty**
 
@@ -207,7 +209,7 @@ means_t_bayes %>%
   median_qi(.epred, .width = c(0.95))
 ```
 
-**Prediction interval (PI) \~ prediction uncertainty**
+**Prediction interval (PI), or prediction uncertainty**
 
 For the frequentist model. `.fitted` is the same as the `estimate`
 above. `.se.pred` times the t-multiplier is the PI.
@@ -379,6 +381,8 @@ preds_t_freq %>%
 
 Replicate the CI+PI plot above, but with the **Bayesian** model
 
+REFLECTION: can we still use `dist_student_t`?
+
 EXERCISE: Visualize parameter uncertainty, predictive uncertainty, and
 the intrinsic uncertainty in data:
 
@@ -388,12 +392,16 @@ the intrinsic uncertainty in data:
 
 ```{r}
 df1 %>%
-  # EXERCISE: fill this out
   ggplot(aes(x = effectiveness, y = condition)) + 
-  stat_interval(aes(x = .prediction), data = preds_t_bayes) +
-  stat_pointinterval(aes(x = .epred), data = means_t_bayes,
-                     .width = c(.66, .95),
-                     position = position_nudge(y = -0.2)) +
+  # EXERCISE: fill this out
+  stat_interval(
+    aes(x = .prediction), 
+    data = preds_t_bayes) +
+  stat_pointinterval(
+    aes(x = .epred), 
+    data = means_t_bayes,
+    .width = c(.66, .95),
+    position = position_nudge(y = -0.2)) +
   geom_point(position = jitterer) +
   # END EXERCISE
   scale_x_continuous(breaks = 1:9)+
@@ -507,18 +515,16 @@ REFLECTION: should you show confidence or prediction distribution, or both?
 Should you use intervals or distributions for uncertainty?
 
 
-## Activity 3: Ordinal linear regression
+## Activity 3: Ordinal logistic regression
 
 Now you will design your own plots for the frequentist and Bayesian ordinal linear regression. You have data exploration and model output summaries below. 
-
 
 ### Considerations and resources
 
 - What does the model look like? How does it work?
 - What are the parameter and prediction uncertainty?
 - How do I want to visualize the uncertainties? (Interval? distribution?)
-
-- Bayesian OLR <https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes>
+- (Bayesian) OLR <https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes>
 
 
 ### Data exploration and how cumulative logit works
@@ -526,11 +532,16 @@ Now you will design your own plots for the frequentist and Bayesian ordinal line
 The same `df1` data, but summarized to show proportion of each effectiveness level (1-9).
 
 ```{r}
-df1 %>%
-  count(condition, effectiveness, name = "n")  %>%
+(df1_prop <- df1 %>%
+  count(condition, effectiveness) %>%
   add_row(condition = "graph", effectiveness = 2, n = 0) %>%
   complete(condition, effectiveness, fill = list(n = 0)) %>%
-  ggplot(aes(x = effectiveness, y = n, color = condition)) + 
+  group_by(condition) %>%
+  mutate(prob = n/sum(n))
+)
+
+df1_prop %>%
+  ggplot(aes(x = effectiveness, y = prob, color = condition)) + 
   geom_point() + 
   geom_line() + 
   scale_x_continuous(breaks = 1:9) + 
@@ -607,92 +618,64 @@ Frequentist
   MASS::polr(effectiveness ~ condition, data = ., Hess=TRUE) 
 )
 ```
+Estimates of the intercepts on the logit scale
 
 ```{r}
 tidy(m_polr)
 ```
 
+Estimates on the probability scale
+
 ```{r}
+(means_olr_freq <- emmeans(m_polr,  ~ condition + effectiveness, mode = "prob") %>%
+  as.data.frame()
+)
+```
 
 
-tidy(m_polr)  %>%
-  mutate(delta = first(estimate)) %>%
+EXERCISE: plot estimates on the cumulative log odds scale
+
+```{r}
+tidy(m_polr) %>%
+ mutate(delta = first(estimate)) %>%
   dplyr::slice(-1) %>%
   crossing(condition = data_grid(df1, condition) %>% pull(condition))  %>%
   mutate(estimate = ifelse(condition == "no_graph", estimate + delta, estimate)) %>%
   select(-delta) %>%
-  mutate(across(estimate:std.error, ~ inv.logit(.))) %>%
-  arrange(condition) %>%
-  add_row(estimate = 1, condition = "no_graph") %>%
-  add_row(estimate = 1, condition = "graph") %>%
-  group_by(condition) %>%
-  mutate(p = estimate - lag(estimate, default = 0)) %>%
-  ungroup()  %>%
-  ggplot(aes(x = condition, y = p, group = term)) + 
-  # stat_lineribbon(aes(
-  #   x = condition,
-  #   ydist = dist_normal(
-  #    mu = p,
-  #    sigma = std.error),
-  #   fill_ramp = stat(.width)), .width = ppoints(50), fill = "#2171b5"
-  #   ) +
-  geom_line() + 
-  facet_grid(~ term) + # EXERCISE: uncomment to see data better
- # scale_fill_ramp_continuous(range = c(1, 0)) +
-  NULL
-  
-  
-```
-
-
-Showing estimates on the cumulative log odds scale
-
-```{r}
-tidy(m_polr) %>%
-  dplyr::slice(-1) %>%
-  crossing(condition = c("graph", "no_graph")) %>%
-  mutate(estimate = 
-           ifelse(condition == "no_graph", 
-                  estimate + condition_no_graph$estimate, 
-                  estimate)) %>%
   ggplot() + 
   stat_lineribbon(aes(
     x = condition,
     ydist = dist_normal(
-     mu = estimate,
-     sigma = std.error),
+      mu = estimate,
+      sigma = std.error),
     fill_ramp = stat(.width)), .width = ppoints(50), fill = "#2171b5"
-    ) +
+  ) +
   facet_grid(~ term) + # EXERCISE: uncomment to see data better
- scale_fill_ramp_continuous(range = c(1, 0)) +
-  # scale_fill_viridis_d()
+  scale_fill_ramp_continuous(range = c(1, 0)) +
+  theme(axis.text.x = element_blank()) + 
+  xlab("Condition: graph - no graph") + 
   NULL
 ```
 
-Going back to the data space... show predicted proportions and
-uncertainty
+EXERCISE: On the probability scale
 
 ```{r}
-# EXERCISE: how to show uncertainty with this?
-
-as.data.frame(predict(m_polr, type.predict = "prob", se.fit = TRUE))  %>%
-  bind_cols(df1 %>% select(effectiveness, condition))  %>%
-  group_by(effectiveness, condition) %>% 
-  slice_head() %>%
-  ungroup()   %>%
-  ggplot(aes(x = effectiveness, y = fit, fill = condition)) + 
-  geom_col(position = "dodge") + 
-  # geom_pointinterval(   # EXERCISE: put in the interval 
-  #   aes(ymin = fit - 1.96 * se.fit, ymax = fit + 1.96 * se.fit),
-  #   position = "dodge") + 
-  scale_x_continuous(breaks = 1:9) + 
-  ylab("Proportion")
+means_olr_freq %>%
+  ggplot(aes(x = condition, y = prob, group = effectiveness)) + 
+  stat_lineribbon(aes(
+    ydist = dist_truncated(dist_normal(mu = prob, sigma = SE), lower = 0)
+  )) +
+  geom_point(data = df1_prop) +
+  facet_grid(~ effectiveness) + # EXERCISE: uncomment to see data better
+  theme(axis.text.x = element_blank()) + 
+  scale_fill_brewer() +
+  xlab("Condition: graph - no graph") + 
+  NULL
+  
 ```
-
 ### Bayesian OLR
 
-There're starter values and stuff, not bothered just yet
-<https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes>
+Load the data
 
 ```{r dat1-bayesian-model3}
 (m_olr_bayes <- readRDS("../02-bayesian_stats/rds/dataset1.brm.olr1.rds"))
@@ -702,44 +685,31 @@ Get posterior estimates for the parameters and predictions (outcome on
 the scale of 1...9)
 
 ```{r}
-(means_df1_olr <- expand(df1, condition) %>%
+(means_olr_bayes <- expand(df1, condition) %>%
   add_epred_draws(m_olr_bayes, dpar = TRUE) %>%
    rename(effectiveness = .category)
 )
 ```
 
-```{r}
-means_df1_olr %>%
-  group_by(.draw) %>%
-  filter(cur_group_id()== 1)
-```
 
 ```{r}
-(preds_df1_olr <- expand(df1, condition) %>%
+(preds_olr_bayes <- df1 %>%
     add_predicted_draws(m_olr_bayes) %>%
     select(-c(.chain, .iteration)) %>%
    drop_na()
  )
 
-preds_df1_olr %>%
-  ungroup() %>%
-  expand(nesting(.draw))
-
 ```
 
 EXERCISE: why does this look different from the frequentist version?
 
-```{r}
-(df1_prop <- df1 %>%
-  count(condition, effectiveness) %>%
-  group_by(condition) %>%
-  mutate(prop = n/sum(n))
-)
 
-means_df1_olr %>%
+
+```{r}
+means_olr_bayes %>%
   ggplot(aes(x = condition, y = .epred)) + 
   stat_lineribbon()  + 
-  geom_point(aes(x = condition, y = prop), data = df1_prop) + 
+  geom_point(aes(x = condition, y = prob), data = df1_prop) + 
   scale_fill_brewer() + 
   facet_grid(~ effectiveness) +
   theme(axis.text.x = element_blank()) + 
@@ -747,18 +717,16 @@ means_df1_olr %>%
   ylab("Proportion")
 ```
 
-EXERCISE (challenge): follow
-<https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes>
-to construct a stacked version
+EXERCISE: compare the two conditions
 
 ```{r}
-(means_df1_olr_compare <- means_df1_olr %>%
+(means_df1_olr_compare <- means_olr_bayes %>%
   group_by(effectiveness) %>%
   compare_levels(variable = .epred, by = condition ) 
 )
 
 (df1_prop_diff <- df1_prop %>%
-  pivot_wider(id_col = effectiveness, names_from = condition, values_from = prop) %>%
+  pivot_wider(id_col = effectiveness, names_from = condition, values_from = prob) %>%
   drop_na() %>%
   mutate(diff = no_graph - graph)
 )
@@ -775,11 +743,15 @@ means_df1_olr_compare %>%
   NULL
 ```
 
+RELFECTION: how else to show the prediction uncertainty?
+
 ```{r}
-preds_df1_olr %>%
-  count(condition, .prediction) %>%
-  ggplot(aes(.prediction, n, fill = condition)) +
-  geom_col(position = "dodge")
+preds_olr_bayes %>%
+  count(.row, condition, .prediction) %>%
+  mutate(prob = n / sum(n)) %>%
+  ggplot(aes(.prediction, prob, group = .row, color = condition)) +
+  geom_line(alpha = 0.05) + 
+  NULL
 
 ```
 
