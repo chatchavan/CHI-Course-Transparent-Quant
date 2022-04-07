@@ -28,49 +28,83 @@ theme_set(theme_tidybayes())
 
 ## Introduction
 
-We will revisit Datasets 1 and 2 from last time, focusing on exploring
-the **visualizations** instead of the analysis. By the end of this
-tutorial, you will learn to:
+We will revisit Datasets 1 from last time, focusing on exploring how to
+make **visualizations** instead of doing the analysis. By the end of
+this tutorial, you will learn to:
 
 1.  Apply the **Grammar of Graphics** to build simple plots
 2.  Identify the types of **uncertainty** from model outputs and modify
-    code to visualize outputs and uncertainty
+    code to visualize model outputs and uncertainty
 3.  Use resources to find options for making a plot more **expressive**
     and evaluate its **usability**
+
+### Expectations
+
+I will mainly be coding here during this tutorial. You have the same
+skeleton code in your Rstudio Cloud. Ideally, you will follow along and
+write code with me. There are many activities where you can
+**participate** and ask **questions** (any time!). We will gradually
+transition from me providing examples to you creating your own plots.
+
+Two files:
+
+-   `session-3-vis.Rmd` (this document we're working on)
+-   `session-3-vis-ref.Rmd` (the "answer key" document, with the
+    exercises filled in)
 
 ### Pre-survey
 
 What makes a plot? How do you systematically describe a plot, like
 linguists using **grammar** to describe a language?
 
-Go to ==TODO== (survey link)
+**Poll** (reply in Zoom chat)
 
-It's OK if you're sure about your answers! It's all part of the plan 🤔
+-   Have you used ggplot before? \[Y/N\]
 
-(Review survey response and adjust timing accordingly)
+-   How familiar are you with "Grammar of Graphics"? \[1..5\]
+
+    -   1: Haven't heard of it
+    -   5: Very familiar, know how it relates to ggplot
+
+It's OK if you don't know everything yet! It's all part of the plan 🤔
+
+(Review survey response)
 
 ------------------------------------------------------------------------
 
 ## Activity 1: exploring data
 
+First, we will learn the "grammar" behind ggplot. By the end of this
+activity, you will be able to read and write basic ggplot specifications
+and understand what you're doing. Also, you need to explore and
+understand the raw data before doing analysis anyways.
+
 ### Load the data
 
+We will base our example on the `blinded.csv` dataset. It's from an
+experiment about whether showing people graphs increase belief in drug
+efficacy, presumably because graphs are associated with science.
+
+**TIP**: `()` enclosing an assignment will print the assigned value as
+well.
+
 ```{r}
-(df1 <- read_csv("data/blinded.csv") %>%
+(df1 <- read_csv("data/blinded.csv", show_col_types = FALSE) %>%
   filter(experiment == 1) %>%
   mutate(
     condition = factor(condition), 
-    participant_id = paste0("P", str_pad(row_number(), 2, pad = "0")))
+    participant_id = paste0("P", str_pad(row_number(), 2, pad = "0"))) %>%
+   select(-experiment)
 )
 ```
 
 ### Explore the data with ggplot
 
-Last time, we modeled how `condition` (graph or no graph) affected `effectiveness`,
-a Likert scale rating from 1 to 9.
+Last time, we modeled how `condition` (graph or no graph) affected
+`effectiveness`, a Likert scale rating from 1 to 9.
 
-To start out, create a scatterplot of effectiveness vs. condition. Your
-plot will end up like this
+To start out, we will create a scatterplot of effectiveness vs.
+condition. Your plot will end up like this
 
 ![](images/000005.png)
 
@@ -86,7 +120,9 @@ df1 %>%
 ```
 
 Let's break it down in terms of the (layered) Grammar of Graphics
-concepts so that we can understand how ggplot works
+concepts so that we can understand how ggplot works:
+
+**Notability doodling**
 
 -   `ggplot`: creates the "default layer"
 
@@ -99,20 +135,23 @@ concepts so that we can understand how ggplot works
         x <- effectiveness 
         y <- condition
 
-REFLECTION: is this plot good? Is it showing all the data points?
+**REFLECTION**: is this plot good? Is it showing all the data points?
+(Think *expressiveness*)
 
-Idea: place the points with some random jitter
+**Solution**:
 
 ```{r}
 jitterer <- position_jitter(height = 0.1, seed = 1)
 ```
 
-Let's write the Grammar of Graphics spec again
+Let's write the Grammar of Graphics spec and add more "color" to it
+(color the points by `condition` variable)
+
+**PREDICT**: how should the new spec look like?
 
     ggplot
         x <- effectiveness 
         y <- condition
-        color <- condition
     geom_point
 
 ```{r}
@@ -121,13 +160,14 @@ df1 %>%
     x = effectiveness, 
     y = condition,
     # EXERCISE: add color
-    color = condition)) +     
-  # EXERCISE: change to jitter
+    color = condition
+  )) +     
+  # EXERCISE: make points jitter
   geom_point(position = jitterer) +       
   scale_x_continuous(breaks = 1:9)
 ```
 
-Common problem and how to fix:
+**TIP**: Common problem and how to fix:
 
 ```{r eval=FALSE}
 df1 %>%
@@ -139,21 +179,41 @@ df1 %>%
     position = jitterer)
 ```
 
+**RELFECTION:** any questions about Grammar of Graphics/ggplot syntax so
+far?
 
 ## Activity 2: t-test/simple linear regression
 
-|                         | Frequentist | Bayesian |
-|-------------------------|-------------|----------|
-| Table summary           |             |          |
-| Point estimate          |             |          |
-| Interval-parameter      |             |          |
-| Interval-prediction     |             |          |
-| Distribution-parameter  |             |          |
-| Distribution-prediction |             |          |
+The two tables are a roadmap of what we're going to do: mapping
+uncertainty onto different representations
 
-### Frequentist and Bayesian models
+1.  Understand types of uncertainty
 
-t-test is equivalent to a linear model estimating two means. For the frequentist version, we are using `lm` because the output is easier to wrangle (good explainer:
++-------------------+--------------------------------------------+
+| Uncertainty type  | From data/model outputs                    |
++===================+============================================+
+| (Intrinsic)       | ?                                          |
++-------------------+--------------------------------------------+
+| Parameter         | ?                                          |
++-------------------+--------------------------------------------+
+| Prediction        | ?                                          |
++-------------------+--------------------------------------------+
+
+2.  Know how to show (the different types of) uncertainty. **PREDICTION**:
+which representation is most expressive?
+
+| Uncertainty representation | Frequentist | Bayesian |
+|----------------------------|-------------|----------|
+| Table summary              | TODO        |          |
+| Point estimate             |             |          |
+| Interval                   |             |          |
+| Distribution               |             |          |
+
+### Load Frequentist and Bayesian models
+
+t-test is equivalent to a linear model estimating two means. For the
+frequentist version, we are using `lm` because the output is easier to
+wrangle (good explainer:
 <https://lindeloev.github.io/tests-as-linear/#61_one-way_anova_and_kruskal-wallis>)
 
 ```{r}
@@ -166,23 +226,14 @@ The Bayesian t-test:
 (m_t_test_bayesian <- readRDS("../02-bayesian_stats/rds/dataset1.brm.bayesiant.rds"))
 ```
 
-### Build CI and PI dataframes; table views
+### Build dataframes for table views
 
-Table is the most basic way of reporting the results.
+**Table** is the most basic way of reporting the results.
 
-For **confidence interval (CI) \~ parameter uncertainty**
+Tables for confidence/credible interval (CI), or **parameter
+uncertainty:**
 
--   `estimate` column is for the estimates of the group means
--   `std.error` is the standard error. Math:
-    $\sqrt{MSE \left(\frac{1}{n} + \frac{(x_h - \bar{x})^2}{\sum{(x_i - \bar{x})^2}}\right)}$
--   95% CI ($\alpha = 0.05$) is
-    $t_{1 - 0.05/2, df} \times \sqrt{MSE \left(\frac{1}{n} + \frac{(x_h - \bar{x})^2}{\sum{(x_i - \bar{x})^2}}\right)}$,
-    where the t-multiplier $t_{1 - 0.05/2, df}$ is calculated as
-    `qt(1 - 0.05/2, df)`.
-
-We won't calculate CI intervals directly. Instead we'll calculate the
-standard errors and use `distributional::dist_student_t` and `ggdist`
-functions later.
+For the **frequentist** analysis:
 
 ```{r}
 (means_t_freq <- m_t_test %>% 
@@ -192,10 +243,29 @@ functions later.
 )
 ```
 
-For the Bayesian model, we get draws from the posterior predictive
+How to interpret this table:
+
+-   `estimate` column is for the estimates of the conditional means
+
+-   `std.error` is the standard error for each mean, and we can get
+    confidence intervals (CI) from it later
+
+    -   Math:
+        $\sqrt{MSE \left(\frac{1}{n} + \frac{(x_h - \bar{x})^2}{\sum{(x_i - \bar{x})^2}}\right)}$
+
+    -   **REFLECTION**: what kind of uncertainty is this?
+
+-   `statistic` is the value of a T-statistic
+
+-   95% CI ($\alpha = 0.05$) is
+    $t_{1 - 0.05/2, df} \times \sqrt{MSE \left(\frac{1}{n} + \frac{(x_h - \bar{x})^2}{\sum{(x_i - \bar{x})^2}}\right)}$,
+    where the t-multiplier $t_{1 - 0.05/2, df}$ is calculated as
+    `qt(1 - 0.05/2, df)`.
+
+For the **Bayesian model**, we get draws from the posterior predictive
 *expectations* (means) of all the parameters of the t-distribution
-(mu/.epred, sigma, nu). There is credible interval (CI) for Bayesian
-models, but we're not summarizing intervals yet.
+($\mu$/`.epred`, $\sigma$, $\nu$). There is credible interval (CI) for
+Bayesian models, but we're not summarizing intervals yet.
 
 ```{r }
 (means_t_bayes <- data_grid(df1, condition) %>%
@@ -206,13 +276,17 @@ From a bunch of samples to a summary table:
 
 ```{r }
 means_t_bayes %>%
-  median_qi(.epred, .width = c(0.95))
+  median_qi(.epred, .width = c(0.95)) 
 ```
 
-**Prediction interval (PI), or prediction uncertainty**
+**Prediction interval (PI), and prediction uncertainty**
 
-For the frequentist model. `.fitted` is the same as the `estimate`
+**DISCUSSION**: Prediction uncertainty? Compared to parameter
+uncertainty?
+
+For the **frequentist** model. `.fitted` is the same as the `estimate`
 above. `.se.pred` times the t-multiplier is the PI.
+$t_{1 - 0.05/2, df} \times \sqrt{MSE \left(1 + \frac{1}{n} + \frac{(x_h - \bar{x})^2}{\sum{(x_i - \bar{x})^2}}\right)}$
 
 NOTE on calculating the `se.pred`:
 <https://online.stat.psu.edu/stat501/lesson/3/3.3> gives a good
@@ -252,11 +326,13 @@ preds_t_bayes %>%
 
 ### Point estimates of the mean
 
+Remember the scatterplot we made earlier?
+
 **Frequentist** `lm()` model, plot estimates of the mean effectiveness
 by condition:
 
-First, use "pseudo" Grammar of Graphics/ggplot to articulate what you
-want
+**EXERCISE**: First, use pseudo Grammar of Graphics/ggplot to articulate
+what you want
 
     geom_point
       x <- estimate 
@@ -302,34 +378,39 @@ means_t_freq %>%
 # layer_data(p_pt_est, i = 1)
 ```
 
-REFLECTION: point estimates don't show uncertainty at all. (So this
+**REFLECTION**: point estimates don't show uncertainty at all. (So this
 model comparison isn't that great)
 
 ### Intervals - parameter and prediction uncertainty
 
-Add interval for uncertainty. In the **frequentist** world, the
+Add interval for uncertainty. For the **frequentist** model, the
 *confidence distribution* for the parameters follows the student-t
 distribution.
 <https://mjskay.github.io/ggdist/articles/freq-uncertainty-vis.html>
 
-We can use `distributional::dist_student_t` to specify a student-t
-distribution, all we need are the three parameters we calculated earlier
+We won't calculate CI intervals directly. Instead we'll calculate the
+standard errors and use `distributional::dist_student_t` and `ggdist`
+functions.
+
+All we need are the three parameters we calculated earlier
 
 -   df: degree of freedom (N-2)
--   mu: estimate/.fitted for the mean
--   sigma: standard error
+-   mu: estimate/.fitted for the mean ... `estimate` column is for the
+    estimates of the group means
+-   sigma: standard error ... `std.error` is the standard error. Math:
+    $\sqrt{MSE \left(\frac{1}{n} + \frac{(x_h - \bar{x})^2}{\sum{(x_i - \bar{x})^2}}\right)}$
 
 Note: `dist_student_t` only works with `xdist` aesthetic from the
 `ggdist` package.
 
-    stat_pointinterval
+    ggdist::stat_pointinterval
       xdist <- student_t(df, mu, sigma) 
       y <- condition
 
-REFLECTION: how would you plot it if you aren't using
+**REFLECTION**: how would you plot it if you aren't using
 `xdist`/`dist_student_t`?
 
-REFLECTION: why is it `stat_*`, not `geom_*`?
+**REFLECTION**: why is it `stat_*`, not `geom_*`?
 
 ```{r }
 means_t_freq %>%
@@ -354,19 +435,21 @@ the CI in the plot below!
 ```{r}
 preds_t_freq %>%
   ggplot(aes(y = condition)) + 
+  # EXERCISE: show PI with stat_interval()
   stat_interval(aes(
     xdist = dist_student_t(
       df = df,
       mu = .fitted, 
       sigma = .se.pred) 
   )) + 
-  # EXERCISE: put CI (dot and whisker) in this plot
+  
   stat_pointinterval(aes(
     xdist = dist_student_t( # EXERCISE: what does this mean?
       df = df,
       mu = .fitted,
       sigma = .se.fit)),
     position = position_nudge(y = -.2)) +
+  
   # EXERCISE: put raw data in this plot
   geom_point(
     aes(x = effectiveness), 
@@ -381,10 +464,10 @@ preds_t_freq %>%
 
 Replicate the CI+PI plot above, but with the **Bayesian** model
 
-REFLECTION: can we still use `dist_student_t`?
+**REFLECTION**: can we still use `dist_student_t`?
 
-EXERCISE: Visualize parameter uncertainty, predictive uncertainty, and
-the intrinsic uncertainty in data:
+**EXERCISE**: Visualize parameter uncertainty, predictive uncertainty,
+and the intrinsic uncertainty in data:
 
       (which visual element?) <- (Parameter uncertainty)
       (which visual element?) <- (Predictive uncertainty)
@@ -417,10 +500,11 @@ EXERCISE: What encoding do you prefer? How to look for more options?
 
 <https://mjskay.github.io/ggdist/>
 
-REFLECTION: how would you categorize all these options? 
+REFLECTION: how would you categorize all these options?
 
-- continuous (`stat_slab`) vs. discrete (`stat_dots`)
-- intervals (`stat_interval`) vs. distribution (`stat_slab`) vs. both (`stat_halfeye`)
+-   continuous (`stat_slab`) vs. discrete (`stat_dots`)
+-   intervals (`stat_interval`) vs. distribution (`stat_slab`) vs. both
+    (`stat_halfeye`)
 
 ```{r}
 means_t_freq %>%
@@ -439,7 +523,6 @@ means_t_freq %>%
     scale = 0.5, fill = "#8c96c6",
     position = position_nudge(y = 0.15)) + 
   
-  # EXERCISE: add a label for confidence distribution
   geom_label_repel(
     aes(estimate + 0.25, y = condition), 
     data = means_t_freq %>% slice_tail(),
@@ -487,8 +570,10 @@ preds_t_freq %>%
   NULL
 ```
 
-This type of plot is sometimes called Kruschke style in Bayesian context https://solomonkurz.netlify.app/post/2018-12-20-make-rotated-gaussians-kruschke-style/. The
-bunch of density lines shows both parameter and predictive uncertainty (why?)
+This type of plot is sometimes called Kruschke style in Bayesian context
+<https://solomonkurz.netlify.app/post/2018-12-20-make-rotated-gaussians-kruschke-style/>.
+The bunch of density lines shows both parameter and predictive
+uncertainty (why?)
 
 ```{r}
 means_t_bayes %>%
@@ -511,25 +596,35 @@ means_t_bayes %>%
   NULL
 ```
 
-REFLECTION: should you show confidence or prediction distribution, or both? 
-Should you use intervals or distributions for uncertainty?
+**REFLECTION**: should you show confidence or prediction distribution, or
+both? Should you use intervals or distributions for uncertainty?
+
+
+
+BREAK
+
+-----
 
 
 ## Activity 3: Ordinal logistic regression
 
-Now you will design your own plots for the frequentist and Bayesian ordinal linear regression. You have data exploration and model output summaries below. 
+Now you will design your own plots for the frequentist and Bayesian
+ordinal linear regression. You have data exploration and model output
+summaries below.
 
 ### Considerations and resources
 
-- What does the model look like? How does it work?
-- What are the parameter and prediction uncertainty?
-- How do I want to visualize the uncertainties? (Interval? distribution?)
-- (Bayesian) OLR <https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes>
-
+-   What does the model look like? How does it work?
+-   What are the parameter and prediction uncertainty?
+-   How do I want to visualize the uncertainties? (Interval?
+    distribution?)
+-   (Bayesian) OLR
+    <https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/monsters-and-mixtures.html#ordered-categorical-outcomes>
 
 ### Data exploration and how cumulative logit works
 
-The same `df1` data, but summarized to show proportion of each effectiveness level (1-9).
+The same `df1` data, but summarized to show proportion of each
+effectiveness level (1-9).
 
 ```{r}
 (df1_prop <- df1 %>%
@@ -568,7 +663,8 @@ logit <- function(x) log(x / (1 - x))
 )
 ```
 
-The first figure, but on log cumulative odds scale. Can you interpret the labeled numbers?
+The first figure, but on log cumulative odds scale. Can you interpret
+the labeled numbers?
 
 ```{r}
 cumu_df1 %>%
@@ -584,8 +680,8 @@ cumu_df1 %>%
 
 Once we have the estimates in the cumulative log odds space, can do
 inverse logit (`brms::inv_logit_scaled()`), and get proportions out of
-the cumulative proportions. The vertical straight lines are the individual 
-proportions at each effectiveness level.
+the cumulative proportions. The vertical straight lines are the
+individual proportions at each effectiveness level.
 
 ```{r}
 cumu_df1 %>%
@@ -618,6 +714,7 @@ Frequentist
   MASS::polr(effectiveness ~ condition, data = ., Hess=TRUE) 
 )
 ```
+
 Estimates of the intercepts on the logit scale
 
 ```{r}
@@ -632,8 +729,8 @@ Estimates on the probability scale
 )
 ```
 
-
-EXERCISE: plot estimates on the cumulative log odds scale
+EXERCISE: plot estimates on the cumulative log odds scale. One option:
+![](images/000003.png)
 
 ```{r}
 tidy(m_polr) %>%
@@ -657,7 +754,9 @@ tidy(m_polr) %>%
   NULL
 ```
 
-EXERCISE: On the probability scale
+EXERCISE: On the probability scale. One design:
+![](images/000002.png)
+
 
 ```{r}
 means_olr_freq %>%
@@ -673,6 +772,7 @@ means_olr_freq %>%
   NULL
   
 ```
+
 ### Bayesian OLR
 
 Load the data
@@ -691,7 +791,6 @@ the scale of 1...9)
 )
 ```
 
-
 ```{r}
 (preds_olr_bayes <- df1 %>%
     add_predicted_draws(m_olr_bayes) %>%
@@ -701,9 +800,8 @@ the scale of 1...9)
 
 ```
 
-EXERCISE: why does this look different from the frequentist version?
-
-
+EXERCISE: make a plot for those mean estimates! One design:
+![](images/000001.png)
 
 ```{r}
 means_olr_bayes %>%
@@ -717,7 +815,6 @@ means_olr_bayes %>%
   ylab("Proportion")
 ```
 
-EXERCISE: compare the two conditions
 
 ```{r}
 (means_df1_olr_compare <- means_olr_bayes %>%
@@ -730,7 +827,13 @@ EXERCISE: compare the two conditions
   drop_na() %>%
   mutate(diff = no_graph - graph)
 )
+```
 
+
+EXERCISE: compare the two conditions
+![](images/000006.png)
+
+```{r}
 means_df1_olr_compare %>%
   ggplot(aes(x = effectiveness, y = .epred)) + 
   stat_interval(.width = c(0.95)) +  # EXERCISE: can you be more expressive with uncertainty?
@@ -743,7 +846,7 @@ means_df1_olr_compare %>%
   NULL
 ```
 
-RELFECTION: how else to show the prediction uncertainty?
+RELFECTION: how else to show the prediction uncertainty? 
 
 ```{r}
 preds_olr_bayes %>%
