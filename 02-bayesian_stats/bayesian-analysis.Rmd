@@ -390,76 +390,6 @@ ppc_stat_grouped(y = dataset1.bayesiant.y,
 
 
 
-```{r dataset1-bayesiant-pop, fig.height=6, fig.width=6}
-
-newdata <- tibble(condition = c('graph', 'no_graph'))
-prior_preds <-  newdata %>%
-      add_epred_draws(dataset1.brm.bayesiant.priorchecks)   %>%
-      select(condition, .epred)  %>% 
-      rename(prior_prediction = .epred) 
-    
-
-posterior_preds <-  newdata %>%
-      add_epred_draws(dataset1.brm.bayesiant)   %>%
-      select(condition, .epred)  %>% 
-      rename(posterior_prediction = .epred)
-
-likelihood <- 
-  exp1.data %>%
-  group_by(condition) %>%
-  summarise(mu = mean(effectiveness), sd = sd(effectiveness))
-
-
-g0 <- exp1.data %>%
-ggplot(mapping = aes(x = effectiveness, y = ..density..)) +
-  geom_point(
-    exp1.data,
-    mapping = aes(x = effectiveness, y = 0),
-    position = position_jitter(height = .02, width = .2),
-    size = .3,
-    color = 'darkgray'
-  ) +
-  coord_cartesian(xlim = c(-1, 12), ylim = c(-0.1, 3)) +
-  facet_wrap(condition ~., ncol = 1)
-
-
-g1 <- g0 + geom_histogram(
-    binwidth = 1,
-    fill = 'darkgray',
-    color = 'white',
-    alpha = .5
-  ) +
-  geom_density( color = 'darkgray', size = 1, adjust = 3) 
-    
-
-g2 <- g1 + geom_density(
-    prior_preds,
-    mapping = aes(x = prior_prediction),
-    color = 'forestgreen',
-    fill = NA,#'forestgreen',
-    alpha = .3,
-    size = 1,
-    adjust = 1.2
-  ) 
-
-g3 <- g2 + geom_density(
-    posterior_preds,
-    mapping = aes(x = posterior_prediction),
-    color = DARK_PURPLE,
-    fill = NA,#DARK_PURPLE,
-    alpha = .3,
-    size = 1,
-    adjust = 1.2
-  ) 
-
-
-  
-g0
-g1
-g2
-g3
-```
-
 
 ### Step 3: Comparing posterior distributions
 
@@ -530,11 +460,11 @@ bind_rows(tidy.wrapper(dataset1.lm.freqt),
   ggplot() +
   geom_pointrange(
     aes(
-      x = model,
+      color = model,
       y = estimate,
       ymin = conf.low,
       ymax = conf.high,
-      color = term
+      x = term
     ),
     position = position_dodge(width = 0.2)
   ) +
@@ -573,7 +503,7 @@ p1 = exp1.data %>%
   geom_point(colour = "#b8925f",
              size = 2.5,
              stroke = 1) +
-  scale_x_continuous("Effectiveness", breaks = 1:7) +
+  scale_x_continuous("Effectiveness", breaks = 1:9) +
   scale_y_continuous("Cumulative Proportion",
                      breaks = seq(0, 1, by = 0.2),
                      limits = c(0, 1)) +
@@ -838,10 +768,32 @@ dataset1.olr.posterior_comparison %>%
     color = DARK_PURPLE,
     alpha = .5
   ) +
+  coord_cartesian(ylim = c(-.1, .1)) + 
   geom_hline(aes(yintercept = 0), linetype = "dashed", color = "gray") +
   xlab('') + ylab('no_graph - graph') +
   theme(axis.title.y = element_text(angle = 0, vjust = .5))
 ```
+
+```{r dataset1-olr-comparison-2, fig.height=5, fig.width=3}
+dataset1.olr.posterior_comparison  %>%
+       ungroup() %>%
+       mean_qi(.epred) %>%
+  ggplot() +
+  geom_hline(aes(yintercept = 0), linetype = "dashed", color = "gray") +
+  geom_point(aes(y = .epred, x = 1), size = 3, color = DARK_PURPLE) +
+  geom_errorbar(
+    aes(ymin = .lower, ymax = .upper, x = 1),
+    width = 0,
+    size = 2,
+    color = DARK_PURPLE,
+    alpha = .5
+  ) +
+  coord_cartesian(xlim = c(0, 2), ylim = c(-.1, .1)) + 
+  xlab('') + ylab('no_graph - graph') +
+  theme(axis.title.y = element_text(angle = 0, vjust = .5),
+        axis.text.x  = element_blank())
+```
+
 
 # Dataset 2
 
@@ -1023,6 +975,46 @@ dataset2.student.epred_comparison %>%
   xlab('')  + ylab('')
 ```
 
+## Compare variance
+
+
+```{r dataset2-student-posterior-fitted-sigma}
+
+dataset2.student.sigma.epred_comparison <-
+  tibble(condition = c(TRUE, FALSE)) %>%
+  add_epred_draws(dataset2.brm.student,
+                  dpar = "sigma",
+                  re_formula = NA,
+                  allow_new_levels = FALSE) %>%
+  ungroup() %>%
+  select(-c(.chain, .iteration, .row)) %>%
+  compare_levels(variable = sigma, by = condition) %>%
+  rename(sigma.diff = sigma)
+
+
+head(dataset2.student.sigma.epred_comparison)
+
+
+```
+
+```{r dataset2.studenyt.diff--sigma, fig.height=1, fig.width=5}
+dataset2.student.sigma.epred_comparison %>%
+  select(sigma.diff) %>%
+  mean_qi() %>%
+  ggplot() +
+  geom_point(aes(x = sigma.diff, y = condition), size = 3, color = DARK_PURPLE) +
+  geom_errorbarh(
+    aes(xmin = .lower, xmax = .upper, y = condition),
+    height = 0,
+    color = DARK_PURPLE,
+    alpha = .5,
+    size = 2
+  ) +
+  geom_vline(aes(xintercept = 0), linetype = "dashed", color = "gray") +
+  coord_cartesian(ylim = c(0, 2), xlim = c(-15, 15))  +
+  scale_y_discrete(label = c('expansive - not expansive')) +
+  xlab('')  + ylab('')
+```
 
 # Packages Information
 ```{r}
