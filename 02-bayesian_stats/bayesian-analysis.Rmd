@@ -389,78 +389,6 @@ ppc_stat_grouped(y = dataset1.bayesiant.y,
 ```
 
 
-
-```{r dataset1-bayesiant-pop, fig.height=6, fig.width=6}
-
-newdata <- tibble(condition = c('graph', 'no_graph'))
-prior_preds <-  newdata %>%
-      add_epred_draws(dataset1.brm.bayesiant.priorchecks)   %>%
-      select(condition, .epred)  %>% 
-      rename(prior_prediction = .epred) 
-    
-
-posterior_preds <-  newdata %>%
-      add_epred_draws(dataset1.brm.bayesiant)   %>%
-      select(condition, .epred)  %>% 
-      rename(posterior_prediction = .epred)
-
-likelihood <- 
-  exp1.data %>%
-  group_by(condition) %>%
-  summarise(mu = mean(effectiveness), sd = sd(effectiveness))
-
-
-g0 <- exp1.data %>%
-ggplot(mapping = aes(x = effectiveness, y = ..density..)) +
-  geom_point(
-    exp1.data,
-    mapping = aes(x = effectiveness, y = 0),
-    position = position_jitter(height = .02, width = .2),
-    size = .3,
-    color = 'darkgray'
-  ) +
-  coord_cartesian(xlim = c(-1, 12), ylim = c(-0.1, 3)) +
-  facet_wrap(condition ~., ncol = 1)
-
-
-g1 <- g0 + geom_histogram(
-    binwidth = 1,
-    fill = 'darkgray',
-    color = 'white',
-    alpha = .5
-  ) +
-  geom_density( color = 'darkgray', size = 1, adjust = 3) 
-    
-
-g2 <- g1 + geom_density(
-    prior_preds,
-    mapping = aes(x = prior_prediction),
-    color = 'forestgreen',
-    fill = NA,#'forestgreen',
-    alpha = .3,
-    size = 1,
-    adjust = 1.2
-  ) 
-
-g3 <- g2 + geom_density(
-    posterior_preds,
-    mapping = aes(x = posterior_prediction),
-    color = DARK_PURPLE,
-    fill = NA,#DARK_PURPLE,
-    alpha = .3,
-    size = 1,
-    adjust = 1.2
-  ) 
-
-
-  
-g0
-g1
-g2
-g3
-```
-
-
 ### Step 3: Comparing posterior distributions
 
 Now that we have performed model diagnostics, we would like to interpret the results. The pertinent research question here is whether there is a difference in the effectiveness rating between the *graph* and *no graph* condition. We use conditional distributions to compare the mean difference between the two conditions. `add_epred_draws()` from tidybayes is the most convenient way. 
@@ -904,18 +832,33 @@ dataset2.brm.student.priorchecks = brm(
   dataset2.brm.student.formula,
   prior = c(
     prior(normal(0, 2), class = "b"),
-    prior(cauchy(0, 2), class = "b", dpar = "sigma"),
+    prior(normal(0, 0.5), class = "b", dpar = "sigma"),
     prior(exponential(0.033), class = "nu"),
     prior(student_t(3, 0, 5), class = "Intercept"),
-    prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
+    prior(student_t(3, 0, 1), class = "Intercept", dpar = "sigma")
   ),
   data = dataset2,
-  backend = BRM_BACKEND,
-  sample_prior = 'only',
-  file = "rds/dataset2.brm.student.priorchecks.rds"
+  # backend = BRM_BACKEND,
+  sample_prior = 'only' #,
+  # file = "rds/dataset2.brm.student.priorchecks.rds"
 )
-
 ```
+
+
+```{r}
+dataset2.yprior <-  posterior_predict(dataset2.brm.student.priorchecks, ndraws = 1000)
+
+ggplot() +
+  geom_histogram(aes(x = dataset2.yprior),
+               fill = DARK_PURPLE,
+               alpha = .5, size = 1, center = 0) +
+ # scale_x_continuous(breaks = 1:9, limits = c(0.5, 9.5)) + 
+ labs(x = 'Prior predictive distribution',  y = "") +
+ theme(
+   axis.text.y = element_blank()
+ )
+```
+
 
 
 ### Step 2: Computing the posterior probability
@@ -927,7 +870,7 @@ dataset2.brm.student = brm(
  family = student()),
  prior = c(
    prior(normal(0, 2), class = "b"),
-   prior(cauchy(0, 2), class = "b", dpar = "sigma"),
+   prior(normal(0, 1), class = "b", dpar = "sigma"),
    prior(exponential(.033), class = "nu"),
    prior(student_t(3, 0, 5), class = "Intercept"),
    prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
