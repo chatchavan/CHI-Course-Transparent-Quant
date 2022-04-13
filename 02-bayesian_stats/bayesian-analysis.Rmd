@@ -388,7 +388,6 @@ ppc_stat_grouped(y = dataset1.bayesiant.y,
                  group = exp1.data$condition, binwidth = .1)
 ```
 
-
 ### Step 3: Comparing posterior distributions
 
 Now that we have performed model diagnostics, we would like to interpret the results. The pertinent research question here is whether there is a difference in the effectiveness rating between the *graph* and *no graph* condition. We use conditional distributions to compare the mean difference between the two conditions. `add_epred_draws()` from tidybayes is the most convenient way. 
@@ -458,11 +457,11 @@ bind_rows(tidy.wrapper(dataset1.lm.freqt),
   ggplot() +
   geom_pointrange(
     aes(
-      x = model,
+      color = model,
       y = estimate,
       ymin = conf.low,
       ymax = conf.high,
-      color = term
+      x = term
     ),
     position = position_dodge(width = 0.2)
   ) +
@@ -501,7 +500,7 @@ p1 = exp1.data %>%
   geom_point(colour = "#b8925f",
              size = 2.5,
              stroke = 1) +
-  scale_x_continuous("Effectiveness", breaks = 1:7) +
+  scale_x_continuous("Effectiveness", breaks = 1:9) +
   scale_y_continuous("Cumulative Proportion",
                      breaks = seq(0, 1, by = 0.2),
                      limits = c(0, 1)) +
@@ -766,10 +765,32 @@ dataset1.olr.posterior_comparison %>%
     color = DARK_PURPLE,
     alpha = .5
   ) +
+  coord_cartesian(ylim = c(-.1, .1)) + 
   geom_hline(aes(yintercept = 0), linetype = "dashed", color = "gray") +
   xlab('') + ylab('no_graph - graph') +
   theme(axis.title.y = element_text(angle = 0, vjust = .5))
 ```
+
+```{r dataset1-olr-comparison-2, fig.height=5, fig.width=3}
+dataset1.olr.posterior_comparison  %>%
+       ungroup() %>%
+       mean_qi(.epred) %>%
+  ggplot() +
+  geom_hline(aes(yintercept = 0), linetype = "dashed", color = "gray") +
+  geom_point(aes(y = .epred, x = 1), size = 3, color = DARK_PURPLE) +
+  geom_errorbar(
+    aes(ymin = .lower, ymax = .upper, x = 1),
+    width = 0,
+    size = 2,
+    color = DARK_PURPLE,
+    alpha = .5
+  ) +
+  coord_cartesian(xlim = c(0, 2), ylim = c(-.1, .1)) + 
+  xlab('') + ylab('no_graph - graph') +
+  theme(axis.title.y = element_text(angle = 0, vjust = .5),
+        axis.text.x  = element_blank())
+```
+
 
 # Dataset 2
 
@@ -966,6 +987,46 @@ dataset2.student.epred_comparison %>%
   xlab('')  + ylab('')
 ```
 
+## Compare variance
+
+
+```{r dataset2-student-posterior-fitted-sigma}
+
+dataset2.student.sigma.epred_comparison <-
+  tibble(condition = c(TRUE, FALSE)) %>%
+  add_epred_draws(dataset2.brm.student,
+                  dpar = "sigma",
+                  re_formula = NA,
+                  allow_new_levels = FALSE) %>%
+  ungroup() %>%
+  select(-c(.chain, .iteration, .row)) %>%
+  compare_levels(variable = sigma, by = condition) %>%
+  rename(sigma.diff = sigma)
+
+
+head(dataset2.student.sigma.epred_comparison)
+
+
+```
+
+```{r dataset2.studenyt.diff--sigma, fig.height=1, fig.width=5}
+dataset2.student.sigma.epred_comparison %>%
+  select(sigma.diff) %>%
+  mean_qi() %>%
+  ggplot() +
+  geom_point(aes(x = sigma.diff, y = condition), size = 3, color = DARK_PURPLE) +
+  geom_errorbarh(
+    aes(xmin = .lower, xmax = .upper, y = condition),
+    height = 0,
+    color = DARK_PURPLE,
+    alpha = .5,
+    size = 2
+  ) +
+  geom_vline(aes(xintercept = 0), linetype = "dashed", color = "gray") +
+  coord_cartesian(ylim = c(0, 2), xlim = c(-15, 15))  +
+  scale_y_discrete(label = c('expansive - not expansive')) +
+  xlab('')  + ylab('')
+```
 
 # Packages Information
 ```{r}
