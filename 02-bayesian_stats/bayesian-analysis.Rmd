@@ -415,7 +415,7 @@ dataset1.bayesiant.posterior_comparison %>%
 
 A basic way to interpret and communicate the results is to plot them. We plot this result using credible interval. Lecture 3 will cover more ways of representing uncertainty for effective communication.
 
-```{r dataset1.bayesiant.diff, fig.height=2, fig.width=5}
+```{r dataset1.bayesiant.diff-1, fig.height=2, fig.width=5}
 dataset1.bayesiant.posterior_epred %>%
   ggplot(aes(x = .epred, fill = condition)) +
   #geom_point(aes(x = .epred, group = condition), color = DARK_PURPLE, size = 3) +
@@ -433,7 +433,7 @@ dataset1.bayesiant.posterior_epred %>%
   xlab('')
 ```
 
-```{r dataset1.bayesiant.diff, fig.height=2, fig.width=5}
+```{r dataset1.bayesiant.diff-2, fig.height=2, fig.width=5}
 dataset1.bayesiant.posterior_comparison %>%
   ggplot(aes(x = .epred)) +
   #geom_point(aes(x = .epred, group = condition), color = DARK_PURPLE, size = 3) +
@@ -910,7 +910,7 @@ dataset2.brm.student.formula <- bf(change ~ condition,
 head(as_tibble(get_prior(dataset2.brm.student.formula, data = dataset2)))
 ```
 
-```{r dataset2-bayesiant-prior-checkes, echo = FALSE, eval = FALSE}
+```{r dataset2-bayesiant-prior-checkes}
 # This breaks :-)
 dataset2.brm.student.priorchecks = brm(
   dataset2.brm.student.formula,
