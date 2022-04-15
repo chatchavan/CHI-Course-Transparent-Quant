@@ -751,7 +751,7 @@ ppc_stat_grouped(y = dataset1.olr.y,
 
 
 
-```{r dataset1-olr-prediction-draws}
+```{r dataset1-olr-prediction-draws, fig.height=3, fig.width=7}
 dataset1.olr.posterior_prediction <-
   tibble(condition = c('graph', 'no_graph')) %>%
   add_predicted_draws(dataset1.brm.olr2,
@@ -762,10 +762,11 @@ dataset1.olr.posterior_prediction <-
 head(dataset1.olr.posterior_prediction)
 
 dataset1.olr.posterior_prediction  %>% 
+  mutate(.prediction = fct_rev(.prediction)) %>%
   ggplot(.) + 
-  geom_bar(aes(fill = .prediction, x = condition), position = 'fill') + 
-  scale_color_brewer(palette = 'Purples') + 
-  scale_fill_brewer(palette = 'Purples') 
+  geom_bar(aes(fill = .prediction, y = condition), position = 'fill') + 
+  scale_color_brewer(palette = 'Purples', direction = -1) + 
+  scale_fill_brewer(palette = 'Purples', direction = -1) 
 
 ```
 
@@ -876,7 +877,7 @@ dataset2 %>%
                adjust = 1.5,
                color = '#9281bf') +
    geom_function(
-    color = "#9281bf",
+    color = "#222222",
     linetype = 'dashed',
     fun = function(x)
       dstudent_t(x, mu = 16,  sigma = 39, df = 6),
@@ -916,7 +917,7 @@ dataset2.brm.student.priorchecks = brm(
   dataset2.brm.student.formula,
   prior = c(
     prior(normal(0, 2), class = "b"),
-    prior(normal(0, 4), class = "b", dpar = "sigma"),
+    prior(cauchy(0, 2), class = "b", dpar = "sigma"),
     prior(exponential(0.033), class = "nu"),
     prior(student_t(3, 0, 5), class = "Intercept"),
     prior(student_t(3, 0, 1), class = "Intercept", dpar = "sigma")
@@ -929,8 +930,8 @@ dataset2.brm.student.priorchecks = brm(
 ```
 
 ```{r}
-min(dataset2$adjPDiff)
-max(dataset2$adjPDiff)
+min(dataset2$change)
+max(dataset2$change)
 dataset2.yprior <-  posterior_predict(dataset2.brm.student.priorchecks)
 
 ggplot() +
