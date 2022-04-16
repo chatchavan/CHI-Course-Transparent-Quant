@@ -9,11 +9,12 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(tidyr)
+library(purrr)
 library(ggplot2)
 library(ggdist)
 library(cowplot)
 
-theme_set(theme_ggdist() + 
+theme_set(theme_ggdist() +
           theme(
             strip.background = element_blank(),
             plot.title = element_text(vjust = .5),
@@ -100,6 +101,7 @@ p2 = dataset %>%
 plot_grid(p2, p1, ncol = 1)
 ```
 
+
 We can describe the data for this group using a t-distribution:
 
 ```{r, warning = FALSE}
@@ -136,13 +138,16 @@ data_mu = mean(df.graph$effectiveness)
 data_sigma = sd(df.graph$effectiveness)
 likelihood = tibble(x = seq(0, 11, by = 0.02), y = dnorm(x, data_mu, data_sigma/sqrt(N)))
 
+prior_mu = 5
+prior_sigma = 0.5
+prior = tibble(x = seq(0, 11, by = 0.02), y = dnorm(x, prior_mu, prior_sigma))
+
 p2 = ggplot() +
-  geom_area(data = likelihood, aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
-  # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 2) +
-  annotate("text", label = "Likelihood =\nP(D | \\mu_{graph}) ??", x = 8, y = 2) +
+  geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.3, size = 0.5) +
+  annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
   geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
-  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
   scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
   theme(
     axis.title.x = element_blank(), 
     axis.line.x = element_blank(),
@@ -155,15 +160,11 @@ plot_grid(p2, p1, ncol = 1)
 ```
 
 ```{r, warning = FALSE}
-prior_mu = 5
-prior_sigma = 0.5
-prior = tibble(x = seq(0, 11, by = 0.02), y = dnorm(x, prior_mu, prior_sigma))
-
 p2 = ggplot() +
   geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.3, size = 0.5) +
   geom_area(data = likelihood, aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
-  annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
-  annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
+  # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
+  # annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
   geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
   scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
   scale_y_continuous(breaks = 0, limits = c(0, 3)) +
@@ -201,11 +202,11 @@ posterior = tibble(x = seq(0, 11, by = 0.01), y = dnorm(x, post_mu, post_sigma))
 
 p2 = ggplot() +
   geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.1, size = 0.5) +
-  geom_area(data = likelihood, aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  # geom_area(data = likelihood, aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
   geom_area(data = posterior, aes(x, y), colour = "#6405F9", fill = "#6405F9", alpha = 0.3, size = 0.5) +
-  annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
-  annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
-  annotate("text", label = "Posterior =\nP(mean | data)", x = 7.8, y = 2) +
+  # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
+  # annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
+  # annotate("text", label = "Posterior =\nP(mean | data)", x = 7.8, y = 2) +
   geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
   scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
   scale_y_continuous(breaks = 0, limits = c(0, 3)) +
@@ -254,4 +255,58 @@ p2 = ggplot() +
 plot_grid(p2, p1, ncol = 1)
 ```
 
+## Parameter vs predictive uncertainty as a function of sample size:
+
+```{r}
+set.seed(1234)
+
+x = seq(-3, 3, by = 0.01)
+
+dat.ss = tibble(
+  N = c(10, 50, 100, 200, 1000),
+  data = map(N, rnorm),
+  mu = map_dbl(data, mean),
+  sd = map_dbl(data, sd),
+  se = sd / sqrt(N)
+) %>%
+  mutate(
+    y.parameter = map2(mu, se, ~ dnorm(x, .x, .y)),
+    y.pred = map2(mu, sd, ~ dnorm(x, .x, .y)),
+    x = list(x)
+  ) %>%
+  unnest(cols = c(y.parameter, y.pred, x)) %>%
+  pivot_longer(cols = c(y.parameter, y.pred), names_to = "parameter", names_prefix = "y.")
+ 
+
+p1 = dat.ss %>%
+  filter(parameter == "parameter") %>%
+  ggplot() +
+  geom_line(aes(x, value), colour = "blue") +
+  geom_vline(xintercept = 0, colour = "red") +
+  facet_grid(N ~ parameter)
+
+p2 = dat.ss %>%
+  filter(parameter == "pred") %>%
+  ggplot() +
+  geom_line(aes(x, value), color = "blue") +
+  geom_line(aes(x, dnorm(x)), color = "red") +
+  facet_grid(N ~ parameter)
+
+cowplot::plot_grid(p1, p2, ncol = 2)
+```
+
+
+```{r, fig.height = 2.5, fig.width = 6}
+tibble(
+  x = seq(-10, 10, by = 0.01),
+  y1 = gamlss.dist::dTF(x, 0, 1, 50),
+  y2 = gamlss.dist::dTF(x, 0, 1, 5),
+  y3 = gamlss.dist::dTF(x, 2, 1, 5),
+  y4 = gamlss.dist::dTF(x, 0, 4, 5)
+) %>%
+  pivot_longer(cols = c(y1:y4), names_to = "parameter", values_to = "y") %>%
+  ggplot() +
+  geom_line(aes(x, y, colour = parameter), size = 1) +
+  scale_color_discrete()
+```
 
