@@ -152,6 +152,7 @@ Let's write the Grammar of Graphics spec and add more "color" to it
     ggplot
         x <- effectiveness 
         y <- condition
+        color <- condition
     geom_point
 
 ```{r}
@@ -195,11 +196,16 @@ uncertainty onto different representations
 
 1.  Understand types of uncertainty
 
-| Uncertainty type | From data/model outputs |
-|------------------|-------------------------|
-| (Intrinsic)      | ?                       |
-| Parameter        | ?                       |
-| Prediction       | ?                       |
++----------------+-----------------------------------------+
+| Uncertainty    | From data/model outputs                 |
+| type           |                                         |
++================+=========================================+
+| (Intrinsic)    | ?                                       |
++----------------+-----------------------------------------+
+| Parameter      | ?                                       |
++----------------+-----------------------------------------+
+| Prediction     | ?                                       |
++----------------+-----------------------------------------+
 
 2.  Know how to show (the different types of) uncertainty.
     **PREDICTION**: which representation is most *expressive*?
@@ -335,14 +341,14 @@ by condition:
 what you want. Remember the scatterplot we made earlier?
 
     geom_point
-      x <- estimate 
+      x <- estimate
       y <- condition
 
 ```{r }
 means_t_freq %>%
   ggplot(aes(x = estimate, y = condition)) + 
   geom_point() +
-  scale_x_continuous(breaks = 1:9, limits = c(1, 9)) + 
+  scale_x_continuous(breaks = 1:9, limits = c(1, 9)) +
   labs(title = "Frequentist lm(), estimated effectiveness by condition") +
   NULL
 ```
@@ -361,11 +367,11 @@ means_t_freq %>%
   ggplot(aes(x = .epred, y = condition)) + 
   geom_point(aes(color = "Bayesian")) + 
   geom_point(
-    aes(x = estimate, 
-    color = "Frequentist"), 
-    data = means_t_freq, 
-    position = position_nudge(y = -0.1)) + 
-  scale_x_continuous("Effectiveness", breaks = 1:9, limits = c(1, 9)) + 
+    aes(x = estimate,
+    color = "Frequentist"),
+    data = means_t_freq,
+    position = position_nudge(y = -0.1)) +
+  scale_x_continuous("Effectiveness", breaks = 1:9, limits = c(1, 9)) +
   scale_color_manual("Model", 
                      breaks = c("Bayesian", "Frequentist"), 
                      values  = c("#45829f", "#000000") ) +
@@ -391,7 +397,7 @@ Add interval for uncertainty. For the **frequentist** model, the
 distribution.
 <https://mjskay.github.io/ggdist/articles/freq-uncertainty-vis.html>
 
-To specify a studdent-t distribution, we need three parameters:
+To specify a student-t distribution, we need three parameters:
 
 -   df: degree of freedom (N-2)
 -   mu: estimate/.fitted for the mean ... `estimate` column is for the
@@ -451,17 +457,17 @@ preds_t_freq %>%
       sigma = .se.pred) 
   )) + 
  
-  # PI with dot-and-whisker  
+  # CI with dot-and-whisker  
   stat_pointinterval(aes(
-    xdist = dist_student_t( 
+    xdist = dist_student_t(
       df = df,
       mu = .fitted,
       sigma = .se.fit)),
     position = position_nudge(y = -.2)) +
-  
+  # 
   # EXERCISE: put raw data in this plot
   geom_point(
-    aes(x = effectiveness), 
+    aes(x = effectiveness),
     data = df1, position = jitterer) +
   
   scale_x_continuous("effectiveness", breaks = 1:11, limits = c(0, 11)) + 
@@ -479,9 +485,8 @@ Replicate the CI+PI plot above, but with the **Bayesian** model
 **EXERCISE**: Visualize parameter uncertainty, predictive uncertainty,
 and the intrinsic uncertainty in data:
 
-      (which visual element?) <- (Parameter uncertainty)
-      (which visual element?) <- (Predictive uncertainty)
-      (which visual element?) <- (Intrinsic uncertainty in data)
+stat_intveral x \<- .epred x \<- .prediction x \<- effectiveness y \<-
+condtion
 
 ```{r}
 df1 %>%
