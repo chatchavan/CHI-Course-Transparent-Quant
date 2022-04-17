@@ -12,16 +12,10 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(tidymodels)
-library(modelr)
-library(brms)
 library(tidybayes)
 library(ggdist)
 library(distributional)
-library(ordinal)
 library(ggrepel)
-library(glue)
-library(dabestr)
-library(emmeans)
 
 theme_set(theme_tidybayes())
 ```
