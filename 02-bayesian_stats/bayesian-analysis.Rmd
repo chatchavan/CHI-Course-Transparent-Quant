@@ -236,6 +236,23 @@ Another important thing to note is that `brms` often specifies improper priors (
 
 The following code block implements some prior predictive checks:
 
+```{r}
+tibble(
+  x = seq(0, 10, by = 0.01),
+  y = dnorm(x, 5, 1.5)
+) %>%
+  ggplot(aes(x, y)) +
+  geom_line(color = "#b8925f", size = 2) +
+  scale_x_continuous(breaks = seq(1, 9, by = 1)) +
+  labs(y = "Density") +
+  theme(
+    panel.grid.major.y = element_line(),
+    axis.title.y = element_text(angle = 90, size = 24),
+    axis.text = element_text(size = 20)
+  )
+```
+
+
 ```{r dataset1-bayesian-t-test-run-prior-predictive-check, fig.height=4, fig.width=9}
 dataset1.brm.bayesiant.priorchecks <-
   brm(
@@ -279,10 +296,6 @@ dataset1.bayesiant.ppc %>%
     size = .75
   ) +
   labs(y = "", x = 'Draws from the prior predictive distribution')
-
-
-# Fumeng -> Abhraneel: I rewrote it...
-# I actually don't immediately know how to implement density estimation per .draw
 
 # flat it
 dim(dataset1.bayesiant.yprior) <- n_prior_draws * 123
@@ -384,6 +397,7 @@ ppc_stat_grouped(y = dataset1.bayesiant.y,
 
 Now that we have performed model diagnostics, we would like to interpret the results. The pertinent research question here is whether there is a difference in the effectiveness rating between the *graph* and *no graph* condition. We use conditional distributions to compare the mean difference between the two conditions. `add_epred_draws()` from tidybayes is the most convenient way.
 
+
 ```{r dataset1-t-test-posterior-fitted}
 dataset1.bayesiant.posterior_epred <-
   tibble(condition = c('graph', 'no_graph')) %>%
@@ -418,7 +432,7 @@ dataset1.bayesiant.posterior_comparison %>%
 A basic way to interpret and communicate the results is to plot them. We plot this result using credible interval. Lecture 3 will cover more ways of representing uncertainty for effective communication.
 
 ```{r dataset1.bayesiant.diff-1, fig.height=2, fig.width=5}
-dataset1.bayesiant.posterior_epred %>%
+p3 = dataset1.bayesiant.posterior_epred %>%
   ggplot(aes(x = .epred, fill = condition)) +
   #geom_point(aes(x = .epred, group = condition), color = DARK_PURPLE, size = 3) +
   geom_density(
@@ -433,6 +447,8 @@ dataset1.bayesiant.posterior_epred %>%
   #geom_vline(aes(xintercept = 0), linetype = "dashed", color = "black") +
   #coord_cartesian(xlim = c(-1, 1))  +
   xlab('')
+
+p3
 ```
 
 ```{r dataset1.bayesiant.diff-2, fig.height=2, fig.width=5}
@@ -751,8 +767,12 @@ ppc_stat_grouped(y = dataset1.olr.y,
 
 ### Step 3: Compare posterior distributions
 
-
-
+```{r}
+tibble(condition = c('graph', 'no_graph')) %>%
+  add_predicted_draws(dataset1.brm.olr2) %>%
+  ggplot() +
+  geom_bar(aes(x = .prediction))
+```
 
 Finally we estimate the difference between the two conditions and plot the results:
 

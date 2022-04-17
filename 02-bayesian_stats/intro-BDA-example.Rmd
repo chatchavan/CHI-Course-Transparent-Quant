@@ -161,6 +161,126 @@ plot_grid(p2, p1, ncol = 1)
 
 ```{r, warning = FALSE}
 p2 = ggplot() +
+  # geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.3, size = 0.5) +
+  geom_area(data = filter(likelihood, x < 2), aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
+  # annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+```{r, warning = FALSE}
+p2 = ggplot() +
+  # geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.3, size = 0.5) +
+  geom_area(data = filter(likelihood, x < 6), aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
+  # annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+```{r, warning = FALSE}
+p2 = ggplot() +
+  # geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.3, size = 0.5) +
+  geom_area(data = filter(likelihood, x < 6.5), aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
+  # annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+```{r, warning = FALSE}
+p2 = ggplot() +
+  # geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.3, size = 0.5) +
+  geom_area(data = filter(likelihood, x < 6.57), aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
+  # annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+```{r, warning = FALSE}
+p2 = ggplot() +
+  # geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.3, size = 0.5) +
+  geom_area(data = filter(likelihood, x < 7), aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
+  # annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+```{r, warning = FALSE}
+p2 = ggplot() +
+  # geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.3, size = 0.5) +
+  geom_area(data = filter(likelihood, x < 9), aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
+  # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
+  # annotate("text", label = "Prior =\nP(mean)", x = 3, y = 0.6) +
+  geom_hline(yintercept = 0, size = 0.2, color = "#979797") +
+  scale_x_continuous(breaks = seq(0, 9, by = 2), limits = c(0, 11)) +
+  scale_y_continuous(breaks = 0, limits = c(0, 3)) +
+  theme(
+    axis.title.x = element_blank(), 
+    axis.line.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    plot.margin = margin(0, .2, 0, .9, "cm")
+  )
+
+plot_grid(p2, p1, ncol = 1)
+```
+
+```{r, warning = FALSE}
+p2 = ggplot() +
   geom_area(data = prior, aes(x, y), colour = "#75D6FF", fill = "#75D6FF", alpha = 0.3, size = 0.5) +
   geom_area(data = likelihood, aes(x, y), colour = "#0119F5", fill = "#0119F5", alpha = 0.1, size = 0.5) +
   # annotate("text", label = "Likelihood =\nP(data | mean)", x = 8, y = 1) +
