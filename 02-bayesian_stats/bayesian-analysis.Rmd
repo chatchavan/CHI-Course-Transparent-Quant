@@ -904,25 +904,6 @@ dataset1.olr.posterior_comparison  %>%
         axis.text.x  = element_blank())
 ```
 
-```{r dataset1-olr-comparison-4, fig.height=4, fig.width=3}
-dataset1.olr.posterior_comparison  %>%
-       ungroup() %>%
-       mean_qi(.epred) %>%
-  ggplot() +
-  geom_hline(aes(yintercept = 0), linetype = "dashed", color = "gray") +
-  geom_point(aes(y = .epred, x = 1), size = 3, color = DARK_PURPLE) +
-  geom_errorbar(
-    aes(ymin = .lower, ymax = .upper, x = 1),
-    width = 0,
-    size = 2,
-    color = DARK_PURPLE,
-    alpha = .5
-  ) +
-  coord_cartesian(xlim = c(0, 2), ylim = c(-.1, .1)) + 
-  xlab('') + ylab('no_graph - graph') +
-  theme(axis.title.y = element_text(angle = 0, vjust = .5),
-        axis.text.x  = element_blank())
-```
 
 # Dataset 2
 
