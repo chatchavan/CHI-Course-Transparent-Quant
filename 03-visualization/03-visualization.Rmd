@@ -64,7 +64,7 @@ efficacy, presumably because graphs are associated with science.
 **TIP**: `()` enclosing an assignment will print the assigned value as
 well.
 
-```{r}
+```{r 1.0}
 # Note that there are 123 rows!
 
 (df1 <- read_csv("data/blinded.csv", show_col_types = FALSE) %>%
@@ -84,7 +84,7 @@ evaluate three plots:
 
 **Plot 1**
 
-```{r}
+```{r 1.1}
 df1 %>%
   ggplot(aes(
     x = effectiveness, 
@@ -105,11 +105,11 @@ expressiveness and usability in the Zoom chat on a scale of 1-5
 
 **Plot 2**
 
-```{r}
+```{r 1.20}
 jitterer <- position_jitter(height = 0.1, seed = 1)
 ```
 
-```{r}
+```{r 1.21}
 df1 %>%
   ggplot(aes(
     x = effectiveness, 
@@ -131,7 +131,7 @@ expressiveness/usability?
 
 One option:
 
-```{r }
+```{r 1.30}
 (df1_prop <- df1 %>%
   count(condition, effectiveness) %>%
   add_row(condition = "graph", effectiveness = 2, n = 0) %>%
@@ -141,7 +141,7 @@ One option:
 )
 ```
 
-```{r }
+```{r 1.31}
 df1_prop %>%
   ggplot(aes(x = effectiveness, y = n, color = condition)) + 
   geom_point() + 
@@ -151,11 +151,15 @@ df1_prop %>%
   NULL
 ```
 
+**Reflection**: why is this better? why is it worse?
+
+
+
 ## Activity 2: visualizing model outputs
 
 ### Load and summarize frequentist and Bayesian models
 
-```{r}
+```{r 2.0}
 # model objects
 m_t_test <- lm(effectiveness ~ - 1 + condition, data = df1)
 m_t_test_bayesian <- readRDS("../02-bayesian_stats/rds/dataset1.brm.bayesiant.rds")
@@ -188,7 +192,7 @@ preds_t_bayes <- data_grid(df1, condition) %>%
 
 Starting from the point estimate
 
-```{r }
+```{r 2.10}
 means_t_freq %>%
   ggplot(aes(x = estimate, y = condition)) + 
   geom_point(aes(effectiveness), position = jitterer, data=df1, alpha = 0.5, color = "#8c96c6") +
@@ -201,11 +205,12 @@ means_t_freq %>%
 👉ACTION: **head to Miro**
 <https://miro.com/app/board/uXjVO8L3bt8=/?moveToWidget=3458764523389765219&cot=14>
 
-We consider two types of intervals:
 
 **Concepts**
 
-Frequentist
+We consider two types of intervals: CI and PI
+
+Frequentist:
 
 -   CI: confidence interval; the long-run proportion of correspondingly
     computed intervals that end up containing the true value of the
@@ -214,6 +219,7 @@ Frequentist
     -   For our t-test, the 95% CI is from the confidence distribution
         (t-distribution). [More
         reading](https://mjskay.github.io/ggdist/articles/freq-uncertainty-vis.html)
+        and an [animated explanation](https://seeing-theory.brown.edu/frequentist-inference/index.html#section2)
 
 -   PI: prediction interval; estimate of an interval in which a future
     observation will fall, with a certain probability, given what has
@@ -239,7 +245,7 @@ Note:
 👉ACTION: **Vote**: is CI always narrower than PI? \[Y/N\]
 
 
-```{r}
+```{r 2.11}
 preds_t_freq %>%
   
   ggplot(aes(y = condition)) + 
@@ -261,9 +267,9 @@ preds_t_freq %>%
     position = position_nudge(y = -.2)) +
   
   # EXERCISE: put raw data in this plot
-  # geom_point(
-  #   aes(x = effectiveness),
-  #   data = df1, position = jitterer) +
+  geom_point(
+    aes(x = effectiveness),
+    data = df1, position = jitterer) +
   
   scale_x_continuous("effectiveness", breaks = 1:9, limits = c(0, 10)) + 
   scale_color_brewer("Predictive interval") + 
@@ -272,7 +278,7 @@ preds_t_freq %>%
   theme(legend.position="none")
 ```
 
-
+👉 Back to Miro and compare our "error bar" guesses with CI/PI we just plotted.
 
 ### Activity 2.2 Types of uncertainty vis
 
@@ -281,14 +287,15 @@ preds_t_freq %>%
 
 ### Activity 2.3 Putting it together
 
-A plot showing the confidence distribution for the frequentist t-test.
-Uncomment code segments below to build it up.
+A plot showing the confidence distribution for the frequentist t-test. I will 
+demonstrate uncommenting code chunks to build up the plot.
 
 **TIP** adding annotation (direct labeling) can increase usability
 
-```{r}
+```{r 2.31}
 means_t_freq %>%
   ggplot(aes(y = condition)) +
+  
   # raw data
   geom_point(
     aes(
@@ -339,7 +346,7 @@ different uncertainty vis types!
 
 👉 ACTION: uncomment the chunks below one at a time
 
-```{r}
+```{r 2.32}
 preds_t_freq %>%
   ggplot(aes(y = condition)) + 
   
@@ -384,7 +391,7 @@ This type of plot is sometimes called Kruschke style in **Bayesian**
 context
 <https://solomonkurz.netlify.app/post/2018-12-20-make-rotated-gaussians-kruschke-style/>.
 
-```{r}
+```{r 2.33}
 means_t_bayes %>%
   
   # Sample draws because there are thousands
@@ -417,24 +424,31 @@ means_t_bayes %>%
 parameter and prediction uncertainty? 
 - How else can you show PI for the Bayesian model?
 
-**REFLECTION**: 
+-------
+
+**Recap**: 
 
 - Should you show parameter or prediction uncertainty,
 or both? 
 - Should you use intervals or distributions for uncertainty?
 
 
-Further reading: Hofman, J. M., Goldstein, D. G., & Hullman, J. (2020,
+Further reading: 
+
+- CI vs. PI: Hofman, J. M., Goldstein, D. G., & Hullman, J. (2020,
 April). How visualizing inferential uncertainty can mislead readers
 about treatment effects in scientific results. In Proceedings of the
 2020 chi conference on human factors in computing systems (pp. 1-12).
+- Interval vs. distribution: Helske, J., Helske, S., Cooper, M., Ynnerman, A., 
+& Besançon, L. (2020). Are You Sure You're Sure?-Effects of Visual 
+Representation on the Cliff Effect in Statistical Inference. CoRR.
 
 
 
 
 **EXERCISE**: can you make the plot above to look like Activity 2.1?
 
-```{r}
+```{r 2.34}
 # Your code here
 ```
 
