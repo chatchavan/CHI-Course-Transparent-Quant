@@ -347,8 +347,9 @@ what you want. Remember the scatterplot we made earlier?
 ```{r }
 means_t_freq %>%
   ggplot(aes(x = estimate, y = condition)) + 
-  geom_point() +
-  scale_x_continuous(breaks = 1:9, limits = c(1, 9)) +
+  geom_point(aes(effectiveness), position = jitterer, data=df1, alpha = 0.5, color = "#8c96c6") +
+  geom_point(position = position_nudge(y = 0.2)) +
+  scale_x_continuous("effectiveness", breaks = 1:9, limits = c(0, 10)) + 
   labs(title = "Frequentist lm(), estimated effectiveness by condition") +
   NULL
 ```
@@ -466,14 +467,15 @@ preds_t_freq %>%
     position = position_nudge(y = -.2)) +
   # 
   # EXERCISE: put raw data in this plot
-  geom_point(
-    aes(x = effectiveness),
-    data = df1, position = jitterer) +
+  # geom_point(
+  #   aes(x = effectiveness),
+  #   data = df1, position = jitterer) +
   
-  scale_x_continuous("effectiveness", breaks = 1:11, limits = c(0, 11)) + 
+  scale_x_continuous("effectiveness", breaks = 1:9, limits = c(0, 10)) + 
   scale_color_brewer("Predictive interval") + 
   labs(title = "Frequentist lm(), estimated effectiveness by condition",
        subtitle = "Confidence interval widths: 0.66 and 0.95") +
+  theme(legend.position="none")
   NULL
   
 ```

@@ -1,0 +1,450 @@
+---
+title: "Session 3 Uncertainty visualizations"
+author: "Xiaoying Pu, Lace Padilla"
+date: "3/3/2022"
+output: html_document
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidymodels)
+library(modelr)
+library(brms)
+library(tidybayes)
+library(ggdist)
+library(distributional)
+library(ordinal)
+library(ggrepel)
+library(glue)
+library(dabestr)
+library(emmeans)
+
+theme_set(theme_tidybayes())
+```
+
+## Introduction
+
+We will revisit Datasets 1 from last time, focusing on exploring how to
+make **visualizations** instead of doing the analysis. By the end of
+this tutorial, you will learn to:
+
+1.  Reason about the **expressiveness** and **usability** of plots you
+    make.
+2.  Identify the **types of uncertainty** from model outputs.
+3.  Use resources to **visualize uncertainty** in different ways.
+
+### Expectations
+
+I will run R code and use a Miro board in this tutorial. You can access
+the same code in your Rstudio Cloud. Ideally, you will follow along and
+run code with me. There are many activities where you can
+**participate** and ask **questions** (any time!).
+
+**TIP**: RStudio shows document outline
+
+
+Miro board (but don't go there yet): <https://miro.com/app/board/uXjVO8L3bt8=/>
+
+------------------------------------------------------------------------
+
+## Activity 1: exploring data
+
+First, we will evaluate some plots made for Dataset 1.
+
+### Load the data
+
+We will base our example on the `blinded.csv` dataset. It's from an
+experiment about whether showing people graphs increase belief in drug
+efficacy, presumably because graphs are associated with science.
+
+**TIP**: `()` enclosing an assignment will print the assigned value as
+well.
+
+```{r}
+# Note that there are 123 rows!
+
+(df1 <- read_csv("data/blinded.csv", show_col_types = FALSE) %>%
+  filter(experiment == 1) %>%
+  mutate(
+    condition = factor(condition), 
+    participant_id = paste0("P", str_pad(row_number(), 2, pad = "0"))) %>%
+   select(-experiment)
+)
+```
+
+### Evaluate three plots
+
+Last time, we modeled how `condition` (graph or no graph) affected
+`effectiveness`, a Likert scale rating from 1 to 9. We are going to
+evaluate three plots:
+
+**Plot 1**
+
+```{r}
+df1 %>%
+  ggplot(aes(
+    x = effectiveness, 
+    y = condition)) +  
+  geom_point() +
+  scale_x_continuous(breaks = 1:9)
+```
+
+**REFLECTION**: is this plot good? Rate (in Zoom chat) its
+expressiveness and usability in the Zoom chat on a scale of 1-5
+
+-   *Expressiveness*: the **plot** should represent all relationships
+    that exist in the **data**, and those relationships only.
+-   *Usability*: the **user** should be able to make accurate inferences
+    from the data.
+
+👉ACTION: Enter in Zoom chat: "E3, U3"
+
+**Plot 2**
+
+```{r}
+jitterer <- position_jitter(height = 0.1, seed = 1)
+```
+
+```{r}
+df1 %>%
+  ggplot(aes(
+    x = effectiveness, 
+    y = condition,
+  )) +     
+  geom_point(position = jitterer) +       
+  scale_x_continuous(breaks = 1:9)
+```
+
+**Reflection**: 👉 how would you rate the expressiveness and usability?
+
+**Concept**: *intrinsic uncertainty* in the data (sans the artificial
+jitter!)
+
+**Plot 3**
+
+👉 How else would you plot this data to increase
+expressiveness/usability?
+
+One option:
+
+```{r }
+(df1_prop <- df1 %>%
+  count(condition, effectiveness) %>%
+  add_row(condition = "graph", effectiveness = 2, n = 0) %>%
+  complete(condition, effectiveness, fill = list(n = 0)) %>%
+  group_by(condition) %>%
+  mutate(prob = n/sum(n))
+)
+```
+
+```{r }
+df1_prop %>%
+  ggplot(aes(x = effectiveness, y = n, color = condition)) + 
+  geom_point() + 
+  geom_line() +
+  scale_x_continuous(breaks = 1:9) + 
+  scale_y_continuous("Count") + 
+  NULL
+```
+
+## Activity 2: visualizing model outputs
+
+### Load and summarize frequentist and Bayesian models
+
+```{r}
+# model objects
+m_t_test <- lm(effectiveness ~ - 1 + condition, data = df1)
+m_t_test_bayesian <- readRDS("../02-bayesian_stats/rds/dataset1.brm.bayesiant.rds")
+
+# means
+means_t_freq <- m_t_test %>% 
+   tidy() %>%
+   mutate(condition = str_remove(term, "condition"), .before = 1) %>%
+   select(-term)
+
+means_t_bayes <- data_grid(df1, condition) %>%
+  tidybayes::add_epred_draws(m_t_test_bayesian, newdata = . ,dpar = TRUE)
+
+# preds
+preds_t_freq_obj <- predict(m_t_test, newdata = data_grid(df1, condition), 
+                     se.fit=TRUE, interval = "prediction", level = 0.95)
+
+preds_t_freq <- m_t_test %>%
+  broom::augment(newdata = data_grid(df1, condition), se_fit = TRUE) %>%
+  mutate(
+    .se.pred = sqrt(.se.fit ^ 2 + preds_t_freq_obj$residual.scale^2), # NOTE
+    df = preds_t_freq_obj$df) 
+
+preds_t_bayes <- data_grid(df1, condition) %>%
+    tidybayes::add_predicted_draws(m_t_test_bayesian)
+
+```
+
+### Activity 2.1 CI vs. PI
+
+Starting from the point estimate
+
+```{r }
+means_t_freq %>%
+  ggplot(aes(x = estimate, y = condition)) + 
+  geom_point(aes(effectiveness), position = jitterer, data=df1, alpha = 0.5, color = "#8c96c6") +
+  geom_point(position = position_nudge(y = 0.2)) +
+  scale_x_continuous("effectiveness", breaks = 1:9, limits = c(0, 10)) + 
+  labs(title = "Frequentist lm(), estimated effectiveness by condition") +
+  NULL
+```
+
+👉ACTION: **head to Miro**
+<https://miro.com/app/board/uXjVO8L3bt8=/?moveToWidget=3458764523389765219&cot=14>
+
+We consider two types of intervals:
+
+**Concepts**
+
+Frequentist
+
+-   CI: confidence interval; the long-run proportion of correspondingly
+    computed intervals that end up containing the true value of the
+    parameter
+
+    -   For our t-test, the 95% CI is from the confidence distribution
+        (t-distribution). [More
+        reading](https://mjskay.github.io/ggdist/articles/freq-uncertainty-vis.html)
+
+-   PI: prediction interval; estimate of an interval in which a future
+    observation will fall, with a certain probability, given what has
+    already been observed
+
+    -   For our t-test, the PI is also from a t-distribution
+
+Bayesian:
+
+-   CI: credible interval; an interval within which an unobserved
+    parameter value falls with a particular probability.
+-   PI: posterior predictive interval... from *posterior predictive
+    distribution*, the distribution of possible unobserved values
+    conditional on the observed values
+-   There are no analytical distributions for CIs and PIs here because
+    our Bayesian model based on sampling.
+
+Note:
+
+-   CI: parameter uncertainty
+-   PI: prediction uncertainty
+
+👉ACTION: **Vote**: is CI always narrower than PI? \[Y/N\]
+
+
+```{r}
+preds_t_freq %>%
+  
+  ggplot(aes(y = condition)) + 
+  
+  # PI
+  stat_interval(aes(
+    xdist = dist_student_t(
+      df = df,
+      mu = .fitted, 
+      sigma = .se.pred) 
+  )) + 
+ 
+  # CI
+  stat_pointinterval(aes(
+    xdist = dist_student_t(
+      df = df,
+      mu = .fitted,
+      sigma = .se.fit)),
+    position = position_nudge(y = -.2)) +
+  
+  # EXERCISE: put raw data in this plot
+  # geom_point(
+  #   aes(x = effectiveness),
+  #   data = df1, position = jitterer) +
+  
+  scale_x_continuous("effectiveness", breaks = 1:9, limits = c(0, 10)) + 
+  scale_color_brewer("Predictive interval") + 
+  labs(title = "Frequentist lm(), estimated effectiveness by condition",
+       subtitle = "Confidence interval widths: 0.66 and 0.95") +
+  theme(legend.position="none")
+```
+
+
+
+### Activity 2.2 Types of uncertainty vis
+
+👉 Go to Miro
+<https://miro.com/app/board/uXjVO8L3bt8=/?moveToWidget=3458764523387189623&cot=14>
+
+### Activity 2.3 Putting it together
+
+A plot showing the confidence distribution for the frequentist t-test.
+Uncomment code segments below to build it up.
+
+**TIP** adding annotation (direct labeling) can increase usability
+
+```{r}
+means_t_freq %>%
+  ggplot(aes(y = condition)) +
+  # raw data
+  geom_point(
+    aes(
+      x = effectiveness,
+      y = condition),
+    data = df1, position = jitterer, alpha = .5) +
+  
+  # EXERCISE 1: add an half-eye plot for the confidence distribution
+  # stat_halfeye(
+  #   aes(xdist =dist_student_t(
+  #     df = df.residual(m_t_test),
+  #     mu = estimate,
+  #     sigma = std.error)),
+  #   scale = 0.5, fill = "#8c96c6",
+  #   position = position_nudge(y = 0.15)) +
+  
+  # EXERCIESE 2: change `stat_halfeye` above to `stat_dots`
+  
+  # EXERCISE 3: add a label for the confidence distribution
+  # geom_label_repel(
+  #   aes(estimate + 0.25, y = condition),
+  #   data = means_t_freq %>% slice_tail(),
+  #   label = "CI of the mean", box.padding = 1,
+  #   position = position_nudge(y = 0.3), max.overlaps = Inf, seed = 15) +
+  
+  # EXERCISE 4: add a label for the raw data
+  # geom_label_repel(
+  #   aes(x = estimate, y = condition),
+  #   data = means_t_freq %>% slice_head(),
+  #   label = "Jittered raw data", box.padding = 1,
+  #   position = position_nudge_repel(y = -0.2), seed = 1) +
+  
+  scale_x_continuous(breaks = 0:10, limits = c(0, 10)) + 
+  labs(title = "Frequentist lm(), confidence distribution of effectiveness by condition") + 
+  NULL
+
+```
+
+Recap the plot above:
+
+-   Intrinsic uncertainty: the spread of the raw data (ignore the
+    jitter!)
+-   Parameter uncertainty: confidence distribution (density plot) and CI
+    (point interval)
+
+For the frequentist t-test, showing all types of uncertainty with
+different uncertainty vis types!
+
+👉 ACTION: uncomment the chunks below one at a time
+
+```{r}
+preds_t_freq %>%
+  ggplot(aes(y = condition)) + 
+  
+  # Raw data
+  # geom_point(
+  #   aes(
+  #     x = effectiveness,
+  #     y = condition),
+  #   data = df1, position = jitterer, shape = 21, size =2) +
+  
+  # Conf. distribution
+  # stat_slab(
+  #   aes(xdist = dist_student_t(
+  #     df = df, 
+  #     mu = .fitted, 
+  #     sigma = .se.pred)),
+  #   slab_color="#9ECAE1", fill = NA, scale = 0.7) +
+  
+  # Pred. distribution
+  # stat_pointinterval(            
+  #   aes(xdist =dist_student_t(
+  #     df = df.residual(m_t_test), 
+  #     mu = estimate, 
+  #     sigma = std.error)),
+  #   data = means_t_freq,
+  #   scale = 0.5, fill = "#8c96c6",
+  #   position = position_nudge(y = 0.15)) + 
+  
+  scale_x_continuous(breaks = 1:9) +
+  labs(title = "Frequentist lm(), effectiveness by condition",
+       subtitle = "Curves show the prediction distributions\nIntervals show confidence intervals") + 
+  NULL
+```
+
+👉 ACTION: answer the questions below:
+
+-   What's the intrinsic uncertainty in data?
+-   What's been shown with the density curve?
+-   What's been shown with the point interval?
+
+This type of plot is sometimes called Kruschke style in **Bayesian**
+context
+<https://solomonkurz.netlify.app/post/2018-12-20-make-rotated-gaussians-kruschke-style/>.
+
+```{r}
+means_t_bayes %>%
+  
+  # Sample draws because there are thousands
+  
+  sample_draws(30) %>%
+  
+  ggplot(
+    aes(y = condition)) + 
+ 
+  # Raw data 
+  geom_point(
+    aes(x = effectiveness), data = df1,
+    shape = 21, size = 2,
+    position = jitterer) +
+  
+  # distributions implied by posterior predictive draws
+  stat_slab(
+    aes(xdist = dist_student_t(nu, mu, sigma)),
+    slab_color="#9ECAE1", alpha = 0.1, fill = NA, scale = 0.7) +
+  
+  scale_x_continuous(breaks = 1:9, limit = c(0, 11)) + 
+  labs(title = "Bayesian t-test, effectiveness by condition",
+       subtitle = "Curves show both PI and CI") + 
+  NULL
+```
+
+**REFLECTION**: 
+
+- Why does the Kruschke spaghetti density show both
+parameter and prediction uncertainty? 
+- How else can you show PI for the Bayesian model?
+
+**REFLECTION**: 
+
+- Should you show parameter or prediction uncertainty,
+or both? 
+- Should you use intervals or distributions for uncertainty?
+
+
+Further reading: Hofman, J. M., Goldstein, D. G., & Hullman, J. (2020,
+April). How visualizing inferential uncertainty can mislead readers
+about treatment effects in scientific results. In Proceedings of the
+2020 chi conference on human factors in computing systems (pp. 1-12).
+
+
+
+
+**EXERCISE**: can you make the plot above to look like Activity 2.1?
+
+```{r}
+# Your code here
+```
+
+
+
+
+## Packages Information
+
+```{r}
+sessionInfo()
+```
+
+
