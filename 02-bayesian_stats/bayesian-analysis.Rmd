@@ -19,6 +19,8 @@ output:
 
 </style>
 ```
+
+
 ```{r knit-github, eval=FALSE,echo=FALSE,include=FALSE}
 # compile for github, you can ignore this
 library(rmarkdown)
@@ -768,7 +770,7 @@ head(dataset1.olr.posterior_epred)
 ```{r dataset1-olr-epred-draws-explanation, fig.height=4, fig.width=9}
 
 dataset1.olr.posterior_epred  %>% 
-  filter(.draw == 1) %>%
+  filter(.draw == 100) %>%
   group_by(condition) %>%
   rename(`probability` = .epred) %>%
   ggplot(., aes(x = .category, y = `probability`, fill = condition, color = condition)) + 
@@ -782,8 +784,27 @@ dataset1.olr.posterior_epred  %>%
   xlab('')
 
 
+dataset1.olr.posterior_epred %>% 
+  select(-.chain, -.iteration, -.row) %>%
+  group_by(condition, .draw, .category) %>%
+  rename(probability = .epred) %>%
+  ungroup() %>%
+  group_by(.category, condition) %>%
+  median_qi(probability) %>%
+ggplot(., aes(x = .category, y = probability, fill = condition, color = condition)) + 
+  geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
+  geom_errorbar(aes(ymin = .lower, ymax = .upper), width = 0, size = 1) + 
+  geom_point(aes(group = condition)) + 
+  geom_path(aes(group = condition)) + 
+  facet_wrap(condition ~ ., ncol = 2) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
+  scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
+  scale_fill_manual(values = c(DARK_PURPLE, GOLD_COLOR))  +
+  xlab('')
+
+
 dataset1.olr.posterior_epred  %>% 
-  filter(.draw == 1) %>%
+  filter(.draw == 100) %>%
   #arrange(.category) %>%
   group_by(condition) %>%
   mutate(`cumulative probability` = cumsum(.epred)) %>%
@@ -791,6 +812,26 @@ dataset1.olr.posterior_epred  %>%
   geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
   geom_point(aes(group = condition)) + 
   geom_path(aes(group = condition)) + 
+  facet_wrap(condition ~ ., ncol = 2) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
+  scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
+  scale_fill_manual(values = c(DARK_PURPLE, GOLD_COLOR))  +
+  xlab('')
+
+
+dataset1.olr.posterior_epred %>% 
+  select(-.chain, -.iteration, -.row) %>%
+  group_by(condition, .draw) %>%
+  arrange(.category) %>%
+  mutate(`cumulative probability` = cumsum(.epred)) %>%
+  ungroup() %>%
+  group_by(.category, condition) %>%
+  median_qi(`cumulative probability`) %>%
+ggplot(., aes(x = .category, y = `cumulative probability`, fill = condition, color = condition)) + 
+  geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
+  geom_errorbar(aes(ymin = .lower, ymax = .upper), width = 0, size = 2) + 
+  geom_point(aes(group = condition)) + 
+  geom_path(aes(group = condition), size = 1) + 
   facet_wrap(condition ~ ., ncol = 2) +
   scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
   scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
@@ -977,7 +1018,7 @@ dataset2.brm.student = brm(
  family = student()),
  prior = c(
    prior(normal(0, 2), class = "b"),
-   prior(normal(0, 1), class = "b", dpar = "sigma"),
+   prior(cauchy(0, 2), class = "b", dpar = "sigma"),
    prior(exponential(.033), class = "nu"),
    prior(student_t(3, 0, 5), class = "Intercept"),
    prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
@@ -993,7 +1034,7 @@ dataset2.brm.student$prior
 ### Step 3: Evaluate the fit (summary)
 
 ```{r dataset2-brm-student-summary}
-summary(dataset2.brm.student)
+summary(dataset2.brm.student)x
 ```
 
 ### Step 3: Evaluate the posterior predictions
