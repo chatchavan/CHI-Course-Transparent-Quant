@@ -11,11 +11,16 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
-library(tidymodels)
-library(tidybayes)
-library(ggdist)
-library(distributional)
-library(ggrepel)
+ library(tidymodels)
+ library(modelr)
+ library(brms)
+ library(tidybayes)
+ library(ggdist)
+ library(distributional)
+ library(ordinal)
+ library(ggrepel)
+ library(glue)
+ library(emmeans)
 
 theme_set(theme_tidybayes())
 ```
