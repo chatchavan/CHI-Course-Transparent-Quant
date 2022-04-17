@@ -772,21 +772,6 @@ tibble(condition = c('graph', 'no_graph')) %>%
   geom_bar(aes(x = .prediction))
 ```
 
-
-```{r dataset1-olr-prediction-draws, fig.height=3, fig.width=7}
-dataset1.olr.posterior_prediction <-
-  tibble(condition = c('graph', 'no_graph')) %>%
-  add_predicted_draws(dataset1.brm.olr2) %>%
-  ungroup()
-
-dataset1.olr.posterior_prediction  %>% 
-  ggplot() + 
-  geom_bar(aes(fill = .prediction, y = condition), position = 'fill') + 
-  scale_color_brewer(palette = 'Purples', direction = -1) + 
-  scale_fill_brewer(palette = 'Purples', direction = -1) 
-```
-
-
 Finally we estimate the difference between the two conditions and plot the results:
 
 ```{r dataset1-olr-epred-draws}
@@ -798,8 +783,42 @@ dataset1.olr.posterior_epred <-
   ungroup()
 
 head(dataset1.olr.posterior_epred)
+```
+
+```{r dataset1-olr-epred-draws-explanation, fig.height=4, fig.width=9}
+
+dataset1.olr.posterior_epred  %>% 
+  filter(.draw == 1) %>%
+  group_by(condition) %>%
+  rename(`probability` = .epred) %>%
+  ggplot(., aes(x = .category, y = `probability`, fill = condition, color = condition)) + 
+  geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
+  geom_point(aes(group = condition)) + 
+  geom_path(aes(group = condition)) + 
+  facet_wrap(condition ~ ., ncol = 2) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
+  scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
+  scale_fill_manual(values = c(DARK_PURPLE, GOLD_COLOR)) +
+  xlab('')
 
 
+dataset1.olr.posterior_epred  %>% 
+  filter(.draw == 1) %>%
+  #arrange(.category) %>%
+  group_by(condition) %>%
+  mutate(`cumulative probability` = cumsum(.epred)) %>%
+  ggplot(., aes(x = .category, y = `cumulative probability`, fill = condition, color = condition)) + 
+  geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
+  geom_point(aes(group = condition)) + 
+  geom_path(aes(group = condition)) + 
+  facet_wrap(condition ~ ., ncol = 2) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
+  scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
+  scale_fill_manual(values = c(DARK_PURPLE, GOLD_COLOR))  +
+  xlab('')
+```
+
+```{r dataset1-olr-comparison-1}
 dataset1.olr.posterior_comparison <-
   dataset1.olr.posterior_epred %>%
   select(-c(.chain, .iteration, .row)) %>%
@@ -810,7 +829,7 @@ head(dataset1.olr.posterior_comparison %>%
        mean_qi())
 ```
 
-```{r dataset1-olr-comparison, fig.height=3, fig.width=10}
+```{r dataset1-olr-comparison-2, fig.height=3, fig.width=10}
 dataset1.olr.posterior_comparison %>%
   mean_qi(.epred) %>%
   ggplot() +
@@ -828,7 +847,7 @@ dataset1.olr.posterior_comparison %>%
   theme(axis.title.y = element_text(angle = 0, vjust = .5))
 ```
 
-```{r dataset1-olr-comparison-2, fig.height=4, fig.width=3}
+```{r dataset1-olr-comparison-3, fig.height=4, fig.width=3}
 dataset1.olr.posterior_comparison  %>%
   ggplot() +
   geom_hline(aes(yintercept = 0), linetype = "dashed", color = "gray") +
@@ -844,7 +863,7 @@ dataset1.olr.posterior_comparison  %>%
         axis.text.x  = element_blank())
 ```
 
-```{r dataset1-olr-comparison-3, fig.height=4, fig.width=3}
+```{r dataset1-olr-comparison-4, fig.height=4, fig.width=3}
 dataset1.olr.posterior_comparison  %>%
        ungroup() %>%
        mean_qi(.epred) %>%
