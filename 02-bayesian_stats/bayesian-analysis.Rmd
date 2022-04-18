@@ -19,6 +19,8 @@ output:
 
 </style>
 ```
+
+
 ```{r knit-github, eval=FALSE,echo=FALSE,include=FALSE}
 # compile for github, you can ignore this
 library(rmarkdown)
@@ -234,6 +236,23 @@ Another important thing to note is that `brms` often specifies improper priors (
 
 The following code block implements some prior predictive checks:
 
+```{r}
+tibble(
+  x = seq(0, 10, by = 0.01),
+  y = dnorm(x, 5, 1.5)
+) %>%
+  ggplot(aes(x, y)) +
+  geom_line(color = "#b8925f", size = 2) +
+  scale_x_continuous(breaks = seq(1, 9, by = 1)) +
+  labs(y = "Density") +
+  theme(
+    panel.grid.major.y = element_line(),
+    axis.title.y = element_text(angle = 90, size = 24),
+    axis.text = element_text(size = 20)
+  )
+```
+
+
 ```{r dataset1-bayesian-t-test-run-prior-predictive-check, fig.height=4, fig.width=9}
 dataset1.brm.bayesiant.priorchecks <-
   brm(
@@ -277,10 +296,6 @@ dataset1.bayesiant.ppc %>%
     size = .75
   ) +
   labs(y = "", x = 'Draws from the prior predictive distribution')
-
-
-# Fumeng -> Abhraneel: I rewrote it...
-# I actually don't immediately know how to implement density estimation per .draw
 
 # flat it
 dim(dataset1.bayesiant.yprior) <- n_prior_draws * 123
@@ -382,6 +397,7 @@ ppc_stat_grouped(y = dataset1.bayesiant.y,
 
 Now that we have performed model diagnostics, we would like to interpret the results. The pertinent research question here is whether there is a difference in the effectiveness rating between the *graph* and *no graph* condition. We use conditional distributions to compare the mean difference between the two conditions. `add_epred_draws()` from tidybayes is the most convenient way.
 
+
 ```{r dataset1-t-test-posterior-fitted}
 dataset1.bayesiant.posterior_epred <-
   tibble(condition = c('graph', 'no_graph')) %>%
@@ -416,7 +432,7 @@ dataset1.bayesiant.posterior_comparison %>%
 A basic way to interpret and communicate the results is to plot them. We plot this result using credible interval. Lecture 3 will cover more ways of representing uncertainty for effective communication.
 
 ```{r dataset1.bayesiant.diff-1, fig.height=2, fig.width=5}
-dataset1.bayesiant.posterior_epred %>%
+p3 = dataset1.bayesiant.posterior_epred %>%
   ggplot(aes(x = .epred, fill = condition)) +
   #geom_point(aes(x = .epred, group = condition), color = DARK_PURPLE, size = 3) +
   geom_density(
@@ -431,6 +447,8 @@ dataset1.bayesiant.posterior_epred %>%
   #geom_vline(aes(xintercept = 0), linetype = "dashed", color = "black") +
   #coord_cartesian(xlim = c(-1, 1))  +
   xlab('')
+
+p3
 ```
 
 ```{r dataset1.bayesiant.diff-2, fig.height=2, fig.width=5}
@@ -749,8 +767,12 @@ ppc_stat_grouped(y = dataset1.olr.y,
 
 ### Step 3: Compare posterior distributions
 
-
-
+```{r}
+tibble(condition = c('graph', 'no_graph')) %>%
+  add_predicted_draws(dataset1.brm.olr2) %>%
+  ggplot() +
+  geom_bar(aes(x = .prediction))
+```
 
 Finally we estimate the difference between the two conditions and plot the results:
 
@@ -768,7 +790,7 @@ head(dataset1.olr.posterior_epred)
 ```{r dataset1-olr-epred-draws-explanation, fig.height=4, fig.width=9}
 
 dataset1.olr.posterior_epred  %>% 
-  filter(.draw == 1) %>%
+  filter(.draw == 100) %>%
   group_by(condition) %>%
   rename(`probability` = .epred) %>%
   ggplot(., aes(x = .category, y = `probability`, fill = condition, color = condition)) + 
@@ -782,8 +804,27 @@ dataset1.olr.posterior_epred  %>%
   xlab('')
 
 
+dataset1.olr.posterior_epred %>% 
+  select(-.chain, -.iteration, -.row) %>%
+  group_by(condition, .draw, .category) %>%
+  rename(probability = .epred) %>%
+  ungroup() %>%
+  group_by(.category, condition) %>%
+  median_qi(probability) %>%
+ggplot(., aes(x = .category, y = probability, fill = condition, color = condition)) + 
+  geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
+  geom_errorbar(aes(ymin = .lower, ymax = .upper), width = 0, size = 1) + 
+  geom_point(aes(group = condition)) + 
+  geom_path(aes(group = condition)) + 
+  facet_wrap(condition ~ ., ncol = 2) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
+  scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
+  scale_fill_manual(values = c(DARK_PURPLE, GOLD_COLOR))  +
+  xlab('')
+
+
 dataset1.olr.posterior_epred  %>% 
-  filter(.draw == 1) %>%
+  filter(.draw == 100) %>%
   #arrange(.category) %>%
   group_by(condition) %>%
   mutate(`cumulative probability` = cumsum(.epred)) %>%
@@ -791,6 +832,26 @@ dataset1.olr.posterior_epred  %>%
   geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
   geom_point(aes(group = condition)) + 
   geom_path(aes(group = condition)) + 
+  facet_wrap(condition ~ ., ncol = 2) +
+  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
+  scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
+  scale_fill_manual(values = c(DARK_PURPLE, GOLD_COLOR))  +
+  xlab('')
+
+
+dataset1.olr.posterior_epred %>% 
+  select(-.chain, -.iteration, -.row) %>%
+  group_by(condition, .draw) %>%
+  arrange(.category) %>%
+  mutate(`cumulative probability` = cumsum(.epred)) %>%
+  ungroup() %>%
+  group_by(.category, condition) %>%
+  median_qi(`cumulative probability`) %>%
+ggplot(., aes(x = .category, y = `cumulative probability`, fill = condition, color = condition)) + 
+  geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
+  geom_errorbar(aes(ymin = .lower, ymax = .upper), width = 0, size = 2) + 
+  geom_point(aes(group = condition)) + 
+  geom_path(aes(group = condition), size = 1) + 
   facet_wrap(condition ~ ., ncol = 2) +
   scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
   scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
@@ -843,25 +904,6 @@ dataset1.olr.posterior_comparison  %>%
         axis.text.x  = element_blank())
 ```
 
-```{r dataset1-olr-comparison-4, fig.height=4, fig.width=3}
-dataset1.olr.posterior_comparison  %>%
-       ungroup() %>%
-       mean_qi(.epred) %>%
-  ggplot() +
-  geom_hline(aes(yintercept = 0), linetype = "dashed", color = "gray") +
-  geom_point(aes(y = .epred, x = 1), size = 3, color = DARK_PURPLE) +
-  geom_errorbar(
-    aes(ymin = .lower, ymax = .upper, x = 1),
-    width = 0,
-    size = 2,
-    color = DARK_PURPLE,
-    alpha = .5
-  ) +
-  coord_cartesian(xlim = c(0, 2), ylim = c(-.1, .1)) + 
-  xlab('') + ylab('no_graph - graph') +
-  theme(axis.title.y = element_text(angle = 0, vjust = .5),
-        axis.text.x  = element_blank())
-```
 
 # Dataset 2
 
@@ -977,7 +1019,7 @@ dataset2.brm.student = brm(
  family = student()),
  prior = c(
    prior(normal(0, 2), class = "b"),
-   prior(normal(0, 1), class = "b", dpar = "sigma"),
+   prior(cauchy(0, 2), class = "b", dpar = "sigma"),
    prior(exponential(.033), class = "nu"),
    prior(student_t(3, 0, 5), class = "Intercept"),
    prior(student_t(3, 0, 2), class = "Intercept", dpar = "sigma")
@@ -993,7 +1035,7 @@ dataset2.brm.student$prior
 ### Step 3: Evaluate the fit (summary)
 
 ```{r dataset2-brm-student-summary}
-summary(dataset2.brm.student)
+summary(dataset2.brm.student)x
 ```
 
 ### Step 3: Evaluate the posterior predictions
