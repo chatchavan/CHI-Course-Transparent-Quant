@@ -767,13 +767,6 @@ ppc_stat_grouped(y = dataset1.olr.y,
 
 ### Step 3: Compare posterior distributions
 
-```{r}
-tibble(condition = c('graph', 'no_graph')) %>%
-  add_predicted_draws(dataset1.brm.olr2) %>%
-  ggplot() +
-  geom_bar(aes(x = .prediction))
-```
-
 Finally we estimate the difference between the two conditions and plot the results:
 
 ```{r dataset1-olr-epred-draws}
@@ -888,21 +881,6 @@ dataset1.olr.posterior_comparison %>%
   theme(axis.title.y = element_text(angle = 0, vjust = .5))
 ```
 
-```{r dataset1-olr-comparison-3, fig.height=4, fig.width=3}
-dataset1.olr.posterior_comparison  %>%
-  ggplot() +
-  geom_hline(aes(yintercept = 0), linetype = "dashed", color = "gray") +
-  geom_density(
-    aes(y = .epred),
-    color = NA, 
-    fill = DARK_PURPLE,
-    alpha = .5
-  ) +
-  coord_cartesian(ylim = c(-.1, .1)) + 
-  xlab('') + ylab('no_graph - graph') +
-  theme(axis.title.y = element_text(angle = 0, vjust = .5),
-        axis.text.x  = element_blank())
-```
 
 
 # Dataset 2
@@ -1035,7 +1013,7 @@ dataset2.brm.student$prior
 ### Step 3: Evaluate the fit (summary)
 
 ```{r dataset2-brm-student-summary}
-summary(dataset2.brm.student)x
+summary(dataset2.brm.student)
 ```
 
 ### Step 3: Evaluate the posterior predictions
