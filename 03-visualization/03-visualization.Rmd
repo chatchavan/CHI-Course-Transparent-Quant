@@ -161,7 +161,7 @@ df1_prop %>%
 ```{r 2.0}
 # model objects
 m_t_test <- lm(effectiveness ~ - 1 + condition, data = df1)
-m_t_test_bayesian <- readRDS("../02-bayesian_stats/rds/dataset1.brm.bayesiant.rds")
+m_t_test_bayesian <- readRDS("data/dataset1.brm.bayesiant.rds")
 
 # means
 means_t_freq <- m_t_test %>% 
