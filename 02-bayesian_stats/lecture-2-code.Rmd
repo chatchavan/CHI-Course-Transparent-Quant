@@ -6,6 +6,9 @@ output:
   html_document: 
     highlight: pygments
     toc: yes
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
     df_print: kable
 ---
 
@@ -19,6 +22,7 @@ output:
 
 </style>
 ```
+
 ```{r knit-github, eval=FALSE,echo=FALSE,include=FALSE}
 # compile for github, you can ignore this
 library(rmarkdown)
@@ -277,34 +281,6 @@ dataset1.bayesiant.yprior <-
   posterior_predict(dataset1.brm.bayesiant.priorchecks, ndraws = n_prior_draws)
 
 # the following computes the probability density for each "draw"
-dataset1.bayesiant.ppc <- 
-  dataset1.bayesiant.yprior %>%
-  as_tibble() %>%
-  mutate(.draw = row_number()) %>%
-  pivot_longer(
-    cols = starts_with("V"),
-    names_to = "participant",
-    names_prefix = "V",
-    values_to = ".value"
-  ) %>%
-  group_by(.draw) %>%
-  summarise(.value = list(.value)) %>%
-  mutate(dens.x = map(.value, ~ density(.)$x),
-         dens.y = map(.value, ~ density(.)$y))
-
-dataset1.bayesiant.ppc %>%
-  select(-.value) %>%
-  unnest(c(dens.x, dens.y)) %>%
-  ggplot() +
-  geom_line(
-    aes(x = dens.x, y = dens.y, group = .draw),
-    color = DARK_PURPLE,
-    alpha = .5,
-    size = .75
-  ) +
-  labs(y = "", x = 'Draws from the prior predictive distribution')
-
-# flat it
 dim(dataset1.bayesiant.yprior) <- n_prior_draws * 123
 
 # create a new table and assign .draw number
@@ -890,7 +866,7 @@ dataset1.olr.posterior_comparison %>%
 # Dataset 2
 
 The following dataset is from experiment 2 of "How Relevant are Incidental Power Poses for HCI?" [(Jansen & Hornbæk, 2018)](https://doi.org/10.1145/3173574.3173588).
-Study participants were asked to either make an expansive posture or a constrictive posture before performing a task. The experiment is a between-subjects design. The dependent variable is the percentage change in risk-taking behavior. Therefore, it is a variable on an interval scale (continuous).
+Study participants were asked to either make an expansive posture or a constrictive posture before performing a task. The experiment investigated whether posture could potentially have an effect on risk taking behavior.
 
 First, we load the data.
 
@@ -901,6 +877,11 @@ dataset2 = readr::read_csv("data/exp2.csv", show_col_types = FALSE) %>%
 
 head(dataset2)
 ```
+The data has been aggregated for each participant:
+- `condition = TRUE` indicates expansive posture, and `condition = FALSE` indicates constrictive posture
+- The dependent variable is `change` which indicates the percentage change in risk-taking behavior. Thus, it is a continuous variable.
+
+For the purposes of this demo, we are only concerned with these two variables. We can ignore the other variables for now.
 
 We plot the data to give us a better picture about its distribution.
 
@@ -953,8 +934,13 @@ dataset2.brm.student.formula <- bf(change ~ condition,
 head(as_tibble(get_prior(dataset2.brm.student.formula, data = dataset2)))
 ```
 
+*IMPORTANT*
+
+TL;DR: Avoid using Cauchy distributions as priors as it may result in pathological behavior. Use a Normal or Student's t distribution as prior instead. We go into further details below.
+
+Note that, here, the authors Jansen and Hornbaek use a $\mathrm{Cauchy}(0, 2)$ prior on $\sigma$ based on the recommendation of Kruschke. While in theory, this distribution can be used as a proper prior distribution, in practice it is generally a bad idea to use Cauchy distributions as priors, especially for $\sigma$. The mean and variance of a Cauchy distribution are undefined, because it has "fat tails" (i.e. the values in its tails have high probability). As a result, when used as a prior, the sampler might end up with very small or very large values. Because the $\sigma$ parameter can only be positive, a log-link function is used i.e. the prior distribution is defined for $log(\sigma)$ as the log of a positive-only value spans the entire real number space. So, $\sigma = exp(x)$ where $x$ is a value sampled from the Cauchy prior. Because of such extreme values sampled from a Cauchy distribution, coupled with the exponential transformation, you might get values which are rounded to 0 or infinity.
+
 ```{r dataset2-bayesiant-prior-checkes}
-# This breaks :-)
 dataset2.brm.student.priorchecks = brm(
   dataset2.brm.student.formula,
   prior = c(
@@ -970,6 +956,9 @@ dataset2.brm.student.priorchecks = brm(
   file = "rds/dataset2.brm.student.priorchecks.rds"
 )
 ```
+
+
+If we look at a histogram of the prior predictive distribution, we notice that it predicts really large values. Again, this is because the $\mathrm{Cauchy}(0, 2)$ distribution has a long tail. However, ignoring extreme values, if we calculate the 95% quantile interval of this prior prediction, we find that it is [-565.42, 614.32]. Compare this interval to the data range: [-36.64, 200.61], we see that although our predicted interval is wider, it is not too bad.
 
 ```{r}
 min(dataset2$change)
@@ -992,7 +981,6 @@ ggplot() +
 dim(dataset2.yprior) <- 4000 * 80
 
 quantile(dataset2.yprior, probs = c(.025, .975))
-
 ```
 
 ### Step 2: Computing the posterior probability
