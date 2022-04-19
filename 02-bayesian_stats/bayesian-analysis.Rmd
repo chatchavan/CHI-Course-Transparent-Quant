@@ -277,7 +277,8 @@ dataset1.bayesiant.yprior <-
   posterior_predict(dataset1.brm.bayesiant.priorchecks, ndraws = n_prior_draws)
 
 # the following computes the probability density for each "draw"
-dataset1.bayesiant.ppc = dataset1.bayesiant.yprior %>%
+dataset1.bayesiant.ppc <- 
+  dataset1.bayesiant.yprior %>%
   as_tibble() %>%
   mutate(.draw = row_number()) %>%
   pivot_longer(
@@ -315,7 +316,8 @@ tibble(.value = dataset1.bayesiant.yprior,
     color = DARK_PURPLE,
     alpha = .5,
     size = .5
-  )
+  ) +
+  labs(y = "", x = 'Draws from the prior predictive distribution')
 ```
 
 Although, based on the above plot, it seems like the model is assigning some non-zero probability to impossible values (less than 1 or more than 9), these are primarily a result of our choice of the likelihood function --- the `student_t()` distribution does not allow us to set bounds on the predictive distribution. Another reason for extreme values may be the use of a Student's *t* prior for sigma with 3 degrees of freedom --- this distribution has fat tails and thus might result in predicting large values for the standard deviation parameter in our model.
