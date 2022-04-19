@@ -11,23 +11,23 @@ editor_options:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
- library(tidymodels)
- library(modelr)
- library(brms)
- library(tidybayes)
- library(ggdist)
- library(distributional)
- library(ordinal)
- library(ggrepel)
- library(glue)
- library(emmeans)
+library(tidymodels)
+library(modelr)
+library(brms)
+library(tidybayes)
+library(ggdist)
+library(distributional)
+library(ordinal)
+library(ggrepel)
+library(glue)
+library(emmeans)
 
 theme_set(theme_tidybayes())
 ```
 
 ## Introduction
 
-We will revisit Datasets 1 from last time, focusing on exploring how to
+We will revisit Dataset 1 from last time, focusing on exploring how to
 make **visualizations** instead of doing the analysis. By the end of
 this tutorial, you will learn to:
 
@@ -78,7 +78,7 @@ well.
 ### Evaluate three plots
 
 Last time, we modeled how `condition` (graph or no graph) affected
-`effectiveness`, a Likert scale rating from 1 to 9. We are going to
+`effectiveness`, a Likert-style rating from 1 to 9. We are going to
 evaluate three plots:
 
 **Plot 1**
@@ -93,7 +93,8 @@ df1 %>%
 ```
 
 **REFLECTION**: is this plot good? Rate (in Zoom chat) its
-expressiveness and usability in the Zoom chat on a scale of 1-5
+expressiveness and usability in the Zoom chat on a scale of 1-5, where 5
+is best and 1 is worst.
 
 -   *Expressiveness*: the **plot** should represent all relationships
     that exist in the **data**, and those relationships only.
@@ -286,8 +287,8 @@ preds_t_freq %>%
 
 ### Activity 2.3 Putting it together
 
-A plot showing the confidence distribution for the frequentist t-test. I will 
-demonstrate uncommenting code chunks to build up the plot.
+A plot showing the confidence distribution for the frequentist t-test. I
+will demonstrate uncommenting code chunks to build up the plot. (Keyboard shortcut: Ctrl+Shift+C on Windows or Shift+Command+C on macOS) 
 
 **TIP** adding annotation (direct labeling) can increase usability
 
@@ -302,7 +303,7 @@ means_t_freq %>%
       y = condition),
     data = df1, position = jitterer, alpha = .5) +
   
-  # EXERCISE 1: add an half-eye plot for the confidence distribution
+  # # EXERCISE 1: add an half-eye plot for the confidence distribution
   # stat_halfeye(
   #   aes(xdist =dist_student_t(
   #     df = df.residual(m_t_test),
@@ -311,16 +312,16 @@ means_t_freq %>%
   #   scale = 0.5, fill = "#8c96c6",
   #   position = position_nudge(y = 0.15)) +
   
-  # EXERCIESE 2: change `stat_halfeye` above to `stat_dots`
+  # # EXERCIESE 2: change `stat_halfeye` above to `stat_dots`
   
-  # EXERCISE 3: add a label for the confidence distribution
+  # # EXERCISE 3: add a label for the confidence distribution
   # geom_label_repel(
   #   aes(estimate + 0.25, y = condition),
   #   data = means_t_freq %>% slice_tail(),
   #   label = "CI of the mean", box.padding = 1,
   #   position = position_nudge(y = 0.3), max.overlaps = Inf, seed = 15) +
   
-  # EXERCISE 4: add a label for the raw data
+  # # EXERCISE 4: add a label for the raw data
   # geom_label_repel(
   #   aes(x = estimate, y = condition),
   #   data = means_t_freq %>% slice_head(),
@@ -349,14 +350,14 @@ different uncertainty vis types!
 preds_t_freq %>%
   ggplot(aes(y = condition)) + 
   
-  # Raw data
+  # # Raw data
   # geom_point(
   #   aes(
   #     x = effectiveness,
   #     y = condition),
   #   data = df1, position = jitterer, shape = 21, size =2) +
   
-  # Conf. distribution
+  # # Conf. distribution
   # stat_slab(
   #   aes(xdist = dist_student_t(
   #     df = df, 
@@ -364,7 +365,7 @@ preds_t_freq %>%
   #     sigma = .se.pred)),
   #   slab_color="#9ECAE1", fill = NA, scale = 0.7) +
   
-  # Pred. distribution
+  # # Pred. distribution
   # stat_pointinterval(            
   #   aes(xdist =dist_student_t(
   #     df = df.residual(m_t_test), 
