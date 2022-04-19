@@ -22,7 +22,6 @@ output:
 
 </style>
 ```
-
 ```{r knit-github, eval=FALSE,echo=FALSE,include=FALSE}
 # compile for github, you can ignore this
 library(rmarkdown)
@@ -262,7 +261,6 @@ tibble(
   )
 ```
 
-
 ```{r dataset1-bayesian-t-test-run-prior-predictive-check, fig.height=4, fig.width=9}
 dataset1.brm.bayesiant.priorchecks <-
   brm(
@@ -413,37 +411,26 @@ dataset1.bayesiant.posterior_comparison %>%
 
 A basic way to interpret and communicate the results is to plot them. We plot this result using credible interval. In lecture 3, you will learn how to choose among these visualizations.
 
-```{r dataset1.bayesiant.diff-1, fig.height=2, fig.width=5}
+```{r dataset1-bayesiant-diff-1, fig.height=2, fig.width=5}
 p3 = dataset1.bayesiant.posterior_epred %>%
   ggplot(aes(x = .epred, fill = condition)) +
-  #geom_point(aes(x = .epred, group = condition), color = DARK_PURPLE, size = 3) +
   geom_density(
-    #fill = DARK_PURPLE,
     color = NA,
     alpha = .5,
-    #geom = 'dots',
-    #size = 1,
-    #height = 0
   ) +
   scale_fill_manual(values = COLOR_PALETTE) + 
-  #geom_vline(aes(xintercept = 0), linetype = "dashed", color = "black") +
-  #coord_cartesian(xlim = c(-1, 1))  +
   xlab('')
 
 p3
 ```
 
-```{r dataset1.bayesiant.diff-2, fig.height=2, fig.width=5}
+```{r dataset1-bayesiant-diff-2, fig.height=2, fig.width=5}
 dataset1.bayesiant.posterior_comparison %>%
   ggplot(aes(x = .epred)) +
-  #geom_point(aes(x = .epred, group = condition), color = DARK_PURPLE, size = 3) +
   geom_density(
     fill = DARK_PURPLE,
     color = NA,
     alpha = .5,
-    #geom = 'dots',
-    #size = 1,
-    #height = 0
   ) +
   geom_vline(aes(xintercept = 0), linetype = "dashed", color = "black") +
   coord_cartesian(xlim = c(-1, 1))  +
@@ -451,7 +438,7 @@ dataset1.bayesiant.posterior_comparison %>%
   xlab('difference in mean')
 ```
 
-```{r dataset1.bayesiant.diffci, fig.height=2, fig.width=5}
+```{r dataset1-bayesiant-diffci, fig.height=2, fig.width=5}
 dataset1.bayesiant.posterior_comparison %>%
   median_qi(.epred) %>%
   ggplot() +
@@ -468,7 +455,7 @@ dataset1.bayesiant.posterior_comparison %>%
   xlab('') + ylab('')
 ```
 
-```{r}
+```{r dataset1-bayesiant-diff-prob}
 dataset1.bayesiant.posterior_comparison %>%
   mutate(if_greater = .epred < 0) %>%
   summarise(`Pr(graph > no_graph)` = mean(if_greater))
@@ -610,7 +597,7 @@ as_tibble(get_prior(dataset1.brm.olr.formula, data = exp1.data))
 
 We notice that the difference parameter, `b` does not have a proper prior, so we should specify one. The Intercept term does have a prior, but since the distributions are going to be logit-transformed it is difficult to intuitively determine whether these are strong or diffuse prior distributions. This is another important question that can be answered through prior predictive checks:
 
-```{r dataset1-olr-priorchecks}
+```{r dataset1-olr-priorchecks-1}
 # priors
 dataset1.brm.olr.priors = c(
       	  prior(normal(0, 1), class = "b")
@@ -643,7 +630,7 @@ ggplot() +
 
 Our prior predictive check reveals that the model is assigning most of the probability mass to middle answer (5). This is not necessarily a bad thing, and it might reflect how participants behave. However, it is possible that these priors are still diffuse, as noticed by the low number of `Bulk_ESS` and `Tail_ESS`. These may act as another diagnostic measure, and ideally you'd want these values to be at least greater than 1000. Let's us try a different prior
 
-```{r bayesian-ordinal-logistic-regression-prior-checks-1, fig.height=4, fig.width=8}
+```{r bayesian-olr-prior-checks-1, fig.height=4, fig.width=8}
 dataset1.brm.olr.priors = c(prior(normal(0, 1), class = "b"),
                             prior(student_t(3, 0, 1.5), class = "Intercept"))
 
@@ -663,7 +650,7 @@ summary(dataset1.brm.olr.priorchecks)
 
 Changing the priors appear to improve `Bulk_ESS` and `Tail_ESS` slightly. Let's take a look at the prior predictive distribution:
 
-```{r bayesian-ordinal-logistic-regression-prior-checks-2, fig.height=4, fig.width=8}
+```{r bayesian-olr-prior-checks-2, fig.height=4, fig.width=8}
 dataset1.olr.yprior <-
   posterior_predict(dataset1.brm.olr.priorchecks, ndraws = 100)
 
@@ -826,7 +813,7 @@ ggplot(., aes(x = .category, y = `cumulative probability`, fill = condition, col
   geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
   geom_errorbar(aes(ymin = .lower, ymax = .upper), width = 0, size = 2) + 
   geom_point(aes(group = condition)) + 
-  geom_path(aes(group = condition), size = 1) + 
+  geom_path(aes(group = condition)) + 
   facet_wrap(condition ~ ., ncol = 2) +
   scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
   scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
@@ -865,8 +852,7 @@ dataset1.olr.posterior_comparison %>%
 
 # Dataset 2
 
-The following dataset is from experiment 2 of "How Relevant are Incidental Power Poses for HCI?" [(Jansen & Hornbæk, 2018)](https://doi.org/10.1145/3173574.3173588).
-Study participants were asked to either make an expansive posture or a constrictive posture before performing a task. The experiment investigated whether posture could potentially have an effect on risk taking behavior.
+The following dataset is from experiment 2 of "How Relevant are Incidental Power Poses for HCI?" [(Jansen & Hornbæk, 2018)](https://doi.org/10.1145/3173574.3173588). Study participants were asked to either make an expansive posture or a constrictive posture before performing a task. The experiment investigated whether posture could potentially have an effect on risk taking behavior.
 
 First, we load the data.
 
@@ -877,9 +863,8 @@ dataset2 = readr::read_csv("data/exp2.csv", show_col_types = FALSE) %>%
 
 head(dataset2)
 ```
-The data has been aggregated for each participant:
-- `condition = TRUE` indicates expansive posture, and `condition = FALSE` indicates constrictive posture
-- The dependent variable is `change` which indicates the percentage change in risk-taking behavior. Thus, it is a continuous variable.
+
+The data has been aggregated for each participant: - `condition = TRUE` indicates expansive posture, and `condition = FALSE` indicates constrictive posture - The dependent variable is `change` which indicates the percentage change in risk-taking behavior. Thus, it is a continuous variable.
 
 For the purposes of this demo, we are only concerned with these two variables. We can ignore the other variables for now.
 
@@ -940,7 +925,7 @@ TL;DR: Avoid using Cauchy distributions as priors as it may result in pathologic
 
 Note that, here, the authors Jansen and Hornbaek use a $\mathrm{Cauchy}(0, 2)$ prior on $\sigma$ based on the recommendation of Kruschke. While in theory, this distribution can be used as a proper prior distribution, in practice it is generally a bad idea to use Cauchy distributions as priors, especially for $\sigma$. The mean and variance of a Cauchy distribution are undefined, because it has "fat tails" (i.e. the values in its tails have high probability). As a result, when used as a prior, the sampler might end up with very small or very large values. Because the $\sigma$ parameter can only be positive, a log-link function is used i.e. the prior distribution is defined for $log(\sigma)$ as the log of a positive-only value spans the entire real number space. So, $\sigma = exp(x)$ where $x$ is a value sampled from the Cauchy prior. Because of such extreme values sampled from a Cauchy distribution, coupled with the exponential transformation, you might get values which are rounded to 0 or infinity.
 
-```{r dataset2-bayesiant-prior-checkes}
+```{r dataset2-bayesiant-prior-checks-1}
 dataset2.brm.student.priorchecks = brm(
   dataset2.brm.student.formula,
   prior = c(
@@ -957,10 +942,9 @@ dataset2.brm.student.priorchecks = brm(
 )
 ```
 
-
 If we look at a histogram of the prior predictive distribution, we notice that it predicts really large values. Again, this is because the $\mathrm{Cauchy}(0, 2)$ distribution has a long tail. However, ignoring extreme values, if we calculate the 95% quantile interval of this prior prediction, we find that it is [-565.42, 614.32]. Compare this interval to the data range: [-36.64, 200.61], we see that although our predicted interval is wider, it is not too bad.
 
-```{r}
+```{r dataset2-bayesiant-prior-checks-2}
 min(dataset2$change)
 max(dataset2$change)
 dataset2.yprior <-  posterior_predict(dataset2.brm.student.priorchecks)
@@ -970,9 +954,8 @@ ggplot() +
                fill = DARK_PURPLE,
                alpha = .5, 
                size = 1, 
+               bins = 30,
                center = 0) +
- #scale_x_log10() + 
- # scale_x_continuous(breaks = 1:9, limits = c(0.5, 9.5)) + 
  labs(x = 'Prior predictive distribution',  y = "") +
  theme(
    axis.text.y = element_blank()
@@ -1067,7 +1050,7 @@ head(dataset2.student.epred_comparison)
 
 ```
 
-```{r dataset2.studenyt.diffci, fig.height=1, fig.width=5}
+```{r dataset2-studenyt-diffci, fig.height=1, fig.width=5}
 dataset2.student.epred_comparison %>%
   select(diff) %>%
   mean_qi() %>%
@@ -1093,9 +1076,7 @@ dataset2.student.epred_comparison %>%
 dataset2.student.sigma.epred_comparison <-
   tibble(condition = c(TRUE, FALSE)) %>%
   add_epred_draws(dataset2.brm.student,
-                  dpar = "sigma",
-                  re_formula = NA,
-                  allow_new_levels = FALSE) %>%
+                  dpar = "sigma") %>%
   ungroup() %>%
   select(-c(.chain, .iteration, .row)) %>%
   compare_levels(variable = sigma, by = condition) %>%
@@ -1107,7 +1088,7 @@ head(dataset2.student.sigma.epred_comparison)
 
 ```
 
-```{r dataset2.studenyt.diff--sigma, fig.height=1, fig.width=5}
+```{r dataset2-student-diff-sigma, fig.height=1, fig.width=5}
 dataset2.student.sigma.epred_comparison %>%
   select(sigma.diff) %>%
   mean_qi() %>%
