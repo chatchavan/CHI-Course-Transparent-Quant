@@ -19,8 +19,6 @@ output:
 
 </style>
 ```
-
-
 ```{r knit-github, eval=FALSE,echo=FALSE,include=FALSE}
 # compile for github, you can ignore this
 library(rmarkdown)
@@ -69,9 +67,15 @@ COLOR_PALETTE <- c(DARK_PURPLE, GOLD_COLOR)
 
 # Introduction
 
-In this document, we will outline the Bayesian analogs of the statistical analyses described [here](https://github.com/chatchavan/CHI-Course-Transparent-Quant/blob/master/frequentist.Rmd) (and in the previous course lecture).
+In this document, we will outline the Bayesian analogs of the statistical analyses described in lecture 1 ([Github code](https://github.com/chatchavan/CHI-Course-Transparent-Quant-Lecture-1)).
 
-Helper functions. This function extracts results from different models and generate results of the same format to be used in visualizations
+## Note on MathJax
+
+If you use RStudio's Visual editor mode. Check if you can see anything written in the following parenthesis: ($k$). If not, your RStudio has a bug. This problem will be fixed in future versions. Meanwhile, if some text seems to be missing in the file below, simply position your cursor around the missing area to reveal the underlying code.
+
+## Helper function
+
+The following function extracts results from different models and generate results of the same format to be used in visualizations
 
 ```{r helper}
 tidy.wrapper = function(model) {
@@ -102,7 +106,7 @@ dataset = readr::read_csv("data/blinded.csv")
 head(dataset)
 ```
 
-Recall from the previous lecture that this dataset contains results from four experiments. In each experiment, participants are placed in either a *graph* or *no graph* condition, and asked to rate the effectiveness of the intervention on a nine-item Likert scale. Here, we plot the data to show the distribution of these responses:
+Recall from the previous lecture that this dataset contains results from four experiments. In each experiment, participants are placed in either a *graph* or *no graph* condition, and asked to rate the effectiveness of the intervention on a 9-point Likert-style question. Here, we plot the data to show the distribution of these responses:
 
 ```{r plot-dataset, fig.height = 3, fig.width = 7}
 dataset %>% 
@@ -126,7 +130,7 @@ dataset %>%
   guides(fill = guide_legend(reverse = TRUE)) 
 ```
 
-For the purposes of this lecture, we will confine ourselves to the first experiment.
+For the purposes of this lecture, we will focus on the first experiment.
 
 ```{r filter-data}
 exp1.data = dataset %>%
@@ -137,11 +141,11 @@ head(exp1.data)
 
 ## Model 1. Wilcoxon signed rank test
 
-The first model discussed in the previous lecture was the `Wilcoxon signed rank test`. This is a non-parametric test which we will skip for now. Although, there exists Bayesian non-parametric methods, they are more advanced for this lecture.
+The first model discussed in the previous lecture was the `Wilcoxon signed rank test`. This is a non-parametric test which we will skip for now. Although, there exists Bayesian non-parametric methods, they are too advanced for this lecture.
 
-## Model 2. Students's t test
+## Model 2. Student's *t*-test
 
-The second model discussed was the T-test. Although R contains a function (`t.test`) to perform this analysis, the t-test is essentially a linear regression, and thus can be performed using the linear model function in R (`lm`). This is the linear model equivalent for the paired sample t-test:
+The second model discussed was the *t*-test. Although R contains a function (`t.test`) to perform this analysis, the *t*-test is essentially a linear regression, and thus can be performed using the linear model function in R (`lm`). The following code shows the equivalent linear-model for a paired sample *t*-test:
 
 ### Frequentist t-test
 
@@ -155,7 +159,7 @@ dataset1.lm.freqt <-
 
 ### Step 1: Build the model (likelihood)
 
-Before we implement a Bayesian model, let us take a look at the distribution of responses. Although we know that we are going to use a t distribution, we still plot the data to set how it looks like. Usually, this will help us decide our likelihood function.
+Before we implement a Bayesian model, let us take a look at the distribution of responses. Although we know that we are going to use a *t* distribution, we still plot the data to set how it looks like. Usually, this will help us decide our likelihood function.
 
 ```{r dataset1-distribution}
   exp1.data %>%
@@ -164,7 +168,9 @@ Before we implement a Bayesian model, let us take a look at the distribution of 
   scale_x_continuous(breaks = seq(0, 10, by = 1))
 ```
 
-Let's also look how a student t distribution varies different parameter. Mu is location, sigma is dipsersion, and nu (df) control the tail.
+We can see from the above plot that the responses are discrete. This is important to keep in mind when specifying a Bayesian model.
+
+Let's also look how a Student's *t* distribution varies different parameter. Mu is location, sigma is dispersion (which is simiilar to the standard deviation parameter of the Gaussian distribution), and nu (df) control the tail.
 
 ```{r draw-student-t, fig.height=4, fig.width=8}
 ggplot() +  xlim(-10, 10) +
@@ -196,7 +202,7 @@ ggplot() +  xlim(-10, 10) +
 
 ```
 
-We can see from the above plot that the responses are discrete. This is important to keep in mind when specifying a Bayesian model. Next, we will implement the Bayesian analog of the linear model described earlier. Here's what the model formula will look like when implemented using the `brm` formula (`bf` function):
+Next, we will implement the Bayesian analog of the linear model described earlier. Here's what the model formula will look like when implemented using the `bf()` function from the `brm` package:
 
 ```{r dataset1-bayesian-t-test-formula}
 dataset1.brm.bayesiant.formula <- bf(effectiveness ~ condition - 1,
@@ -207,7 +213,7 @@ Let us take a minute to understand this code. It says that we are regressing the
 
 ### Step 1: Build the model (priors)
 
-The blank ones are flat (uniform) priors. These are improper priors and usually needed to be set. We can and should adjust other priors given by `brm`.
+The blank ones are flat (uniform) priors. These are improper priors and usually needed to be set. We can and should adjust the priors given by `brm`.
 
 ```{r dataset1-bayesian-t-test-get-prior}
 as_tibble(get_prior(dataset1.brm.bayesiant.formula, data = exp1.data))
@@ -215,9 +221,9 @@ as_tibble(get_prior(dataset1.brm.bayesiant.formula, data = exp1.data))
 
 Next, we need to specify priors for the parameters in the model. We will discuss briefly how these prior distributions were obtained.
 
-For the prior on `b` which is the mean parameter of the student t distribution (used as the likelihood), a unbiased assumption would be that they should be centered around 5 (which is the center of the 9-item likert scale), and the mean would likely be greater than 1 and less than 9 (unless every single participant responded either 1 or 9; but we know that was not the case).
+For the prior on `b` which is the mean parameter of the Student's *t* distribution (used as the likelihood), an unbiased assumption would be that they should be centered around 5 (which is the center of the 9 possible answers), and the mean would likely be greater than 1 and less than 9 (unless every single participant responded either 1 or 9; but we know that was not the case).
 
-The prior on `sigma` determines the standard deviation parameter of the student t distribution. Now, considering that our data is bounded between 1 and 9, a uniform distribution will have the maximum variance given these constraints. The variance of such an uniform distribution would be: `sd(runif(1e4, 1, 9)` which is approximately 2.5. We know that our data will most likely have less variance than such a uniform distribution. Thus, we want the prior on `sigma` to assign very little probability mass for values greater than 2.5. Our prior `student_t(3, 0, 1)` assigns less than 0.05 probability to values greater than 2.5 (you can check by running the following code in the console: `sum(gamlss.dist::rTF(1e4, 0, 1, 3) > 2.5) / 1e4`).
+The prior on `sigma` determines the dispersion parameter of the Student's *t* distribution. Now, considering that our data is bounded between 1 and 9, a uniform distribution will have the maximum variance given these constraints. The variance of such an uniform distribution would be: `sd(runif(1e4, 1, 9)` which is approximately 2.5. We know that our data will most likely have less variance than such a uniform distribution. Thus, we want the prior on `sigma` to assign very little probability mass for values greater than 2.5. Our prior `student_t(3, 0, 1)` assigns less than 0.05 probability to values greater than 2.5 (you can check by running the following code in the console: `sum(gamlss.dist::rTF(1e4, 0, 1, 3) > 2.5) / 1e4`).
 
 ```{r dataset1-bayesian-t-test-priors}
 dataset1.brm.bayesiant.priors = c(
@@ -228,11 +234,11 @@ dataset1.brm.bayesiant.priors = c(
 
 ### Step 1: Build the model (prior predictive checks)
 
-Before we implement the regression model, it is advisable to perform some prior predictive checks. Bayesian models are generative --- in other words, it is possible to sample values from the prior distributions, feed them through the likelihood function to obtain a *prior predictive* distribution.
+Before we implement the regression model, it is advisable to perform some prior predictive checks. Bayesian models are generative. In other words, it is possible to sample values from the prior distributions, feed them through the likelihood function to obtain a *prior predictive* distribution.
 
-The prior predictive distribution should ideally resemble the data generating process, and should not assign probability mass to unlikely or impossible values. If the prior predictive distribution is assigning substantial probability mass to unlikely or impossible values, we should want to adjust our choice of prior distributions. Prior predictive checks also help make explicit some of the assumptions that go into the prior specification process.
+The prior predictive distribution should ideally resemble the data generating process, and should not assign probability mass to unlikely or impossible values. If the prior predictive distribution is assigning substantial probability mass to unlikely or impossible values, we should adjust our choice of prior distributions. Prior predictive checks also help make explicit some of the assumptions that go into the prior specification process.
 
-Another important thing to note is that `brms` often specifies improper priors (denoted by `flat`) by default. However, we cannot sample draws from the prior predictive distribution if the priors are improper.
+Another important thing to note is that `brms` often specifies improper priors (denoted by `flat`) by default. If the priors are improper, we cannot sample draws from the prior predictive distribution.
 
 The following code block implements some prior predictive checks:
 
@@ -312,9 +318,9 @@ tibble(.value = dataset1.bayesiant.yprior,
   )
 ```
 
-Although, based on the above plot, it seems like the model is assigning some non-zero probability to values which are not possible (y \<= 0 and y \> 9), these are primarily a result of our choice of the likelihood function --- the `student t` distribution does not allow us to set bounds on the predictive distribution. Another reason for extreme values may be the use of a student's t prior for sigma with 3 degrees of freedom --- this distribution has fat tails and thus might result in predicting large values for the standard deviation parameter in our model.
+Although, based on the above plot, it seems like the model is assigning some non-zero probability to impossible values (less than 1 or more than 9), these are primarily a result of our choice of the likelihood function --- the `student_t()` distribution does not allow us to set bounds on the predictive distribution. Another reason for extreme values may be the use of a Student's *t* prior for sigma with 3 degrees of freedom --- this distribution has fat tails and thus might result in predicting large values for the standard deviation parameter in our model.
 
-For now, let's move forward, and fit the model.
+We will revisit this point later. For now, let's move forward, and fit the model.
 
 ### Step 2: Computing the posterior probability distribution
 
@@ -329,8 +335,7 @@ dataset1.brm.bayesiant =
     backend = BRM_BACKEND,
     # There are many other parameters you can play with.
     # Here we use default parameters to simplify the lecture.
-    # We save the model 
-    # But if you have this file, brm only loads the model from this file
+    # We save the model in the following file.
     file = "rds/dataset1.brm.bayesiant.rds"
   )
 ```
@@ -395,8 +400,7 @@ ppc_stat_grouped(y = dataset1.bayesiant.y,
 
 ### Step 3: Comparing posterior distributions
 
-Now that we have performed model diagnostics, we would like to interpret the results. The pertinent research question here is whether there is a difference in the effectiveness rating between the *graph* and *no graph* condition. We use conditional distributions to compare the mean difference between the two conditions. `add_epred_draws()` from tidybayes is the most convenient way.
-
+Now that we have performed model diagnostics, we would like to interpret the results. The pertinent research question here is whether there is a difference in the effectiveness rating between the *graph* and *no graph* condition. We use conditional distributions to compare the mean difference between the two conditions. `add_epred_draws()` from the `tidybayes` package is the most convenient way.
 
 ```{r dataset1-t-test-posterior-fitted}
 dataset1.bayesiant.posterior_epred <-
@@ -429,7 +433,7 @@ dataset1.bayesiant.posterior_comparison %>%
         mean_qi(.epred)
 ```
 
-A basic way to interpret and communicate the results is to plot them. We plot this result using credible interval. Lecture 3 will cover more ways of representing uncertainty for effective communication.
+A basic way to interpret and communicate the results is to plot them. We plot this result using credible interval. In lecture 3, you will learn how to choose among these visualizations.
 
 ```{r dataset1.bayesiant.diff-1, fig.height=2, fig.width=5}
 p3 = dataset1.bayesiant.posterior_epred %>%
@@ -516,7 +520,7 @@ bind_rows(tidy.wrapper(dataset1.lm.freqt),
 
 ## Model 3. Ordinal Logistic Regression
 
-A more appropriate to analyze ordianl data is to use ordinal logistic regression. In this section, we reanalyze the data using Bayesian ordinal logistic regression.
+A more appropriate to analyze ordinal data is to use ordinal logistic regression. In this section, we reanalyze the data using Bayesian ordinal logistic regression.
 
 ### Step 1: Build the model (likelihood)
 
@@ -528,7 +532,7 @@ dataset1.brm.olr.formula <-
      family = cumulative("logit"))
 ```
 
-Before we go further into the model building step, it is important to understand what a ordinal regression model is *estimating*. The figure below shows the cumulative proportion of participants who responded at least $k$, i.e. $Pr(y_i \leq k)$, on the likert questionnaire.
+Before we go further into the model building step, it is important to understand what a ordinal regression model is *estimating*. The figure below shows the cumulative proportion of participants who responded at least $k$, i.e. $Pr(y_i \leq k)$, on a Likert-style question.
 
 ```{r ordinal-logistic-regression-cumulative-proportion, fig.height=4, fig.width=8}
 # figure from: Statistical rethinking with brms, ggplot2, and the tidyverse: Second edition by A Solomon Kurz
@@ -579,7 +583,7 @@ $$
 \begin{align}
 log(\frac{Pr(y_i <= k)}{1 - Pr(y_i <= k)}) = \alpha_k
 \end{align}
-$$ Ordinal regression estimates this cumulative probability: $Pr(y_i \leq k)$. Once we have estimated the cumulative probability, we can take the difference between successive items, $Pr(y_i = k) = Pr(y_i \leq k) - Pr(y_i \leq k - 1)$ to estimate the discrete probability for each outcome:
+$$ Ordinal regression estimates this cumulative probability: $Pr(y_i \leq k)$. Once we have estimated the cumulative probability, we can take the difference between successive items, $Pr(y_i = k) = Pr(y_i \leq k) - Pr(y_i \leq k - 1)$, to estimate the discrete probability for each outcome:
 
 ```{r ordinal-logistic-regression-cumulative-proportion-diff}
 # primary data
@@ -626,7 +630,7 @@ The next step is to specify the prior distributions. Let us first look at the de
 as_tibble(get_prior(dataset1.brm.olr.formula, data = exp1.data))
 ```
 
-We notice that the difference parameter, `b` does not have a proper prior, so we should specify one. The Intercept term does have a prior, but since the distributions are going to be logit transformed it is difficult to intuitively determine whether these are strong or diffuse prior distributions. This is another important question that can be answered through prior predictive checks:
+We notice that the difference parameter, `b` does not have a proper prior, so we should specify one. The Intercept term does have a prior, but since the distributions are going to be logit-transformed it is difficult to intuitively determine whether these are strong or diffuse prior distributions. This is another important question that can be answered through prior predictive checks:
 
 ```{r dataset1-olr-priorchecks}
 # priors
@@ -659,7 +663,7 @@ ggplot() +
  )
 ```
 
-Our prior predictive check reveals that the model is assigning most of the probability mass to middle items in the Likert scale. This is not necessarily a bad thing, and it might reflect how participants behave. However, it is possible that these priors are still diffuse, as noticed by the low number of `Bulk_ESS` and `Tail_ESS`. These may act as another diagnostic measure, and ideally you'd want these values to be at least greater than 1000. Let's us try a different prior
+Our prior predictive check reveals that the model is assigning most of the probability mass to middle answer (5). This is not necessarily a bad thing, and it might reflect how participants behave. However, it is possible that these priors are still diffuse, as noticed by the low number of `Bulk_ESS` and `Tail_ESS`. These may act as another diagnostic measure, and ideally you'd want these values to be at least greater than 1000. Let's us try a different prior
 
 ```{r bayesian-ordinal-logistic-regression-prior-checks-1, fig.height=4, fig.width=8}
 dataset1.brm.olr.priors = c(prior(normal(0, 1), class = "b"),
@@ -696,7 +700,7 @@ ggplot() +
   xlab('prior draws') + ylab('')
 ```
 
-Although these priors may be improved, it is often a case of trial and error. For now, let us proceed with these priors.
+For now, let us proceed with these priors.
 
 ### Step 2: Computing the posterior probability
 
@@ -881,11 +885,12 @@ dataset1.olr.posterior_comparison %>%
   theme(axis.title.y = element_text(angle = 0, vjust = .5))
 ```
 
-
-
 # Dataset 2
 
-Load the data.
+The following dataset is from experiment 2 of "How Relevant are Incidental Power Poses for HCI?" [(Jansen & Hornbæk, 2018)](https://doi.org/10.1145/3173574.3173588).
+Study participants were asked to either make an expansive posture or a constrictive posture before performing a task. The experiment is a between-subjects design. The dependent variable is the percentage change in risk-taking behavior. Therefore, it is a variable on an interval scale (continuous).
+
+First, we load the data.
 
 ```{r load-dataset-2}
 dataset2 = readr::read_csv("data/exp2.csv") %>%
