@@ -101,7 +101,7 @@ tidy.wrapper = function(model) {
 Let's first load and take a look at the data in a table:
 
 ```{r load-dataset, warning=FALSE, message=FALSE}
-dataset = readr::read_csv("data/blinded.csv")
+dataset = readr::read_csv("data/blinded.csv", col_types = "dcd")
 
 head(dataset)
 ```
@@ -742,7 +742,7 @@ summary(dataset1.brm.olr2)
 We then perform the same model diagnostics steps that we had performed for the previous model.
 
 ```{r dataset1-brm-olr-mcmc}
-plot(dataset1.brm.olr2, newpage = T)
+plot(dataset1.brm.olr2, newpage = T, ask=FALSE)
 ```
 
 ### Step 3: Evaluate the posterior predictions
@@ -893,7 +893,7 @@ Study participants were asked to either make an expansive posture or a constrict
 First, we load the data.
 
 ```{r load-dataset-2}
-dataset2 = readr::read_csv("data/exp2.csv") %>%
+dataset2 = readr::read_csv("data/exp2.csv", show_col_types = FALSE) %>%
   mutate(condition = condition == 'expansive') %>%
   group_by(participant)
 
