@@ -1,5 +1,5 @@
 # Source code for the course "Transparent Practices for Quantitative Empirical Research"
-A course at CHI 2022 by Chat Wacharamanotham, Fumeng Yang, Xiaoying Pu, Abhraneel Sarma, and Lace Padilla
+A course at CHI 2023 by Chat Wacharamanotham, Fumeng Yang, Xiaoying Pu, and Abhraneel Sarma
 
 
 ## Dataset credits
@@ -15,4 +15,4 @@ We use two datasets from two papers made their data publicly available.
 ## Citing
 See our course proposal: 
 
-> Chat Wacharamanotham, Fumeng Yang, Xiaoying Pu, Abhraneel Sarma, and Lace Padilla. 2022. Transparent Practices for Quantitative Empirical Research. In CHI Conference on Human Factors in Computing Systems Extended Abstracts (CHI ’22 Extended Abstracts), April 29-May 5, 2022, New Orleans, LA, USA. ACM, New York, NY, USA, 5 pages. https://doi.org/10.1145/3491101.3503760
+> Chat Wacharamanotham, Fumeng Yang, Xiaoying Pu, and Abhraneel Sarma. 2022. Transparent Practices for Quantitative Empirical Research. In CHI Conference on Human Factors in Computing Systems Extended Abstracts (CHI ’23 Extended Abstracts, to appear)
