@@ -99,48 +99,267 @@ tidy.wrapper = function(model) {
 }
 ```
 
-# Dataset 1
+# Dataset 2
 
-Let's first load and take a look at the data in a table:
+The following dataset is from experiment 2 of "How Relevant are Incidental Power Poses for HCI?" [(Jansen & Hornbæk, 2018)](https://doi.org/10.1145/3173574.3173588). Study participants were asked to either make an expansive posture or a constrictive posture before performing a task. The experiment investigated whether posture could potentially have an effect on risk taking behavior.
 
-```{r load-dataset, warning=FALSE, message=FALSE}
-dataset = readr::read_csv("data/blinded.csv", col_types = "dcd")
+First, we load the data.
 
-head(dataset)
+```{r load-dataset-2}
+dataset2 = readr::read_csv("data/exp2.csv", show_col_types = FALSE) %>%
+  mutate(condition = condition == 'expansive') %>%
+  mutate(c = ifelse(condition, "Expansive", "Constrictive")) %>%
+  group_by(participant)
+
+head(dataset2)
 ```
 
-Recall from the previous lecture that this dataset contains results from four experiments. In each experiment, participants are placed in either a *graph* or *no graph* condition, and asked to rate the effectiveness of the intervention on a 9-point Likert-style question. Here, we plot the data to show the distribution of these responses:
+The data has been aggregated for each participant: - `condition = TRUE` indicates expansive posture, and `condition = FALSE` indicates constrictive posture - The dependent variable is `change` which indicates the percentage change in risk-taking behavior. Thus, it is a continuous variable.
 
-```{r plot-dataset, fig.height = 3, fig.width = 7}
-dataset %>% 
-  mutate(effectiveness = fct_rev(factor(effectiveness, levels = 1:9)),
-         experiment = as.factor(experiment)) %>%
-  
-  # stacked bar plot
-  ggplot(aes(x = condition, fill = effectiveness)) +
-  geom_bar(position = "stack", stat="count") +
-  
-  # plot data for different experiments as small multiples
-  facet_wrap(. ~ experiment) +
-  
-  # grey color scale is robust for colorblind
-  scale_fill_brewer(palette="Purples", drop = FALSE) +
-  
-  # horizontal plot
-  coord_flip() +
-  
-  # legend
-  guides(fill = guide_legend(reverse = TRUE)) 
+For the purposes of this demo, we are only concerned with these two variables. We can ignore the other variables for now.
+
+We plot the data to give us a better picture about its distribution.
+
+```{r dataset2, fig.height=3, fig.width=7}
+dataset2 %>%
+  mutate(c = as.factor(condition)) %>%
+  ggplot(aes(x = change)) +
+  geom_histogram(
+    aes(y = ..density..),
+    binwidth = 10,
+    fill = DARK_PURPLE,
+    alpha = .5,
+    color = 'white'
+  ) +
+  geom_density(size = 1,
+               adjust = 1.5,
+               color = '#9281bf') +
+   geom_function(
+    color = "#222222",
+    linetype = 'dashed',
+    fun = function(x)
+      dstudent_t(x, mu = 16,  sigma = 39, df = 6),
+    size = 1
+  ) + 
+  scale_x_continuous(limits = c(-200, 200)) 
 ```
 
-For the purposes of this lecture, we will focus on the first experiment.
+## Intuition of Bayesian Posteriors
 
-```{r filter-data}
-exp1.data = dataset %>%
-  filter(experiment == 1)
+The Bayesian t-test (BEST) assumes that the data in the two conditions arises from two separate t-distributions. In the following section, we will describe the process for one of the conditions in the experiment.
 
-head(exp1.data)
+We will use the $Normal(\mu = 20, \sigma = 20)$ as the prior distribution.
+
+First, we define some functions for manual calculation of the posterior normal distribution:
+
+```{r}
+sigma_post = function(sigma_prior, sigma, n = 1) {
+  sqrt(1 / (1 / (sigma_prior^2) + n / (sigma^2)))
+}
+
+mu_post = function(mu_prior, sigma_prior, mu, sigma, n = 1) {
+  tau = sigma_post(sigma_prior, sigma, n)
+  (tau^2 / sigma_prior^2)*mu_prior + (n * tau^2 / sigma^2)*mu
+}
 ```
+
+```{r}
+d.p2 = tibble(
+  group = c("Prior", "Expansive", "Constrictive", "Posterior"), 
+  mu = c(20, 32.82, 31.61, mu_post(20, 20, 32.82, 7.52)), 
+  sd = c(20, 7.52, 7.06, sigma_post(20, 7.52))
+) %>%
+  mutate(
+    cutoff_group = list(c(1:7)),
+    cutoff = list(c(0, 15, 25, 30, 32.82, 40, 100))
+  ) %>%
+  unnest(c(cutoff_group, cutoff)) %>%
+  mutate(
+    x = map(cutoff, ~ seq(from = -40, ., by = 0.1)),
+    y = pmap(list(x, mu, sd), ~ dnorm(..1, ..2, ..3))
+  )
+```
+
+We also define some ggplot styles:
+
+```{r}
+theme_density = theme(
+    axis.text.y = element_text(colour = "#ffffff"),
+    axis.title.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.x = element_text(colour = "#ffffff"),
+    axis.title.x = element_blank(),
+    axis.line.x = element_blank(),
+    axis.ticks.x = element_blank()
+  )
+```
+
+In the plot below, we show the raw data distribution for the two conditions:
+
+```{r, fig.height = 4, fig.width = 9}
+p1 = dataset2 %>%
+  ggplot() +
+  geom_point( aes(x = change, y = c, colour = c), position = position_jitter(height = 0.1), alpha = 0.7) +
+  scale_colour_manual(values = COLOR_PALETTE) + 
+  labs(y = "Condition") +
+  theme(
+    legend.position = "none", 
+    axis.line.y = element_blank(), 
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  scale_x_continuous(limits = c(-40, 100), breaks = seq(-40, 100, by = 20))
+
+p2.blank = tibble(y = c("Expansive", "Constrictive"), x = 0) %>%
+  ggplot(aes(x, y)) +
+  theme_density
+
+cowplot::plot_grid(p2.blank, p1, nrow = 2)
+```
+Next, we plot the prior density:
+
+```{r, fig.height = 4, fig.width = 9}
+p2.prior = d.p2 %>%
+  filter(cutoff_group == 7 & group == "Prior") %>%
+  unnest(c(x, y)) %>%
+  ggplot(aes(x, y)) +
+  geom_line(color = "red", size = 1) +
+  geom_area(fill = "red", size = 1, alpha = 0.5) +
+  scale_x_continuous(limits = c(-40, 100)) +
+  scale_y_continuous(limits = c(0, 0.1)) +
+  theme_density
+
+cowplot::plot_grid(p2.prior, p1, nrow = 2)
+```
+Then we describe step by step, how the likelihood is computed:
+
+```{r, fig.height = 4, fig.width = 9}
+p2.ll.0 = d.p2 %>%
+  filter(cutoff_group == 1 & group == "Expansive") %>%
+  unnest(c(x, y)) %>%
+  ggplot(aes(x, y)) +
+  geom_line(color = "purple", size = 1) +
+  geom_area(fill = "purple", size = 1, alpha = 0.5) +
+  scale_x_continuous(limits = c(-40, 100)) +
+  scale_y_continuous(limits = c(0, 0.1)) +
+  theme_density
+
+cowplot::plot_grid(p2.ll.0, p1, nrow = 2)
+```
+
+```{r, fig.height = 4, fig.width = 9}
+p2.ll.1 = d.p2 %>%
+  filter(cutoff_group == 2 & group == "Expansive") %>%
+  unnest(c(x, y)) %>%
+  ggplot(aes(x, y)) +
+  geom_line(color = "purple", size = 1) +
+  geom_area(fill = "purple", size = 1, alpha = 0.5) +
+  scale_x_continuous(limits = c(-40, 100)) +
+  scale_y_continuous(limits = c(0, 0.1)) +
+  theme_density
+
+cowplot::plot_grid(p2.ll.1, p1, nrow = 2)
+```
+```{r, fig.height = 4, fig.width = 9}
+p2.ll.2 = d.p2 %>%
+  filter(cutoff_group == 3 & group == "Expansive") %>%
+  unnest(c(x, y)) %>%
+  ggplot(aes(x, y)) +
+  geom_line(color = "purple", size = 1) +
+  geom_area(fill = "purple", size = 1, alpha = 0.5) +
+  scale_x_continuous(limits = c(-40, 100)) +
+  scale_y_continuous(limits = c(0, 0.1)) +
+  theme_density
+
+cowplot::plot_grid(p2.ll.2, p1, nrow = 2)
+```
+
+```{r, fig.height = 4, fig.width = 9}
+p2.ll.3 = d.p2 %>%
+  filter(cutoff_group == 4 & group == "Expansive") %>%
+  unnest(c(x, y)) %>%
+  ggplot(aes(x, y)) +
+  geom_line(color = "purple", size = 1) +
+  geom_area(fill = "purple", size = 1, alpha = 0.5) +
+  scale_x_continuous(limits = c(-40, 100)) +
+  scale_y_continuous(limits = c(0, 0.1)) +
+  theme_density
+
+cowplot::plot_grid(p2.ll.3, p1, nrow = 2)
+```
+
+```{r, fig.height = 4, fig.width = 9}
+p2.ll.5 = d.p2 %>%
+  filter(cutoff_group == 5 & group == "Expansive") %>%
+  unnest(c(x, y)) %>%
+  ggplot(aes(x, y)) +
+  geom_line(color = "purple", size = 1) +
+  geom_area(fill = "purple", size = 1, alpha = 0.5) +
+  scale_x_continuous(limits = c(-40, 100)) +
+  scale_y_continuous(limits = c(0, 0.1)) +
+  theme_density
+
+cowplot::plot_grid(p2.ll.5, p1, nrow = 2)
+```
+
+```{r, fig.height = 4, fig.width = 9}
+p2.ll.6 = d.p2 %>%
+  filter(cutoff_group == 6 & group == "Expansive") %>%
+  unnest(c(x, y)) %>%
+  ggplot(aes(x, y)) +
+  geom_line(color = "purple", size = 1) +
+  geom_area(fill = "purple", size = 1, alpha = 0.5) +
+  scale_x_continuous(limits = c(-40, 100)) +
+  scale_y_continuous(limits = c(0, 0.1)) +
+  theme_density
+
+cowplot::plot_grid(p2.ll.6, p1, nrow = 2)
+```
+
+```{r, fig.height = 4, fig.width = 9}
+p2.ll.7 = d.p2 %>%
+  filter(cutoff_group == 7 & group == "Expansive") %>%
+  unnest(c(x, y)) %>%
+  ggplot(aes(x, y)) +
+  geom_line(color = "purple", size = 1) +
+  geom_area(fill = "purple", size = 1, alpha = 0.5) +
+  scale_x_continuous(limits = c(-40, 100)) +
+  scale_y_continuous(limits = c(0, 0.1)) +
+  theme_density
+
+cowplot::plot_grid(p2.ll.7, p1, nrow = 2)
+```
+We want to compute the posterior, which is the product of the prior and likelihood:
+
+```{r, fig.height = 4, fig.width = 9}
+p2.prior_ll = d.p2 %>%
+  filter(cutoff_group == 7 & group %in% c("Prior", "Expansive")) %>%
+  unnest(c(x, y)) %>%
+  ggplot() +
+  geom_line(aes(x, y, color = group)) +
+  geom_area(aes(x, y, fill = group), position = "identity", alpha = 0.5) +
+  scale_x_continuous(limits = c(-40, 100)) +
+  scale_y_continuous(limits = c(0, 0.1)) +
+  theme_density
+
+cowplot::plot_grid(p2.prior_ll, p1, nrow = 2)
+```
+
+```{r, fig.height = 4, fig.width = 9}
+p2.prior_ll_post = d.p2 %>%
+  filter(cutoff_group == 7 & group != "Constrictive") %>%
+  unnest(c(x, y)) %>%
+  ggplot() +
+  geom_line(aes(x, y, color = group)) +
+  geom_area(aes(x, y, fill = group), position = "identity", alpha = 0.5) +
+  scale_x_continuous(limits = c(-40, 100)) +
+  scale_y_continuous(limits = c(0, 0.1)) +
+  theme_density
+
+cowplot::plot_grid(p2.prior_ll_post, p1, nrow = 2)
+```
+
 
 ## Model 1. Wilcoxon signed rank test
 
@@ -483,416 +702,6 @@ bind_rows(tidy.wrapper(dataset1.lm.freqt),
   coord_flip()
 ```
 
-## Model 3. Ordinal Logistic Regression
-
-A more appropriate to analyze ordinal data is to use ordinal logistic regression. In this section, we reanalyze the data using Bayesian ordinal logistic regression.
-
-### Step 1: Build the model (likelihood)
-
-As always the first step is to specify the appropriate model formula:
-
-```{r bayesian-ordinal-logistic-regression-formula}
-dataset1.brm.olr.formula <-
-  bf(effectiveness ~ condition,
-     family = cumulative("logit"))
-```
-
-Before we go further into the model building step, it is important to understand what a ordinal regression model is *estimating*. The figure below shows the cumulative proportion of participants who responded at least $k$, i.e. $Pr(y_i \leq k)$, on a Likert-style question.
-
-```{r ordinal-logistic-regression-cumulative-proportion, fig.height=4, fig.width=8}
-# figure from: Statistical rethinking with brms, ggplot2, and the tidyverse: Second edition by A Solomon Kurz
-p1 = exp1.data %>%
-  count(effectiveness) %>%
-  mutate(pr_k = n / nrow(exp1.data),
-         cum_pr_k = cumsum(pr_k)) %>%
-  ggplot(aes(x = effectiveness, y = cum_pr_k,
-             fill = effectiveness)) +
-  geom_line(color = "#b8925f") +
-  geom_point(colour = "#b8925f",
-             size = 2.5,
-             stroke = 1) +
-  scale_x_continuous("Effectiveness", breaks = 1:9) +
-  scale_y_continuous("Cumulative Proportion",
-                     breaks = seq(0, 1, by = 0.2),
-                     limits = c(0, 1)) +
-  theme(axis.ticks = element_blank(),
-        legend.position = "none")
-
-p2 = exp1.data %>%
-  count(effectiveness) %>%
-  mutate(pr_k = n / nrow(exp1.data),
-         log_cum_odds = logit(cumsum(pr_k))) %>%
-  ggplot(aes(x = effectiveness, y = log_cum_odds,
-             fill = effectiveness)) +
-  geom_line(color = "#b8925f") +
-  geom_point(colour = "#b8925f",
-             size = 2.5,
-             stroke = 1) +
-  scale_x_continuous("Effectiveness", breaks = 1:9) +
-  scale_y_continuous(
-    "Log-Cumulative Odds",
-    breaks = seq(-5, 5, by = 1),
-    limits = c(logit(0.005), logit(0.99))
-  ) +
-  theme(axis.ticks = element_blank(),
-        legend.position = "none")
-
-ggarrange(p1, p2)
-```
-
-Since cumulative proportion is a value bounded between 0 and 1, linear regression models apply the logit function to apply the following transformation $f: [0, 1] \to (-Inf, Inf)$. Applying this transformation to the data gives the plot on the right.
-
-Ordinal regression estimates this cumulative probability: $Pr(y_i \leq k)$. They do this using a series of parameters $\alpha_k$ where $k \in \{1, 2, 3, 4, 5, 6, 7, 8, 9\}$, according to the following equation:
-
-$$
-\begin{align}
-log(\frac{Pr(y_i <= k)}{1 - Pr(y_i <= k)}) = \alpha_k
-\end{align}
-$$ Ordinal regression estimates this cumulative probability: $Pr(y_i \leq k)$. Once we have estimated the cumulative probability, we can take the difference between successive items, $Pr(y_i = k) = Pr(y_i \leq k) - Pr(y_i \leq k - 1)$, to estimate the discrete probability for each outcome:
-
-```{r ordinal-logistic-regression-cumulative-proportion-diff}
-# primary data
-exp1.data_plot = exp1.data %>%
-  count(effectiveness) %>%
-  mutate(pr_k = n / nrow(exp1.data)) %>%
-  add_row(effectiveness = 2, n = 0, pr_k = 0) %>%
-  arrange(effectiveness) %>%
-  mutate(cum_pr_k = cumsum(n / nrow(exp1.data))) %>% 
-  mutate(discrete_probability = ifelse(effectiveness == 1, cum_pr_k, cum_pr_k - pr_k))
-
-text = exp1.data_plot %>%
-  mutate(
-    text = effectiveness,
-    effectiveness = effectiveness + 0.25,
-    cum_pr_k = ifelse(cum_pr_k - 0.05 < 0.065, 0.05, cum_pr_k - 0.05)
-  )
-
-exp1.data_plot %>% 
-  ggplot(aes(x = effectiveness, y = cum_pr_k)) +
-  geom_line(aes(color = cum_pr_k), color = "#b8925f") +
-  geom_linerange(aes(ymin = 0, ymax = cum_pr_k), alpha = 1/2, color = "#b8925f") +
-  geom_linerange(aes(x = effectiveness,
-                     ymin = ifelse(effectiveness == 1, 0, discrete_probability), 
-                     ymax = cum_pr_k),
-                 color = "black") +
-  geom_point(colour = "#b8925f", size = 2.5, stroke = 1) +
-  # number annotation
-  geom_text(data = text, 
-            aes(label = text),
-            size = 4) +
-  scale_x_continuous("Effectiveness", breaks = 1:9) +
-  scale_y_continuous("Cumulative Proportion", breaks = seq(0, 1, by = 0.2), limits = c(0, 1)) +
-  theme(axis.ticks = element_blank(),
-        axis.title.y = element_text(angle = 90),
-        legend.position = "none")
-```
-
-### Step 1: Build the model (priors)
-
-The next step is to specify the prior distributions. Let us first look at the default prior distributions:
-
-```{r dataset1-olr-priors}
-as_tibble(get_prior(dataset1.brm.olr.formula, data = exp1.data))
-```
-
-We notice that the difference parameter, `b` does not have a proper prior, so we should specify one. The Intercept term does have a prior, but since the distributions are going to be logit-transformed it is difficult to intuitively determine whether these are strong or diffuse prior distributions. This is another important question that can be answered through prior predictive checks:
-
-```{r dataset1-olr-priorchecks-1}
-# priors
-dataset1.brm.olr.priors = c(
-      	  prior(normal(0, 1), class = "b")
-)
-
-dataset1.brm.olr.priorchecks <- brm(
-    dataset1.brm.olr.formula,
-    data = exp1.data,
-    prior = dataset1.brm.olr.priors,
-    iter = 15000,
-    warmup = 7500,
-    backend = BRM_BACKEND,
-    sample_prior = 'only',
-    file = "rds/dataset1.brm.bayesiant.priorchecks1.rds"
-  )
-
-dataset1.olr.yprior <-  posterior_predict(dataset1.brm.olr.priorchecks, ndraws = 100)
-
-ggplot() +
-  geom_histogram(aes(x = dataset1.olr.yprior),
-               fill = DARK_PURPLE,
-               alpha = .5, size = 1,
-               binwidth = 0.5, center = 0) +
- scale_x_continuous(breaks = 1:9, limits = c(0.5, 9.5)) + 
- labs(x = 'Prior predictive distribution',  y = "") +
- theme(
-   axis.text.y = element_blank()
- )
-```
-
-Our prior predictive check reveals that the model is assigning most of the probability mass to middle answer (5). This is not necessarily a bad thing, and it might reflect how participants behave. However, it is possible that these priors are still diffuse, as noticed by the low number of `Bulk_ESS` and `Tail_ESS`. These may act as another diagnostic measure, and ideally you'd want these values to be at least greater than 1000. Let's us try a different prior
-
-```{r bayesian-olr-prior-checks-1, fig.height=4, fig.width=8}
-dataset1.brm.olr.priors = c(prior(normal(0, 1), class = "b"),
-                            prior(student_t(3, 0, 1.5), class = "Intercept"))
-
-dataset1.brm.olr.priorchecks <- brm(
-    dataset1.brm.olr.formula,
-    prior = dataset1.brm.olr.priors,
-    data = exp1.data,
-    iter = 15000,
-    warmup = 7500,
-    backend = BRM_BACKEND,
-    sample_prior = 'only',
-    file = "rds/dataset1.brm.bayesiant.priorchecks2.rds"
-    )
-
-summary(dataset1.brm.olr.priorchecks)
-```
-
-Changing the priors appear to improve `Bulk_ESS` and `Tail_ESS` slightly. Let's take a look at the prior predictive distribution:
-
-```{r bayesian-olr-prior-checks-2, fig.height=4, fig.width=8}
-dataset1.olr.yprior <-
-  posterior_predict(dataset1.brm.olr.priorchecks, ndraws = 100)
-
-
-ggplot() +
-  geom_histogram(aes(x = dataset1.olr.yprior),
-               fill = '#351c75',
-               alpha = .5,
-               size = 1,
-               binwidth = .5) +
-  scale_x_continuous(breaks = 1:9, limits = c(0.5, 9.5)) + 
-  xlab('prior draws') + ylab('')
-```
-
-For now, let us proceed with these priors.
-
-### Step 2: Computing the posterior probability
-
-After we've completed the model building phase, we can then compile the model.
-
-```{r bayesian-ordinal-logistic-regression-run-1}
-dataset1.brm.olr1 =
-  brm(
-    dataset1.brm.olr.formula,
-    prior = dataset1.brm.olr.priors,
-    data = exp1.data,
-    backend = BRM_BACKEND,
-    file = "rds/dataset1.brm.olr1.rds"
-  )
-
-summary(dataset1.brm.olr1)
-```
-
-Notice that we get a few error messages about divergent transitions. Here we adjust a few sampling parameters, namely `adapt_delta` and `max_treedepth` which are passed to the `control` argument, to help the MCMC sampler and avoid divergent transitions:
-
-```{r bayesian-ordinal-logistic-regression-run-2}
-dataset1.brm.olr2 =
-  brm(
-    dataset1.brm.olr.formula,
-    prior = dataset1.brm.olr.priors,
-    data = exp1.data,
-    backend = BRM_BACKEND,
-    warmup = 1500,
-    iter = 2500,
-    control = list(adapt_delta = 0.99, max_treedepth = 15),
-    file = "rds/dataset1.brm.olr2.rds"
-  )
-
-summary(dataset1.brm.olr2)
-```
-
-### Step 3: Evaluate the fit
-
-We then perform the same model diagnostics steps that we had performed for the previous model.
-
-```{r dataset1-brm-olr-mcmc}
-plot(dataset1.brm.olr2, newpage = T, ask=FALSE)
-```
-
-### Step 3: Evaluate the posterior predictions
-
-```{r dataset1-olr-posterior-checks, fig.height=3, fig.width=10}
-dataset1.olr.y <- exp1.data$effectiveness
-dataset1.olr.yrep <- posterior_predict(dataset1.brm.olr2)
-
-ppc_hist(y = dataset1.olr.y,
-         yrep = dataset1.olr.yrep[1000:1007, ],
-         binwidth = .5)
-
-ppc_dens_overlay(y = dataset1.olr.y,
-                 yrep = dataset1.olr.yrep[2000:2050, ], adjust = .5)
-
-
-ppc_bars(y = dataset1.olr.y,
-        yrep = dataset1.olr.yrep, binwidth = .5)
-
-
-ppc_stat_grouped(y = dataset1.olr.y,
-                 yrep = dataset1.olr.yrep,
-                 group = exp1.data$condition)
-
-```
-
-### Step 3: Compare posterior distributions
-
-Finally we estimate the difference between the two conditions and plot the results:
-
-```{r dataset1-olr-epred-draws}
-dataset1.olr.posterior_epred <-
-  tibble(condition = c('graph', 'no_graph')) %>%
-  add_epred_draws(dataset1.brm.olr2,
-                  re_formula = NA,
-                  allow_new_levels = FALSE) %>%
-  ungroup()
-
-head(dataset1.olr.posterior_epred)
-```
-
-```{r dataset1-olr-epred-draws-explanation, fig.height=4, fig.width=9}
-
-dataset1.olr.posterior_epred  %>% 
-  filter(.draw == 100) %>%
-  group_by(condition) %>%
-  rename(`probability` = .epred) %>%
-  ggplot(., aes(x = .category, y = `probability`, fill = condition, color = condition)) + 
-  geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
-  geom_point(aes(group = condition)) + 
-  geom_path(aes(group = condition)) + 
-  facet_wrap(condition ~ ., ncol = 2) +
-  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
-  scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
-  scale_fill_manual(values = c(DARK_PURPLE, GOLD_COLOR)) +
-  xlab('')
-
-
-dataset1.olr.posterior_epred %>% 
-  select(-.chain, -.iteration, -.row) %>%
-  group_by(condition, .draw, .category) %>%
-  rename(probability = .epred) %>%
-  ungroup() %>%
-  group_by(.category, condition) %>%
-  median_qi(probability) %>%
-ggplot(., aes(x = .category, y = probability, fill = condition, color = condition)) + 
-  geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
-  geom_errorbar(aes(ymin = .lower, ymax = .upper), width = 0, size = 1) + 
-  geom_point(aes(group = condition)) + 
-  geom_path(aes(group = condition)) + 
-  facet_wrap(condition ~ ., ncol = 2) +
-  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
-  scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
-  scale_fill_manual(values = c(DARK_PURPLE, GOLD_COLOR))  +
-  xlab('')
-
-
-dataset1.olr.posterior_epred  %>% 
-  filter(.draw == 100) %>%
-  #arrange(.category) %>%
-  group_by(condition) %>%
-  mutate(`cumulative probability` = cumsum(.epred)) %>%
-  ggplot(., aes(x = .category, y = `cumulative probability`, fill = condition, color = condition)) + 
-  geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
-  geom_point(aes(group = condition)) + 
-  geom_path(aes(group = condition)) + 
-  facet_wrap(condition ~ ., ncol = 2) +
-  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
-  scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
-  scale_fill_manual(values = c(DARK_PURPLE, GOLD_COLOR))  +
-  xlab('')
-
-
-dataset1.olr.posterior_epred %>% 
-  select(-.chain, -.iteration, -.row) %>%
-  group_by(condition, .draw) %>%
-  arrange(.category) %>%
-  mutate(`cumulative probability` = cumsum(.epred)) %>%
-  ungroup() %>%
-  group_by(.category, condition) %>%
-  median_qi(`cumulative probability`) %>%
-ggplot(., aes(x = .category, y = `cumulative probability`, fill = condition, color = condition)) + 
-  geom_bar(stat = 'identity', alpha = .5, color = NA, width = .3) + 
-  geom_errorbar(aes(ymin = .lower, ymax = .upper), width = 0, size = 2) + 
-  geom_point(aes(group = condition)) + 
-  geom_path(aes(group = condition)) + 
-  facet_wrap(condition ~ ., ncol = 2) +
-  scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, .2)) + 
-  scale_color_manual(values = c(DARK_PURPLE, GOLD_COLOR)) + 
-  scale_fill_manual(values = c(DARK_PURPLE, GOLD_COLOR))  +
-  xlab('')
-```
-
-```{r dataset1-olr-comparison-1}
-dataset1.olr.posterior_comparison <-
-  dataset1.olr.posterior_epred %>%
-  select(-c(.chain, .iteration, .row)) %>%
-  group_by(.category) %>%
-  compare_levels(variable = .epred, by = condition)
-
-head(dataset1.olr.posterior_comparison %>%
-       mean_qi())
-```
-
-```{r dataset1-olr-comparison-2, fig.height=3, fig.width=10}
-dataset1.olr.posterior_comparison %>%
-  mean_qi(.epred) %>%
-  ggplot() +
-  geom_point(aes(y = .epred, x = .category), size = 3, color = DARK_PURPLE) +
-  geom_errorbar(
-    aes(ymin = .lower, ymax = .upper, x = .category),
-    width = 0,
-    size = 2,
-    color = DARK_PURPLE,
-    alpha = .5
-  ) +
-  coord_cartesian(ylim = c(-.1, .1)) + 
-  geom_hline(aes(yintercept = 0), linetype = "dashed", color = "gray") +
-  xlab('') + ylab('no_graph - graph') +
-  theme(axis.title.y = element_text(angle = 0, vjust = .5))
-```
-
-# Dataset 2
-
-The following dataset is from experiment 2 of "How Relevant are Incidental Power Poses for HCI?" [(Jansen & Hornbæk, 2018)](https://doi.org/10.1145/3173574.3173588). Study participants were asked to either make an expansive posture or a constrictive posture before performing a task. The experiment investigated whether posture could potentially have an effect on risk taking behavior.
-
-First, we load the data.
-
-```{r load-dataset-2}
-dataset2 = readr::read_csv("data/exp2.csv", show_col_types = FALSE) %>%
-  mutate(condition = condition == 'expansive') %>%
-  group_by(participant)
-
-head(dataset2)
-```
-
-The data has been aggregated for each participant: - `condition = TRUE` indicates expansive posture, and `condition = FALSE` indicates constrictive posture - The dependent variable is `change` which indicates the percentage change in risk-taking behavior. Thus, it is a continuous variable.
-
-For the purposes of this demo, we are only concerned with these two variables. We can ignore the other variables for now.
-
-We plot the data to give us a better picture about its distribution.
-
-```{r dataset2, fig.height=3, fig.width=7}
-dataset2 %>%
-  mutate(c = as.factor(condition)) %>%
-  ggplot(aes(x = change)) +
-  geom_histogram(
-    aes(y = ..density..),
-    binwidth = 10,
-    fill = DARK_PURPLE,
-    alpha = .5,
-    color = 'white'
-  ) +
-  geom_density(size = 1,
-               adjust = 1.5,
-               color = '#9281bf') +
-   geom_function(
-    color = "#222222",
-    linetype = 'dashed',
-    fun = function(x)
-      dstudent_t(x, mu = 16,  sigma = 39, df = 6),
-    size = 1
-  ) + 
-  scale_x_continuous(limits = c(-200, 200)) 
-```
 
 ### Step 1: Build the model (likelihood and priors)
 
