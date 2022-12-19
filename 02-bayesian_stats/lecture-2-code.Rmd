@@ -1,0 +1,320 @@
+---
+title: "Introduction to Transparent Bayesian Data Analysis (chi2-course)"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: Abhraneel Sarma and Fumeng Yang
+output: 
+  html_document: 
+    highlight: tango
+    toc: yes
+    toc_float: yes
+    toc_collapsed: yes
+    df_print: kable
+---
+
+```{=html}
+<style>
+.kable-table{
+ overflow:scroll;
+}
+
+</style>
+```
+
+
+```{r knit-github, eval=FALSE,echo=FALSE,include=FALSE}
+# compile for github, you can ignore this
+library(rmarkdown)
+render("bayesian-analysis.Rmd", md_document(variant = "gfm"), 
+       knit_root_dir = "/Users/fm/Documents/Github/CHI-Course-Transparent-Quant")
+```
+
+```{r message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+rm(list = ls(all.names = TRUE)) 
+
+library(dplyr)
+library(tibble)
+library(purrr)
+library(ggpubr)
+library(tidyr)
+library(forcats)
+library(gtools)
+
+library(broom)
+library(broom.mixed)
+
+library(modelr)
+
+library(brms)
+library(tidybayes)
+
+library(ggdist)
+library(bayesplot)
+library(ggplot2)
+library(knitr)
+
+BRM_BACKEND <- ifelse(require("cmdstanr"), 'cmdstanr', 'rstan')
+```
+
+```{r include=FALSE}
+# specify color theme for the two poses
+theme_green = '#20a598'
+theme_blue = '#4574bf'
+theme_yellow = '#fbc63d'
+theme_red = '#e2524b'
+
+scale_color_theme = \(...) scale_color_manual(..., 
+  values = c('prior' = theme_yellow,
+             'expansive' = theme_blue, 
+             'posterior' = theme_green,
+             'constrictive' = '#888888'),
+  guide = "none",
+  aesthetics = c("color", "fill")
+)
+
+
+# set up the global theme
+theme_set(theme_ggdist() + 
+          theme(strip.background = element_blank(),
+               plot.title = element_text(hjust = .5)))
+
+# We also define some ggplot styles
+theme_density = theme(
+    axis.text.y = element_text(colour = "#ffffff"),
+    axis.title.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.text.x = element_text(colour = "#ffffff"),
+    axis.title.x = element_blank(),
+    axis.line.x = element_blank(),
+    axis.ticks.x = element_blank())
+
+```
+
+# Introduction
+
+In this document, we will outline the Bayesian analogs of the statistical analyses described in lecture 1 ([Github code](https://github.com/chatchavan/CHI-Course-Transparent-Quant-Lecture-1)).
+
+## Note on MathJax
+
+If you use RStudio's Visual editor mode. Check if you can see anything written in the following parenthesis: ($k$). If not, your RStudio has a bug. This problem will be fixed in future versions. Meanwhile, if some text seems to be missing in the file below, simply position your cursor around the missing area to reveal the underlying code.
+
+# Dataset
+
+The following dataset is from experiment 2 of "How Relevant are Incidental Power Poses for HCI?" [(Jansen & Hornbæk, 2018)](https://doi.org/10.1145/3173574.3173588). Study participants were asked to either make an expansive posture or a constrictive posture before performing a task. The experiment investigated whether posture could potentially have an effect on risk taking behavior.
+
+First, we load the data.
+
+```{r load-dataset}
+pose_df = readr::read_csv("data/poses_data.csv", show_col_types = FALSE) %>%
+  mutate(condition) %>%
+  group_by(participant)
+```
+
+The data has been aggregated for each participant: - `condition = expansive` indicates expansive posture, and `condition = constrictive` indicates constrictive posture - The dependent variable is `change` which indicates the percentage change in risk-taking behavior. Thus, it is a continuous variable.
+
+For the purposes of this demo, we are only concerned with these two variables. We can ignore the other variables for now.
+
+```{r show-dataset}
+head(pose_df %>% select(participant, condition, change))
+```
+
+# Intuition of Bayesian Statistics
+
+The Bayesian t-test (BEST) assumes that the data in the two conditions arises from two separate t-distributions. In the following section, we will describe the process for one of the conditions in the experiment.
+
+We will use the $Normal(\mu = 20, \sigma = 20)$ as the prior distribution.
+
+First, we define some functions for manual calculation of the posterior normal distribution:
+
+```{r}
+sigma_post = function(sigma_prior, sigma, n = 1) {
+  sqrt(1 / (1 / (sigma_prior^2) + n / (sigma^2)))
+}
+
+mu_post = function(mu_prior, sigma_prior, mu, sigma, n = 1) {
+  tau = sigma_post(sigma_prior, sigma, n)
+  (tau^2 / sigma_prior^2)*mu_prior + (n * tau^2 / sigma^2)*mu
+}
+```
+
+```{r}
+d.p2 = tibble(
+  group = c("prior", "expansive", "constrictive", "posterior"), 
+  mu = c(20, 32.82, 31.61, mu_post(20, 20, 32.82, 7.52)), 
+  sd = c(20, 7.52, 7.06, sigma_post(20, 7.52))
+) %>%
+  mutate(
+    cutoff_group = list(c(1:7)),
+    cutoff = list(c(0, 15, 25, 30, 32.82, 40, 100))
+  ) %>%
+  unnest(c(cutoff_group, cutoff)) %>%
+  mutate(
+    x = map(cutoff, ~ seq(from = -40, ., by = 0.1)),
+    y = pmap(list(x, mu, sd), ~ dnorm(..1, ..2, ..3))
+  )
+```
+
+In the plot below, we show the raw data distribution for the two conditions:
+
+```{r, fig.height = 4, fig.width = 8}
+p1 = pose_df %>%
+  ggplot() +
+  geom_point(aes(x = change, y = condition, colour = condition), 
+             position = position_jitter(height = 0.1), alpha = 0.7) +
+  scale_color_theme() + 
+  labs(y = "Condition") +
+  theme(
+    legend.position = "none", 
+    axis.line.y = element_blank(), 
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  scale_x_continuous(limits = c(-40, 100), breaks = seq(-40, 100, by = 20))
+
+p2.blank = tibble(y = c("expansive", "constrictive"), x = 0) %>%
+  ggplot(aes(x, y)) +
+  scale_color_theme() + 
+  theme_density
+
+cowplot::plot_grid(p2.blank, p1, nrow = 2)
+```
+
+First, we define a function to help us plot different cutoff groups.
+
+```{r plot-preliminaries}
+plot_preliminary <- function(data, group_num, group_name){
+  data %>%
+  filter(cutoff_group == group_num & group %in% group_name) %>%
+  unnest(c(x, y)) %>%
+  ggplot(aes(x, y)) +
+  #geom_line(aes(color = group), size = 1) +
+  # density
+  geom_area(aes(fill = group, color = group), position = "identity", size = 1, alpha = 0.3) +
+  scale_x_continuous(limits = c(-40, 100)) +
+  scale_y_continuous(limits = c(0, 0.1)) +
+  scale_color_theme() +
+  theme_density
+}
+
+```
+
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 0, NULL), 
+  p1, nrow = 2)
+```
+
+Next, we plot the prior density:
+
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 7, 'prior'), 
+  p1, nrow = 2)
+```
+
+Then we describe step by step, how the likelihood is computed:
+
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 1, 'expansive'), 
+  p1, nrow = 2)
+```
+
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 2, 'expansive'), 
+  p1, nrow = 2)
+```
+
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 3, 'expansive'), 
+  p1, nrow = 2)
+```
+
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 5, 'expansive'), 
+  p1, nrow = 2)
+```
+
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 6, 'expansive'), 
+  p1, nrow = 2)
+```
+
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 7, 'expansive'), 
+  p1, nrow = 2)
+```
+
+We want to compute the posterior, which is the product of the prior and likelihood:
+
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 7, c('prior', 'expansive', 'posterior')), 
+  p1, nrow = 2)
+```
+
+# Model 1: Equal standard deviations
+
+## Step 1: model specification
+
+Fumeng: I hope to keep this example simple. Is there a __simple__ way to justify the choice of $\nu$? 
+
+$$
+\begin{align}
+y_{i} &\sim \mathrm{T}(\nu, \mu, \sigma) \\
+\mu &= \alpha_{0} + \beta * x_i \\
+\sigma  &\sim \mathrm{Normal}(20, 20) \\
+\beta &\sim \mathrm{Normal}(\mu_{0}, \sigma_{0}) \\
+\nu &\sim \mathrm{exp}(1/30)
+\end{align}
+$$
+
+
+### prior checks
+
+
+## Step 2: model fitting
+
+
+## Step 3: check posteriors
+
+
+# Model 2: The BEST test model
+
+## Step 1: model specification
+
+This model is the BEST test model as described by Kruschke in the paper *Bayesian estimation supersedes the t-test*. In this model, $\beta$ indicates the mean difference in the outcome variable between the two groups (in this case, the percent change in the BART scores). We fit different priors on $\beta$ and set different weights on these priors to obtain our posterior estimate.
+
+$$
+\begin{align}
+y_{i} &\sim \mathrm{T}(\nu, \mu, \sigma) \\
+\mu &= \alpha_{0} + \beta * x_i \\
+\sigma &= \sigma_{a} + \sigma_{b}*x_i \\
+\beta &\sim \mathrm{Normal}(\mu_{0}, \sigma_{0}) \\
+\sigma_a, \sigma_b &\sim \mathrm{Cauchy}(0, 2) \\
+\nu &\sim \mathrm{exp}(1/30)
+\end{align}
+$$
+
+# Model 3: Alternative SAYA model
+
+SAYA = SArma + YAng
+
+## model specification
+
+$$
+\begin{align}
+y_{i} &\sim \mathrm{T}(\nu, \mu, \sigma) \\
+\mu &= \alpha_{0} + \beta * x_i \\
+\sigma &= \sigma_{a} + \sigma_{b}*x_i \\
+\beta &\sim \mathrm{Normal}(\mu_{0}, \sigma_{0}) \\
+\sigma_a, \sigma_b &\sim \mathrm{HalfNormal}(0, 10) \\
+\nu &\sim \mathrm{exp}(1/30)
+\end{align}
+$$
