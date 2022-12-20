@@ -6,8 +6,8 @@ output:
   html_document: 
     highlight: tango
     toc: yes
-    toc_float: yes
-    toc_collapsed: yes
+    toc_float: true
+    toc_collapsed: true
     df_print: kable
 ---
 
@@ -263,9 +263,9 @@ cowplot::plot_grid(
 ```
 
 
-Of course, if you have `gganimate` and `magick` working on your computer, you can try the following code to get a gif!
+Of course, if you have `gganimate` and `magick` working on your computer, you can try the following code to get a gif! Here, we are not going to show the code.
 
-```{r fig.height = 4, fig.width = 8, message=FALSE, warning=FALSE}
+```{r fig.height = 4, fig.width = 8, message=FALSE, warning=FALSE, echo=FALSE}
 
 if(require("gganimate") & require("magick")){
   
@@ -328,7 +328,7 @@ if(require("gganimate") & require("magick")){
   
   b_mgif <- image_read(bottom_gif)
   
-  # combine them for each frame
+  # combine them in each frame
   new_gif <- image_append(c(a_mgif[1], b_mgif[1]), stack = TRUE)
   for(i in 2:8){
     combined <- image_append(c(a_mgif[i], b_mgif[1]), stack = TRUE)
@@ -345,13 +345,17 @@ if(require("gganimate") & require("magick")){
 
 Fumeng: I hope to keep this example simple. Is there a __simple__ way to justify the choice of $\nu$? 
 
+
+
 $$
 \begin{align}
-y_{i} &\sim \mathrm{T}(\nu, \mu, \sigma) \\
-\mu &= \alpha_{0} + \beta * x_i \\
-\sigma  &\sim \mathrm{Normal}(20, 20) \\
-\beta &\sim \mathrm{Normal}(\mu_{0}, \sigma_{0}) \\
-\nu &\sim \mathrm{exp}(1/30)
+y_{i} &\sim \mathrm{Student\_t}(\mu, \sigma_{0}, \nu_{0}) \\
+\mu &= \beta_{0} + \beta_{1} * x_i \\
+\sigma_{0}  &\sim \mathrm{Normal}(0, 10) \\
+\beta_{0} &\sim \mathrm{?} \\
+\beta_{1} &\sim \mathrm{Normal}(0,2) \\
+\nu_{0} &\sim \mathrm{?} \\
+i & \in \{\mathrm{expnansive}, \mathrm{constrictive}\}
 \end{align}
 $$
 
