@@ -34,6 +34,16 @@ rm(list = ls(all.names = TRUE))
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 10, fig.height = 6)
 ```
 
+# Introduction
+
+In this document, we will outline the Bayesian analogs of the statistical analyses described in lecture 1 ([Github code](https://github.com/chatchavan/CHI-Course-Transparent-Quant-Lecture-1)).
+
+## Note on MathJax
+
+If you use RStudio's Visual editor mode. Check if you can see anything written in the following parenthesis: ($k$). If not, your RStudio has a bug. This problem will be fixed in future versions. Meanwhile, if some text seems to be missing in the file below, simply position your cursor around the missing area to reveal the underlying code.
+
+
+# Load packages
 
 ```{r message=FALSE, warning=FALSE}
 library(dplyr)
@@ -101,13 +111,6 @@ theme_density_x = theme(
 
 ```
 
-# Introduction
-
-In this document, we will outline the Bayesian analogs of the statistical analyses described in lecture 1 ([Github code](https://github.com/chatchavan/CHI-Course-Transparent-Quant-Lecture-1)).
-
-## Note on MathJax
-
-If you use RStudio's Visual editor mode. Check if you can see anything written in the following parenthesis: ($k$). If not, your RStudio has a bug. This problem will be fixed in future versions. Meanwhile, if some text seems to be missing in the file below, simply position your cursor around the missing area to reveal the underlying code.
 
 # Dataset
 
