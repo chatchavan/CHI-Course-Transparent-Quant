@@ -1,13 +1,14 @@
 ---
-title: "Introduction to Transparent Bayesian Data Analysis (chi2-course)"
+title: "Introduction to Transparent Bayesian Data Analysis (chi2023-course)"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 author: Abhraneel Sarma and Fumeng Yang
 output: 
   html_document: 
-    highlight: tango
+    highlight: pygments
     toc: yes
-    toc_float: true
-    toc_collapsed: true
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
     df_print: kable
 ---
 
@@ -28,10 +29,13 @@ render("bayesian-analysis.Rmd", md_document(variant = "gfm"),
        knit_root_dir = "/Users/fm/Documents/Github/CHI-Course-Transparent-Quant")
 ```
 
-```{r message=FALSE, warning=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
-rm(list = ls(all.names = TRUE)) 
+```{r setup, include=FALSE}
+rm(list = ls(all.names = TRUE))
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 10, fig.height = 6)
+```
 
+
+```{r message=FALSE, warning=FALSE}
 library(dplyr)
 library(tibble)
 library(purrr)
@@ -88,6 +92,12 @@ theme_density = theme(
     axis.title.x = element_blank(),
     axis.line.x = element_blank(),
     axis.ticks.x = element_blank())
+
+theme_density_x = theme(
+    axis.text.y = element_text(colour = "#ffffff"),
+    axis.title.y = element_blank(),
+    axis.line.y = element_blank(),
+    axis.ticks.y = element_blank())
 
 ```
 
@@ -339,37 +349,207 @@ if(require("gganimate") & require("magick")){
 }
 ```
 
+
+
+Fumeng: the content below needs better documentation....
+
+
+
 # Model 1: Equal standard deviations
 
 ## Step 1: model specification
 
 Fumeng: I hope to keep this example simple. Is there a __simple__ way to justify the choice of $\nu$? 
 
-
+Here we use a mathematical expression for the model above. Fumeng: need explanations here...
 
 $$
 \begin{align}
 y_{i} &\sim \mathrm{Student\_t}(\mu, \sigma_{0}, \nu_{0}) \\
 \mu &= \beta_{0} + \beta_{1} * x_i \\
-\sigma_{0}  &\sim \mathrm{Normal}(0, 10) \\
+\sigma_{0}  &\sim \mathrm{HalfNormal}(0, 10) \\
 \beta_{0} &\sim \mathrm{?} \\
 \beta_{1} &\sim \mathrm{Normal}(0,2) \\
 \nu_{0} &\sim \mathrm{?} \\
-i & \in \{\mathrm{expnansive}, \mathrm{constrictive}\}
+i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}
 \end{align}
 $$
+
+We translate this thought into `brms` formula using the function `bf`.
+
+```{r}
+model.1.formula <- bf(
+                      # we think change is affected by different conditions.
+                      change ~ condition,
+                      # to tell brms which response distribution to use
+                      family = student()
+                    )
+```
+
+Now we can use `get_prior()` to inspect the available priors and formula. As what we learned, we have priors for 
+
+
+```{r}
+tibble(get_prior(model.1.formula, pose_df))
+```
 
 
 ### prior checks
 
+```{r}
+model.1.checks <- brm(
+  model.1.formula,
+  data = pose_df, 
+  family = student_t(),
+  prior = c(
+    prior(normal(0, 2), class = 'b'),
+    prior(normal(0, 10), class = 'sigma', lb = 0)
+  ),
+  sample_prior = 'only',
+  backend = BRM_BACKEND,
+  file = 'rds/model.1.checks.rds',
+  file_refit = 'on_change' 
+)
+
+```
+
+plot 
+
+```{r}
+model.1.priorsamples <- 
+  model.1.checks %>% 
+    epred_draws(tibble(condition = c('expansive', 'constrictive')))
+```
+
+```{r}
+head(model.1.priorsamples)
+```
+
+```{r  fig.height=2.5}
+model.1.priorsamples %>% 
+  ggplot(aes(x = .epred, group = condition)) +
+  geom_density(alpha = .5, color = NA, fill = theme_yellow) +
+  theme_density_x + 
+  ggtitle('Prior checks of model.1')
+```
+
+
+
 
 ## Step 2: model fitting
 
+```{r}
+model.1 <- brm(
+  model.1.formula,
+  data = pose_df, 
+  family = student_t(),
+  prior = c(
+    prior(normal(0, 2), class = 'b'),
+    prior(normal(0, 10), class = 'sigma', lb = 0)
+  ),
+  backend = BRM_BACKEND,
+  file = 'rds/model.1.rds'
+)
+```
 
 ## Step 3: check posteriors
 
+### aspect 1: mcmc traces
 
-# Model 2: The BEST test model
+```{r}
+mcmc_trace(model.1)
+```
+
+
+### aspect 2: model metrics
+
+Rhat, ESS, etc here
+
+```{r}
+summary(model.1)
+```
+### aspect 3: visually
+
+Fumeng: do we need this?
+
+```{r}
+model.1.predictions <- 
+  model.1 %>% 
+    predicted_draws(tibble(condition = c('expansive', 'constrictive')))
+
+```
+
+```{r}
+head(model.1.predictions)
+```
+
+```{r}
+plot_predictions <- function(model, title = ''){
+  model %>% 
+    predicted_draws(tibble(condition = c('expansive', 'constrictive'), 
+                           participant = c(-1, -1)), 
+                    allow_new_levels = TRUE,
+                    sample_new_levels = 'uncertainty') %>% 
+    ggplot(aes(x = .prediction, fill = condition)) +
+    geom_density(alpha = .5, size = 1, color = NA) +
+    scale_color_theme() +
+    theme_density_x + 
+    scale_y_continuous(breaks = 0, labels = 'constrictive') + 
+    scale_x_continuous(breaks = seq(-200, 250, by = 100)) +
+    coord_cartesian(xlim = c(-200, 250)) + 
+    ggtitle(paste0('Posterior predictions of ', deparse(substitute(model))))
+}
+```
+
+
+```{r}
+cowplot::plot_grid(plot_predictions(model.1), 
+                   p1 + 
+                     scale_x_continuous(breaks = seq(-200, 250, by = 100)) +
+                     coord_cartesian(xlim = c(-200, 250)), 
+                   nrow = 2)
+```
+
+### reporting
+
+```{r}
+model.1.posteriors <- 
+  model.1 %>% 
+    epred_draws(tibble(condition = c('expansive', 'constrictive')))
+
+```
+
+```{r}
+model.1.posteriors %>% 
+  median_qi(.epred)
+```
+
+
+```{r}
+plot_posteriors <- function(model, title = ''){
+  model %>% 
+    epred_draws(tibble(condition = c('expansive', 'constrictive')), 
+                # ignoring random effects if there is any
+                re_formula = NA) %>% 
+    ggplot(aes(x = .epred, fill = condition)) +
+    geom_density(alpha = .5, size = 1, color = NA) +
+    scale_color_theme() +
+    theme_density_x + 
+    scale_y_continuous(breaks = 0, labels = 'constrictive') + 
+    scale_x_continuous(limits = c(-40, 100), breaks = seq(-40, 100, by = 20)) +
+    ggtitle(paste0('Posterior means of ', deparse(substitute(model))))
+}
+```
+
+
+```{r}
+
+cowplot::plot_grid(plot_posteriors(model.1), p1, nrow = 2)
+
+```
+
+
+# Model 2: the BEST test model
 
 ## Step 1: model specification
 
@@ -378,27 +558,187 @@ This model is the BEST test model as described by Kruschke in the paper *Bayesia
 $$
 \begin{align}
 y_{i} &\sim \mathrm{T}(\nu, \mu, \sigma) \\
-\mu &= \alpha_{0} + \beta * x_i \\
+\mu &= \beta_{0} + \beta_{1} * x_i \\
 \sigma &= \sigma_{a} + \sigma_{b}*x_i \\
-\beta &\sim \mathrm{Normal}(\mu_{0}, \sigma_{0}) \\
+\beta_{1} &\sim \mathrm{Normal}(\mu_{0}, \sigma_{0}) \\
 \sigma_a, \sigma_b &\sim \mathrm{Cauchy}(0, 2) \\
-\nu &\sim \mathrm{exp}(1/30)
+\nu &\sim \mathrm{exp}(1/30)\\
+i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}
 \end{align}
 $$
 
-# Model 3: Alternative SAYA model
+
+
+```{r}
+model.2.formula <- bf(# we think change is affected by different conditions.
+                      change ~ condition,
+                      sigma ~ condition,
+                      # to tell brms which response distribution to use
+                      family = student())
+```
+
+```{r}
+tibble(get_prior(model.2.formula, pose_df))
+```
+
+## Step 2:  model fiting
+
+```{r}
+model.2 <- brm(
+  model.2.formula,
+  data = pose_df, 
+  family = student_t(),
+  prior = c(
+    prior(normal(0, 2), class = 'b'),
+    prior(cauchy(0, 2), class = 'b', dpar = 'sigma'),
+    prior(exponential(0.0333), class = 'nu')
+  ),
+  backend = BRM_BACKEND,
+  file = 'rds/model.2.rds',
+  file_refit = 'on_change' 
+)
+```
+
+
+
+## Step 3: posterior checks
+
+
+```{r}
+summary(model.2)
+```
+
+```{r}
+cowplot::plot_grid(plot_predictions(model.2), p1, nrow = 2)
+```
+
+
+```{r}
+cowplot::plot_grid(plot_posteriors(model.2), p1, nrow = 2)
+```
+
+```{r fig.height=4}
+model.2.posteriors <-  model.2 %>% 
+    epred_draws(tibble(condition = c('expansive', 'constrictive'))) %>% 
+  mutate(model = 'model 2') 
+
+model.2.posteriors %>% 
+  rbind(
+    model.1.posteriors %>% 
+      mutate(model = 'model 1')) %>% 
+  ggplot() + 
+  geom_density(aes(x = .epred, fill = condition), color = NA, alpha = .5) +
+  facet_grid(model ~ .) +
+  scale_x_continuous(limits = c(-40, 100), breaks = seq(-40, 100, by = 20)) +
+  scale_color_theme() +
+  theme_density_x +
+  ggtitle('Comparing model.1 with model.2')
+
+```
+
+
+# Model 3: the SAYA model
 
 SAYA = SArma + YAng
 
-## model specification
+Fumeng: do we want to get into random intercepts?
+
+## Step 1: model specification
 
 $$
 \begin{align}
 y_{i} &\sim \mathrm{T}(\nu, \mu, \sigma) \\
-\mu &= \alpha_{0} + \beta * x_i \\
+\mu &= \beta_{i,j} + \beta_{1} * x_i \\
 \sigma &= \sigma_{a} + \sigma_{b}*x_i \\
-\beta &\sim \mathrm{Normal}(\mu_{0}, \sigma_{0}) \\
+\beta_{1} &\sim \mathrm{Normal}(0, 2) \\
 \sigma_a, \sigma_b &\sim \mathrm{HalfNormal}(0, 10) \\
-\nu &\sim \mathrm{exp}(1/30)
+\nu &\sim \mathrm{exp}(1/30)\\
+i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}\\
+j & \in \{1, ..., \mathrm{N}\}
 \end{align}
 $$
+
+```{r}
+model.3.formula <- bf(# we think change is affected by different conditions.
+                      change ~ condition + (1|participant),
+                      sigma ~ condition,
+                      # to tell brms which response distribution to use
+                      family = student())
+```
+
+```{r}
+
+tibble(get_prior(model.3.formula, pose_df))
+
+```
+
+## Step 2:  model fiting
+
+```{r}
+model.3 <- brm(
+  model.3.formula,
+  data = pose_df, 
+  family = student_t(),
+  prior = c(
+    prior(normal(0, 2), class = 'b'),
+    prior(normal(0, 2), class = 'b', dpar = 'sigma'),
+    prior(normal(0, 2), class = 'sd', group = 'participant', lb = 0),
+    prior(exponential(0.0333), class = 'nu')
+  ),
+  backend = BRM_BACKEND,
+  file = 'rds/model.3.rds',
+  file_refit = 'on_change' 
+)
+```
+
+
+## Step 3: posterior checks
+
+```{r}
+
+summary(model.3)
+
+```
+
+
+```{r}
+cowplot::plot_grid(plot_predictions(model.3), p1, nrow = 2)
+```
+
+
+
+
+
+```{r}
+cowplot::plot_grid(plot_posteriors(model.3), p1, nrow = 2)
+```
+
+
+```{r}
+
+model.3 %>% 
+   epred_draws(tibble(condition = c('expansive', 'constrictive')),
+               re_formula = NA) %>% 
+  mutate(model = 'model 3') %>% 
+  rbind(
+    model.2.posteriors %>% 
+      mutate(model = 'model 2'))  %>% 
+  rbind(
+    model.1.posteriors %>% 
+      mutate(model = 'model 1')) %>% 
+ggplot() + 
+  geom_density(aes(x = .epred, fill = condition), color = NA, alpha = .5) +
+  facet_grid(model ~ .) +
+  scale_x_continuous(limits = c(-40, 100), breaks = seq(-40, 100, by = 20)) +
+  scale_color_theme() +
+  theme_density_x
+
+```
+
+
+
+# Session info
+
+```{r}
+sessionInfo()
+```
