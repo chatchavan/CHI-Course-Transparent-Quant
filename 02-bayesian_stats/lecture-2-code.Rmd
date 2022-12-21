@@ -4,22 +4,14 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 author: Abhraneel Sarma and Fumeng Yang
 output: 
   html_document: 
-    highlight: pygments
+    css: "CHI23course-style.css"
+    toc_depth: 2
     toc: yes
     toc_float:
       collapsed: no
       smooth_scroll: no
     df_print: kable
 ---
-
-```{=html}
-<style>
-.kable-table{
- overflow:scroll;
-}
-
-</style>
-```
 
 
 ```{r knit-github, eval=FALSE,echo=FALSE,include=FALSE}
@@ -71,7 +63,7 @@ BRM_BACKEND <- ifelse(require("cmdstanr"), 'cmdstanr', 'rstan')
 ```
 
 ```{r include=FALSE}
-# specify color theme for the two poses
+# specify  theme colors
 theme_green = '#20a598'
 theme_blue = '#4574bf'
 theme_yellow = '#fbc63d'

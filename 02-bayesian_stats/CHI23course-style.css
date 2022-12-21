@@ -1,0 +1,61 @@
+
+```{=html}
+<style>
+
+body {
+  color: #333333;
+}
+
+h1, h2, h3, h4, h5{
+  color: #333333;
+}
+
+h1{
+  margin-bottom: 20pt;
+}
+
+h4.date{
+  margin-bottom: 20pt;
+}
+
+/* border of boxes */
+pre, .tocify {
+  border: .3px solid #adbfdb;
+}
+
+/* background of color block */
+pre.r{
+  background: rgba(225, 230, 237, .2);
+}
+
+/* color of strings */
+.hljs-string{
+  color: #edb628;
+}
+
+/* color of constants and numbers */
+.hljs-literal, .hljs-number{
+  color: #edb628;
+}
+
+/* color of functions */
+.hljs-keyword{
+  color: #20a598;
+}
+
+/* style of comment */
+.hljs-comment{
+  font-style: normal;
+  color: #aaaaaa;
+}
+
+.kable-table{
+  overflow:scroll;
+}
+
+li::marker, a{
+  color: #fbc63d;
+}
+</style>
+```
+
