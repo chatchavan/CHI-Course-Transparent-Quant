@@ -1,6 +1,6 @@
 # Source code for the course "Transparent Practices for Quantitative Empirical Research" 
 ## Lecture 2
-A course at CHI 2022 by Chat Wacharamanotham, Fumeng Yang, Xiaoying Pu, and Abhraneel Sarma
+A course at CHI 2023 by Chat Wacharamanotham, Fumeng Yang, Xiaoying Pu, and Abhraneel Sarma
 
 ## Entry point
 1. This code requires RStudio
