@@ -107,7 +107,7 @@ The following dataset is from experiment 2 of "How Relevant are Incidental Power
 First, we load the data.
 
 ```{r load-dataset-2}
-dataset2 = readr::read_csv("data/exp2.csv", show_col_types = FALSE) %>%
+dataset2 = readr::read_csv("data/poses_data.csv", show_col_types = FALSE) %>%
   mutate(condition = condition == 'expansive') %>%
   mutate(c = ifelse(condition, "Expansive", "Constrictive")) %>%
   group_by(participant)
@@ -218,6 +218,7 @@ p2.blank = tibble(y = c("Expansive", "Constrictive"), x = 0) %>%
 
 cowplot::plot_grid(p2.blank, p1, nrow = 2)
 ```
+
 Next, we plot the prior density:
 
 ```{r, fig.height = 4, fig.width = 9}
@@ -233,6 +234,7 @@ p2.prior = d.p2 %>%
 
 cowplot::plot_grid(p2.prior, p1, nrow = 2)
 ```
+
 Then we describe step by step, how the likelihood is computed:
 
 ```{r, fig.height = 4, fig.width = 9}
@@ -262,6 +264,7 @@ p2.ll.1 = d.p2 %>%
 
 cowplot::plot_grid(p2.ll.1, p1, nrow = 2)
 ```
+
 ```{r, fig.height = 4, fig.width = 9}
 p2.ll.2 = d.p2 %>%
   filter(cutoff_group == 3 & group == "Expansive") %>%
@@ -331,6 +334,7 @@ p2.ll.7 = d.p2 %>%
 
 cowplot::plot_grid(p2.ll.7, p1, nrow = 2)
 ```
+
 We want to compute the posterior, which is the product of the prior and likelihood:
 
 ```{r, fig.height = 4, fig.width = 9}
@@ -360,7 +364,6 @@ p2.prior_ll_post = d.p2 %>%
 
 cowplot::plot_grid(p2.prior_ll_post, p1, nrow = 2)
 ```
-
 
 ## Model 1. Wilcoxon signed rank test
 
@@ -393,7 +396,7 @@ Before we implement a Bayesian model, let us take a look at the distribution of 
 
 We can see from the above plot that the responses are discrete. This is important to keep in mind when specifying a Bayesian model.
 
-Let's also look how a Student's *t* distribution varies different parameter. Mu is location, sigma is dispersion (which is simiilar to the standard deviation parameter of the Gaussian distribution), and nu (df) control the tail.
+Let's also look how a Student's *t* distribution varies different parameter. Mu is location, sigma is dispersion (which is similar to the standard deviation parameter of the Gaussian distribution), and nu (df) control the tail.
 
 ```{r draw-student-t, fig.height=4, fig.width=8}
 ggplot() +  xlim(-10, 10) +
@@ -702,7 +705,6 @@ bind_rows(tidy.wrapper(dataset1.lm.freqt),
   scale_y_continuous(breaks = 1:9, limits = c(1, 9)) +
   coord_flip()
 ```
-
 
 ### Step 1: Build the model (likelihood and priors)
 
