@@ -22,8 +22,8 @@ render("bayesian-analysis.Rmd", md_document(variant = "gfm"),
 ```
 
 ```{r setup, include=FALSE}
-rm(list = ls(all.names = TRUE))
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 10, fig.height = 6)
+# rm(list = ls(all.names = TRUE))
+# knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 10, fig.height = 6)
 ```
 
 # Introduction
@@ -164,11 +164,13 @@ p1 = pose_df %>%
     axis.ticks.y = element_blank(),
     axis.title.y = element_blank()
   ) +
-  scale_x_continuous(limits = c(-40, 100), breaks = seq(-40, 100, by = 20))
+  scale_x_continuous(limits = c(-40, 202), breaks = seq(-40, 202, by = 20))
+
 p2.blank = tibble(y = c("expansive", "constrictive"), x = 0) %>%
   ggplot(aes(x, y)) +
   scale_color_theme() + 
   theme_density
+
 cowplot::plot_grid(p2.blank, p1, nrow = 2)
 ```
 
@@ -182,7 +184,7 @@ plot_preliminary <- function(data, group_num, group_name){
   ggplot(aes(x, y)) +
   #geom_line(aes(color = group), size = 1) +
   # density
-  geom_area(aes(fill = group, color = group), position = "identity", size = 1, alpha = 0.3) +
+  geom_area(aes(fill = group, color = group), position = "identity", linewidth = 1, alpha = 0.3) +
   scale_x_continuous(limits = c(-40, 100)) +
   scale_y_continuous(limits = c(0, 0.1)) +
   scale_color_theme() +
@@ -608,7 +610,58 @@ model.2.posteriors %>%
 ```
 
 
-# Model 3: the SAYA model
+# Model 3: Poisson / Negative-Binomial Regression model
+
+## Step 1: model specification
+
+$$
+\begin{align}
+y_{i} &\sim \mathrm{Neg-Binomial}(\mu, \phi) \\
+\mu &= \beta_{i,j} + \beta_{1} * x_i \\
+\beta_{1} &\sim \mathrm{Normal}(0, 2) \\
+i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}\\
+j & \in \{1, ..., \mathrm{N}\}
+\end{align}
+$$
+
+```{r}
+pose_raw_df = read.csv("data/posture_data-raw.csv") %>%
+  mutate(participant = factor(participant)) %>%
+  rename(trial = trial.number)
+
+pose_raw_df
+```
+
+
+```{r}
+model.3.formula = brm(pumps ~ 1 + condition + trial + (trial | participant),
+                      data = pose_raw_df, family = negbinomial,
+                      prior = c(prior(normal(0, 10), class = Intercept),
+                                prior(normal(0, 1), class = b),
+                                prior(gamma(0.01, 0.01), class = shape)
+                      ),  # this is the brms default
+                      iter = 4000, warmup = 1000, cores = 4, chains = 4)
+```
+
+
+```{r}
+summary(model.3.formula)
+```
+
+## Step 2: model interpretation
+The results of this model are on the log-odds scale. What do the coefficients mean? The simplest way is to simply transform the data into a more interpretable scale and visualise the results:
+
+```{r}
+# draws.model.3 = 
+data_grid(pose_raw_df, condition, trial) %>%
+  add_epred_draws(model.3.formula, re_formula = NA) %>%
+  ggplot() +
+  stat_halfeye(aes(x = .epred, y = condition, fill = condition), alpha = .5)
+```
+
+From this, we can see that there does not appear to be a difference between the two conditions.
+
+# Model 4: the SAYA model
 
 SAYA = SArma + YAng
 
