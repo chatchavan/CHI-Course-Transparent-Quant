@@ -30,21 +30,16 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width =
 
 In this document, we will outline the Bayesian analogs of the statistical analyses described in lecture 1 ([Github code](https://github.com/chatchavan/CHI-Course-Transparent-Quant-Lecture-1)).
 
-## Note on MathJax
-
-If you use RStudio's Visual editor mode. Check if you can see anything written in the following parenthesis: ($k$). If not, your RStudio has a bug. This problem will be fixed in future versions. Meanwhile, if some text seems to be missing in the file below, simply position your cursor around the missing area to reveal the underlying code.
-
-
 # Load packages
 
 ```{r message=FALSE, warning=FALSE}
 library(dplyr)
 library(tibble)
 library(purrr)
-library(patchwork)
 library(tidyr)
 library(forcats)
 library(gtools)
+library(patchwork)
 library(broom)
 library(broom.mixed)
 library(modelr)
@@ -104,6 +99,7 @@ pose_df = readr::read_csv("data/poses_data.csv", show_col_types = FALSE) %>%
   mutate(condition) %>%
   group_by(participant)
 ```
+
 
 The data has been aggregated for each participant: - `condition = expansive` indicates expansive posture, and `condition = constrictive` indicates constrictive posture - The dependent variable is `change` which indicates the percentage change in risk-taking behavior. Thus, it is a continuous variable.
 
@@ -257,7 +253,7 @@ cowplot::plot_grid(
 
 Of course, if you have `gganimate` and `magick` working on your computer, you can try the following code to get a gif! Here, we are not going to show the code.
 
-```{r fig.height = 4, fig.width = 8, message=FALSE, warning=FALSE, echo=FALSE}
+```{r fig.height = 4, fig.width = 8, message=FALSE, warning=FALSE, echo=FALSE, eval=FALSE}
 if(require("gganimate") & require("magick")){
   
   library(gganimate)
@@ -484,7 +480,6 @@ model.1.priorsamples <-
 Compare two sets of priors
 
 ```{r  fig.height=5}
-
 cowplot::plot_grid(
   
 model.1.defaultpriorsamples %>% 
@@ -505,8 +500,6 @@ ncol = 1)
 ```
 
 
-
-
 ## Step 2: model fitting
 
 ```{r}
@@ -522,9 +515,6 @@ model.1 <- brm(
   file = 'rds/model.1.rds'
 )
 ```
-
-
-
 
 ## Step 3: check posteriors
 
@@ -701,7 +691,6 @@ model.2.priorchecks <- brm(
 
 
 ```{r fig.height=2.5}
-
 model.2.priorchecks %>% 
  epred_draws(tibble(condition = c('expansive', 'constrictive'))) %>% 
   ggplot(aes(x = .epred, group = condition)) +
@@ -761,8 +750,103 @@ model.2.posteriors <- model.2 %>%
                 re_formula = NA) 
 ```
 
+# Model 3: the BEST model with better intercepts
 
-# Model 3: Poisson / Negative-Binomial Regression model
+## Step 1: model specification
+
+$$
+\begin{align}
+y_{i} &\sim \mathrm{T}(\nu, \mu, \sigma) \\
+\mu &= \beta_{i,j} + \beta_{1} * x_i \\
+\sigma &= \sigma_{a} + \sigma_{b}*x_i \\
+\beta_{1} &\sim \mathrm{Normal}(0, 2) \\
+\sigma_a, \sigma_b &\sim \mathrm{HalfNormal}(0, 10) \\
+\nu &\sim \mathrm{exp}(1/30)\\
+i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}\\
+j & \in \{1, ..., \mathrm{N}\}
+\end{align}
+$$
+
+```{r}
+model.3.formula <- bf(# we think change is affected by different conditions.
+                      change ~ condition + (1|participant),
+                      sigma ~ condition,
+                      # to tell brms which response distribution to use
+                      family = student())
+```
+
+```{r}
+tibble(get_prior(model.3.formula, pose_df))
+```
+
+## Step 2:  model fiting
+
+```{r}
+model.3 <- brm(
+  model.3.formula,
+  data = pose_df, 
+  family = student_t(),
+  prior = c(
+    prior(normal(0, 2), class = 'b'),
+    prior(normal(0, 2), class = 'b', dpar = 'sigma'),
+    prior(normal(0, 2), class = 'sd', group = 'participant', lb = 0),
+    prior(exponential(0.0333), class = 'nu')
+  ),
+  #backend = BRM_BACKEND,
+  file = 'rds/model.3.rds',
+  file_refit = 'on_change' 
+)
+```
+
+
+## Step 3: posterior checks
+
+```{r}
+summary(model.3)
+```
+
+
+```{r}
+cowplot::plot_grid(plot_predictions(model.3), p1, nrow = 2)
+```
+
+
+
+```{r}
+cowplot::plot_grid(plot_posteriors(model.3), p1, nrow = 2)
+```
+
+
+```{r}
+model.3.posteriors <-
+  model.3 %>% 
+  epred_draws(tibble(condition = c('expansive', 'constrictive')),
+               re_formula = NA)
+```
+
+
+```{r fig.height=7, fig.width=10}
+wrap_plots(
+model.3.posteriors %>%
+  mutate(model = 'model 3') %>%
+  rbind(
+    model.2.posteriors %>% 
+      mutate(model = 'model 2'))  %>% 
+  rbind(
+    model.1.posteriors %>% 
+      mutate(model = 'model 1')) %>% 
+ggplot() + 
+  geom_density(aes(x = .epred, fill = condition), adjust = 1.5, color = NA, alpha = .5) +
+  facet_grid(model ~ .) +
+  scale_x_continuous(limits = c(-150, 250), breaks = seq(-150, 250, by = 50)) +
+  scale_color_theme() +
+  theme_density_x +
+  ggtitle('Compare the means of all three models'),
+p1, nrow = 2, heights = c(4,1.5))
+```
+
+
+# Model 4: Poisson / Negative-Binomial Regression model
 
 ## Step 1: model specification
 
@@ -786,29 +870,29 @@ head(pose_raw_df)
 
 
 ```{r}
-model.3= brm(pumps ~ 1 + condition + trial + (trial | participant),
+model.4 = brm(pumps ~ 1 + condition + trial + (trial | participant),
                       data = pose_raw_df, family = negbinomial,
                       prior = c(prior(normal(0, 10), class = Intercept),
                                 prior(normal(0, 1), class = b),
                                 prior(gamma(0.01, 0.01), class = shape)
                       ),  # this is the brms default
-                      file = 'rds/model.3.rds',
+                      file = 'rds/model.4.rds',
                       file_refit = 'on_change' ,
                       iter = 4000, warmup = 1000, cores = 4, chains = 4)
 ```
 
 
 ```{r}
-summary(model.3)
+summary(model.4)
 ```
 
 ## Step 2: model interpretation
 The results of this model are on the log-odds scale. What do the coefficients mean? The simplest way is to simply transform the data into a more interpretable scale and visualise the results:
 
 ```{r fig.height=5}
-# draws.model.3 = 
+# draws.model.4 = 
 wrap_plots(
-  plot_predictions(model.3, df = crossing(condition = c('expansive', 'constrictive'), 
+  plot_predictions(model.4, df = crossing(condition = c('expansive', 'constrictive'), 
                                           trial = 29,
                                           participant = 0)), 
   p1,
@@ -816,9 +900,9 @@ nrow = 2)
 ```
 
 ```{r fig.height=5}
-# draws.model.3 = 
+# draws.model.4 = 
 wrap_plots(
-  plot_posteriors(model.3, df = tibble(condition = c('expansive', 'constrictive'), 
+  plot_posteriors(model.4, df = tibble(condition = c('expansive', 'constrictive'), 
                                        trial = 29,
                                        participant = 0)), 
   p1,
@@ -826,7 +910,7 @@ nrow = 2)
 ```
 
 ```{r}
-model.3.posteriors <-  model.3 %>% 
+model.4.posteriors <-  model.4 %>% 
     epred_draws(tibble(condition = c('expansive', 'constrictive'),     
                        trial = 29,
                        participant = 0),
@@ -836,108 +920,6 @@ model.3.posteriors <-  model.3 %>%
 
 From this, we can see that there does not appear to be a difference between the two conditions.
 
-
-# Model 4: the SAYA model
-
-SAYA = SArma + YAng
-
-Fumeng: do we want to get into random intercepts?
-
-## Step 1: model specification
-
-$$
-\begin{align}
-y_{i} &\sim \mathrm{T}(\nu, \mu, \sigma) \\
-\mu &= \beta_{i,j} + \beta_{1} * x_i \\
-\sigma &= \sigma_{a} + \sigma_{b}*x_i \\
-\beta_{1} &\sim \mathrm{Normal}(0, 2) \\
-\sigma_a, \sigma_b &\sim \mathrm{HalfNormal}(0, 10) \\
-\nu &\sim \mathrm{exp}(1/30)\\
-i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}\\
-j & \in \{1, ..., \mathrm{N}\}
-\end{align}
-$$
-
-```{r}
-model.4.formula <- bf(# we think change is affected by different conditions.
-                      change ~ condition + (1|participant),
-                      sigma ~ condition,
-                      # to tell brms which response distribution to use
-                      family = student())
-```
-
-```{r}
-tibble(get_prior(model.4.formula, pose_df))
-```
-
-## Step 2:  model fiting
-
-```{r}
-model.4 <- brm(
-  model.4.formula,
-  data = pose_df, 
-  family = student_t(),
-  prior = c(
-    prior(normal(0, 2), class = 'b'),
-    prior(normal(0, 2), class = 'b', dpar = 'sigma'),
-    prior(normal(0, 2), class = 'sd', group = 'participant', lb = 0),
-    prior(exponential(0.0333), class = 'nu')
-  ),
-  #backend = BRM_BACKEND,
-  file = 'rds/model.4.rds',
-  file_refit = 'on_change' 
-)
-```
-
-
-## Step 3: posterior checks
-
-```{r}
-summary(model.4)
-```
-
-
-```{r}
-cowplot::plot_grid(plot_predictions(model.4), p1, nrow = 2)
-```
-
-
-
-
-
-```{r}
-cowplot::plot_grid(plot_posteriors(model.4), p1, nrow = 2)
-```
-```{r}
-model.4.posteriors <-
-  model.4 %>% 
-  epred_draws(tibble(condition = c('expansive', 'constrictive')),
-               re_formula = NA)
-```
-
-
-```{r fig.height=7, fig.width=10}
-wrap_plots(
-model.4.posteriors %>% 
-  mutate(model = 'model 4') %>% 
-    rbind(
-    model.3.posteriors %>% 
-      mutate(model = 'model 3'))  %>% 
-  rbind(
-    model.2.posteriors %>% 
-      mutate(model = 'model 2'))  %>% 
-  rbind(
-    model.1.posteriors %>% 
-      mutate(model = 'model 1')) %>% 
-ggplot() + 
-  geom_density(aes(x = .epred, fill = condition), adjust = 1.5, color = NA, alpha = .5) +
-  facet_grid(model ~ .) +
-  scale_x_continuous(limits = c(-150, 250), breaks = seq(-150, 250, by = 50)) +
-  scale_color_theme() +
-  theme_density_x +
-  ggtitle('Compare the means of all four models'),
-p1, nrow = 2, heights = c(4,1.5))
-```
 
 # Reporting
 
@@ -968,7 +950,7 @@ ggplot() +
   geom_errorbarh(model.4.posteriors.CI, 
                  mapping = aes(x = .epred, xmin = .epred.lower, xmax = .epred.upper, y = 0), height = 0, linewidth = 1.5) + 
   facet_wrap(condition ~ ., ncol = 1) + 
-  scale_x_continuous(limits = c(0, 50)) + 
+  scale_x_continuous(limits = c(0, 80)) + 
   scale_y_continuous(expand = c(.02,.02)) + 
   scale_color_theme() +
   theme_density_x 
