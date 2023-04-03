@@ -91,6 +91,17 @@ priors_choice <- c(
 
 this is a placeholder for visualizing the priors that abhraneel is working on...
 
+```{r}
+get_prior_dist = function(priors) {
+  as_tibble(priors) |>
+    mutate(prior_dist = map(prior, ~ eval_tidy(parse_expr(paste0("dist_", .)))))
+}
+
+get_prior_dist(priors_choice) |> 
+  ggplot() +
+  stat_dist_halfeye(aes(y = class, xdist = prior_dist))
+```
+
 
 ## Prior check
 
