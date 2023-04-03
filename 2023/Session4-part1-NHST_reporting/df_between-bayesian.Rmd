@@ -1,0 +1,69 @@
+---
+title: "Session 4 - Bayesian modeling (chi2023-course)"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: Fumeng Yang and Abhraneel Sarma
+output: 
+  html_document: 
+    css: "CHI23course-style.css"
+    toc_depth: 2
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+    df_print: kable
+---
+
+
+```{r knit-github, eval=FALSE,echo=FALSE,include=FALSE}
+# compile for github, you can ignore this
+library(rmarkdown)
+render("bayesian-analysis.Rmd", md_document(variant = "gfm"), 
+       knit_root_dir = "/Users/fm/Documents/Github/CHI-Course-Transparent-Quant")
+```
+
+```{r setup, include=FALSE}
+rm(list = ls(all.names = TRUE))
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 10, fig.height = 6)
+```
+
+# Introduction
+
+# Load packages
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+library(tibble)
+library(purrr)
+library(tidyr)
+library(brms)
+BRM_BACKEND <- ifelse(require("cmdstanr"), 'cmdstanr', 'rstan')
+```
+
+
+
+```{r}
+df_between <- read_csv("df_between.csv")
+
+ggplot(df_between) +
+  geom_histogram(aes(x = wpm)) +
+  facet_grid(cond ~ .)
+```
+
+
+### Step 1:
+Use the get_prior function to check out the default priors:
+
+```{r}
+get_prior(wpm ~ cond,  data = df_between)
+```
+
+
+### Step 2:
+Update to proper priors to 
+
+```{r}
+
+```
+
+
+
