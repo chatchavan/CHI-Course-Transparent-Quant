@@ -54,7 +54,7 @@ Use the get_prior function to check out the default priors:
 
 ```{r}
 get_prior(
-  # write down the model syntax ...
+  # TODO: write down the model syntax ...
   ,  
   data = df_between
 )
@@ -68,14 +68,12 @@ Update to proper priors to
 ```{r}
 priors_choice <-  c(
     prior(
-          # plug-in your choice here
+          # TODO: plug-in your choice here
           # hint: normal, student_t
-          # normal(0, 2), 
           class = 'b'),
     prior(
-          # plug-in your choice
+          # TODO: plug-in your choice
           # hint: normal, student_t
-          # normal(0, 5), 
           class = 'sigma', lb = 0)
   )
 ```
@@ -107,9 +105,9 @@ get_prior_dist(priors_choice) |>
 
 ```{r}
 m_prior_check <- brm(
-  # write down the model syntax ...
+  # TODO: write down the model syntax ...
   data = df_between,
-  family = student(), 
+  family = # TODO: write down the likelihood function, 
   prior = priors_choice,
   seed = 1234,
   sample_prior = 'only'
@@ -131,8 +129,8 @@ add_predicted_draws(
     m_prior_check
 ) %>% 
 ggplot(aes(
-  x = # enter the variable for predictions here
-  y = # enter the variable for conditions here
+  x = # TODO: enter the variable for predictions here
+  y = # TODO: enter the variable for conditions here
 )) +
 stat_halfeye()
 ```
@@ -141,9 +139,9 @@ stat_halfeye()
 
 ```{r}
 m <- brm(
-  # write out the model formula 
+  # TODO: write out the model formula 
   data = df_between,
-  family = student(), 
+  family =  # TODO: write down the likelihood function, 
   prior = priors_choice,
   seed = 1234
 )
@@ -167,14 +165,16 @@ posterior_predictive_draws %>%
   ggplot() +
   stat_halfeye(
     aes(
-      x = # enter the variable here
-      y = # enter the variable here
+      x = # TODO: enter the variable here
+      y = # TODO: enter the variable here
     )
     position = position_nudge(y = .1),
     height = .8
   ) +
   geom_point(df_between,
-             mapping = aes(x = wpm, y = cond),
+             mapping = aes(x = # TODO: plug in x, 
+                           y = # TODO: plug in y
+                           ),
              size = 5, shape = 20, alpha = .4) 
   
   
@@ -192,14 +192,16 @@ posterior_draws %>%
   ggplot() +
   stat_halfeye(
     aes(
-      x = # enter the variable here, 
-      y = # enter the variable here
+      x = # TODO: enter the variable here, 
+      y = # TODO: enter the variable here
     ),
     position = position_nudge(y = .1),
     height = .8
   ) +
   geom_point(df_between,
-             mapping = aes(x = wpm, y = cond),
+             mapping = aes(x = # TODO: plug in x, 
+                           y = # TODO: plug in y
+                           ),
              size = 5, shape = 20, alpha = .4) 
   
   
@@ -208,29 +210,44 @@ posterior_draws %>%
 
 ```{r}
 posterior_draws %>% 
-  group_by(cond) %>% 
-  median_qi(.epred)
+  group_by( 
+          # TODO: plug in the variable, 
+         ) %>% 
+  median_qi(
+          # TODO: plug in the variable
+  )
 ```
 
 ```{r}
 posterior_draws_diff <-
 posterior_draws %>% 
-  compare_levels(variable = .epred, by = cond, comparison = list(c('adaptive', 'constant'), c('off', 'constant'), c('adaptive', '')))
+  compare_levels(variable = .epred, 
+                 by = cond, 
+                 comparison = list(c('adaptive', 'constant'), 
+                                   c('off', 'constant'), 
+                                   c('adaptive', 'off')))
 ```
 
 
 
 ```{r}
 posterior_draws_diff %>% 
-  group_by(cond) %>% 
-  median_qi()
+  group_by( 
+           # TODO: plug in the variable, 
+           ) %>% 
+  median_qi(
+           # TODO: plug in the variable
+  )
 ```
 
 
 ```{r}
 posterior_draws_diff %>% 
   ggplot() + 
-  stat_halfeye(aes(x = .epred, y = cond)) + 
+  stat_halfeye(aes(
+    x =  # TODO: plug in x, 
+    y =  # TODO: plug in y, 
+    )) + 
   geom_vline(xintercept = 0, linetype = 2)
 ```
 
