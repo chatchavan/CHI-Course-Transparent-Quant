@@ -14,13 +14,6 @@ output:
 ---
 
 
-```{r knit-github, eval=FALSE,echo=FALSE,include=FALSE}
-# compile for github, you can ignore this
-library(rmarkdown)
-render("bayesian-analysis.Rmd", md_document(variant = "gfm"), 
-       knit_root_dir = "/Users/fm/Documents/Github/CHI-Course-Transparent-Quant")
-```
-
 ```{r setup, include=FALSE}
 rm(list = ls(all.names = TRUE))
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 10, fig.height = 6)
@@ -31,22 +24,30 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width =
 # Load packages
 
 ```{r message=FALSE, warning=FALSE}
-library(dplyr)
-library(tibble)
-library(purrr)
-library(tidyr)
+library(tidyverse)
 library(brms)
+library(tidybayes)
+library(cowplot)
 BRM_BACKEND <- ifelse(require("cmdstanr"), 'cmdstanr', 'rstan')
+
+theme_set(theme_ggdist())
 ```
 
 
+# plot
 
 ```{r}
 df_between <- read_csv("df_between.csv")
+```
 
+```{r}
+df_between
+```
+
+
+```{r}
 ggplot(df_between) +
-  geom_histogram(aes(x = wpm)) +
-  facet_grid(cond ~ .)
+  stat_histinterval(aes(x = wpm, y = cond))
 ```
 
 
@@ -59,11 +60,161 @@ get_prior(wpm ~ cond,  data = df_between)
 
 
 ### Step 2:
+
 Update to proper priors to 
 
 ```{r}
 
+priors_choice <-  c(
+    prior(
+          # plug-in your choice here
+          # hint: normal, student_t
+          # normal(0, 2), 
+          class = 'b'),
+    prior(
+          # plug-in your choice
+          # hint: normal, student_t
+          # normal(0, 5), 
+          class = 'sigma', lb = 0)
+  )
+
 ```
+
+```{r}
+priors_choice <- c(
+  prior(normal(0, 5), class = 'b'),
+  prior(normal(50, 10), class = 'Intercept'),
+  prior(normal(0, 2), class = 'sigma', lb = 0)
+)
+```
+
+
+this is a placeholder for visualizing the priors
+
+
+```{r}
+m_prior_check <- brm(
+  wpm ~ cond,
+  data = df_between,
+  family = student(), 
+  prior = priors_choice,
+  seed = 1234,
+  sample_prior = 'only'
+)
+
+```
+
+
+Prior check
+
+What they should see here
+1. positive-only
+2. on average, it should be around 50
+3. symmetric
+4. < 100
+
+```{r}
+newdata <-   crossing(cond = df_between$cond)
+add_predicted_draws(
+    newdata, 
+    m_prior_check
+) %>% 
+ggplot(aes(x = .prediction, y = cond)) +
+stat_halfeye()
+  
+```
+
+
+
+```{r}
+m <- brm(
+  wpm ~ cond,
+  data = df_between,
+  family = student(), 
+  prior = priors_choice,
+  seed = 1234
+)
+
+```
+
+## Step 3 
+
+```{r}
+summary(m)
+```
+
+prediction?
+
+```{r}
+
+newdata %>%
+  add_predicted_draws(m, ndraws = NULL, seed = 1234) %>% 
+  ggplot() +
+  stat_halfeye(
+    aes(x = .prediction, y = cond),
+    position = position_nudge(y = .1),
+    height = .8
+  ) +
+  geom_point(df_between,
+             mapping = aes(x = wpm, y = cond),
+             size = 5, shape = 20, alpha = .4) 
+  
+  
+```
+mena?
+
+```{r}
+
+posterior_draws <- 
+newdata %>%
+  add_epred_draws(m, seed = 1234)  
+  
+posterior_draws %>% 
+  ggplot() +
+  stat_halfeye(
+    aes(x = .epred, y = cond),
+    position = position_nudge(y = .1),
+    height = .8
+  ) +
+  geom_point(df_between,
+             mapping = aes(x = wpm, y = cond),
+             size = 5, shape = 20, alpha = .4) 
+  
+  
+```
+
+
+```{r}
+posterior_draws %>% 
+  group_by(cond) %>% 
+  median_qi(.epred)
+```
+
+```{r}
+posterior_draws_diff <-
+posterior_draws %>% 
+  compare_levels(variable = .epred, by = cond, comparison = list(c('adaptive', 'constant'), c('off', 'constant'), c('adaptive', '')))
+```
+
+
+
+```{r}
+posterior_draws_diff %>% 
+  group_by(cond) %>% 
+  median_qi()
+```
+
+
+```{r}
+posterior_draws_diff %>% 
+  ggplot() + 
+  stat_halfeye(aes(x = .epred, y = cond)) + 
+  geom_vline(xintercept = 0, linetype = 2)
+```
+
+
+
+
 
 
 
