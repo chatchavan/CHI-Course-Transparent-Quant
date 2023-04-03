@@ -14,7 +14,7 @@ d <- read_csv('df_between.csv')
 more_data <-
  d %>% 
   # mutate(sd = c(rnorm(10, 5, 1),  rnorm(10, 5.5, 1),  rnorm(10, 5, 1))) %>% 
-  mutate(sd = rep(c(5, 7, 9), each = 10)) %>% 
+  mutate(sd = rep(c(5, 7, 9))) %>% 
   rowwise() %>% 
   mutate(draw_wpm = list(rnorm(100, mean = wpm, sd = sd))) %>% 
   unnest(draw_wpm)
