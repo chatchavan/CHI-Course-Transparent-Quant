@@ -22,8 +22,8 @@ render("bayesian-analysis.Rmd", md_document(variant = "gfm"),
 ```
 
 ```{r setup, include=FALSE}
-# rm(list = ls(all.names = TRUE))
-# knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 10, fig.height = 6)
+rm(list = ls(all.names = TRUE))
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 10, fig.height = 6)
 ```
 
 # Introduction
@@ -41,7 +41,7 @@ If you use RStudio's Visual editor mode. Check if you can see anything written i
 library(dplyr)
 library(tibble)
 library(purrr)
-library(ggpubr)
+library(patchwork)
 library(tidyr)
 library(forcats)
 library(gtools)
@@ -164,7 +164,7 @@ p1 = pose_df %>%
     axis.ticks.y = element_blank(),
     axis.title.y = element_blank()
   ) +
-  scale_x_continuous(limits = c(-40, 202), breaks = seq(-40, 202, by = 20))
+  scale_x_continuous(limits = c(-150, 250), breaks = seq(-150, 250, by = 50))
 
 p2.blank = tibble(y = c("expansive", "constrictive"), x = 0) %>%
   ggplot(aes(x, y)) +
@@ -376,6 +376,86 @@ tibble(get_prior(model.1.formula, pose_df))
 
 ### prior checks
 
+Look at the default priors
+
+```{r fig.height=4, fig.width=15}
+cowplot::plot_grid(
+tibble(x = qstudent_t(ppoints(n = 500), df = 3, mu = 22.6, sigma = 38.8)) %>% 
+  ggplot() +
+  geom_density(aes(x = x), fill = theme_yellow, color = NA) +
+  ggtitle('student_t(3, 22.6, 38.8) for Intercept') +
+  coord_cartesian(xlim = c(-300, 300),expand = c(0)),
+tibble(x = qgamma(ppoints(n = 500), shape = 2, rate = .1)) %>% 
+  ggplot() +
+  geom_density(aes(x = x), fill = theme_yellow, color = NA) +
+  ggtitle('Gamma(2, 0.1) for nu') +
+  coord_cartesian(xlim = c(1, 100), expand = 0),
+tibble(x = qstudent_t(ppoints(n = 500), df = 3, mu = 0, sigma = 38.8)) %>% 
+  ggplot() +
+  geom_density(aes(x = x), fill = theme_yellow, color = NA) +
+  ggtitle('student_t(3, 0, 38.8) for sigma') +
+  coord_cartesian(xlim = c(0, 400),expand = c(0)),
+ncol = 3)
+
+```
+
+prior check for default priors
+
+```{r}
+model.1.checks_default <- brm(
+  model.1.formula,
+  data = pose_df, 
+  family = student_t(),
+  prior = c(
+    prior(normal(0, 3), class = 'b')
+  ),
+  sample_prior = 'only',
+  #backend = BRM_BACKEND,
+  file = 'rds/model.1.checks_default.rds',
+  file_refit = 'on_change' 
+)
+```
+
+plot 
+
+```{r}
+model.1.defaultpriorsamples <- 
+  model.1.checks_default %>% 
+    epred_draws(tibble(condition = c('expansive', 'constrictive')))
+```
+
+```{r}
+head(model.1.defaultpriorsamples)
+```
+
+```{r  fig.height=2.5}
+model.1.defaultpriorsamples %>% 
+  ggplot(aes(x = .epred, group = condition)) +
+  geom_density(alpha = .5, color = NA, adjust = 2, fill = theme_yellow) +
+  theme_density_x + 
+  ggtitle('Checks default priors of model.1')
+```
+
+Our priors
+
+```{r fig.height=3, fig.width=7}
+cowplot::plot_grid(
+tibble(x = qnorm(ppoints(n = 1000), mean = 0, sd = 2)) %>% 
+  ggplot() +
+  geom_density(aes(x = x), fill = theme_yellow, color = NA) +
+  ggtitle('Normal(0, 2) for b & Intercept') +
+  coord_cartesian(xlim = c(-8, 8), expand = 0),
+tibble(x = qnorm(ppoints(n = 1000), mean = 0, sd = 10)) %>% 
+  ggplot() +
+  geom_density(aes(x = x), fill = theme_yellow, color = NA) +
+  ggtitle('HalfNormal(0, 10) for sigma') +
+  coord_cartesian(xlim = c(0, 50), expand = c(0)),
+ncol = 2)
+
+```
+
+
+
 ```{r}
 model.1.checks <- brm(
   model.1.formula,
@@ -386,7 +466,7 @@ model.1.checks <- brm(
     prior(normal(0, 10), class = 'sigma', lb = 0)
   ),
   sample_prior = 'only',
-  backend = BRM_BACKEND,
+  #backend = BRM_BACKEND,
   file = 'rds/model.1.checks.rds',
   file_refit = 'on_change' 
 )
@@ -400,16 +480,28 @@ model.1.priorsamples <-
     epred_draws(tibble(condition = c('expansive', 'constrictive')))
 ```
 
-```{r}
-head(model.1.priorsamples)
-```
 
-```{r  fig.height=2.5}
+Compare two sets of priors
+
+```{r  fig.height=5}
+
+cowplot::plot_grid(
+  
+model.1.defaultpriorsamples %>% 
+  ggplot(aes(x = .epred, group = condition)) +
+  geom_density(alpha = .5, color = NA, adjust = 2, fill = theme_yellow) +
+  theme_density_x + 
+  #coord_cartesian(xlim = c(-800, 800)) + 
+  ggtitle('Checks default priors of model.1')
+,
 model.1.priorsamples %>% 
   ggplot(aes(x = .epred, group = condition)) +
-  geom_density(alpha = .5, color = NA, fill = theme_yellow) +
+  geom_density(alpha = .5, color = NA, adjust = 2, fill = theme_yellow) +
   theme_density_x + 
-  ggtitle('Prior checks of model.1')
+  #coord_cartesian(xlim = c(-800, 800)) + 
+  ggtitle('Checks our priors of model.1')
+,
+ncol = 1)
 ```
 
 
@@ -431,12 +523,16 @@ model.1 <- brm(
 )
 ```
 
+
+
+
 ## Step 3: check posteriors
 
 ### aspect 1: mcmc traces
 
 ```{r}
-mcmc_trace(model.1)
+color_scheme_set("teal")
+mcmc_trace(model.1, facet_args = list(ncol = 4))
 ```
 
 
@@ -462,19 +558,24 @@ head(model.1.predictions)
 ```
 
 ```{r}
-plot_predictions <- function(model, title = ''){
+plot_predictions <- function(model, df = NULL, title = ''){
+  
+  if(is.null(df))
+      df = tibble(condition = c('expansive', 'constrictive'), 
+                           participant = c(-1, -1))
   model %>% 
-    predicted_draws(tibble(condition = c('expansive', 'constrictive'), 
-                           participant = c(-1, -1)), 
+    predicted_draws(df,
+                    seed = 1234,
+                    ndraws = NULL,
                     allow_new_levels = TRUE,
                     sample_new_levels = 'uncertainty') %>% 
     ggplot(aes(x = .prediction, fill = condition)) +
-    geom_density(alpha = .5, size = 1, color = NA) +
+    geom_density(alpha = .5, size = 1, adjust = 2, color = NA) +
     scale_color_theme() +
     theme_density_x + 
     scale_y_continuous(breaks = 0, labels = 'constrictive') + 
-    scale_x_continuous(breaks = seq(-200, 250, by = 100)) +
-    coord_cartesian(xlim = c(-200, 250)) + 
+    scale_x_continuous(breaks = seq(-150, 250, by = 50)) +
+    coord_cartesian(xlim = c(-150, 250)) + 
     ggtitle(paste0('Posterior predictions of ', deparse(substitute(model))))
 }
 ```
@@ -483,12 +584,11 @@ plot_predictions <- function(model, title = ''){
 ```{r}
 cowplot::plot_grid(plot_predictions(model.1), 
                    p1 + 
-                     scale_x_continuous(breaks = seq(-200, 250, by = 100)) +
-                     coord_cartesian(xlim = c(-200, 250)), 
+                    scale_x_continuous(breaks = seq(-150, 250, by = 100)) +
+                    coord_cartesian(xlim = c(-150, 250)), 
                    nrow = 2)
 ```
 
-### reporting
 
 ```{r}
 model.1.posteriors <- 
@@ -496,24 +596,24 @@ model.1.posteriors <-
     epred_draws(tibble(condition = c('expansive', 'constrictive')))
 ```
 
-```{r}
-model.1.posteriors %>% 
-  median_qi(.epred)
-```
-
 
 ```{r}
-plot_posteriors <- function(model, title = ''){
+plot_posteriors <- function(model, df = NULL, title = ''){
+  
+  if(is.null(df))
+     df = tibble(condition = c('expansive', 'constrictive'))
   model %>% 
-    epred_draws(tibble(condition = c('expansive', 'constrictive')), 
+    epred_draws(df, 
                 # ignoring random effects if there is any
+                #seed = 1234,
+                ndraws = NULL,
                 re_formula = NA) %>% 
     ggplot(aes(x = .epred, fill = condition)) +
-    geom_density(alpha = .5, size = 1, color = NA) +
+    geom_density(alpha = .5, size = 1, adjust = 2, color = NA) +
     scale_color_theme() +
     theme_density_x + 
     scale_y_continuous(breaks = 0, labels = 'constrictive') + 
-    scale_x_continuous(limits = c(-40, 100), breaks = seq(-40, 100, by = 20)) +
+    scale_x_continuous(limits = c(-150, 250), breaks = seq(-150, 250, by = 50)) +
     ggtitle(paste0('Posterior means of ', deparse(substitute(model))))
 }
 ```
@@ -556,6 +656,60 @@ model.2.formula <- bf(# we think change is affected by different conditions.
 tibble(get_prior(model.2.formula, pose_df))
 ```
 
+### prior check
+
+Fumeng: not sure qcauchy has the correct paramaterization
+
+```{r fig.height=4, fig.width=15}
+cowplot::plot_grid(
+  tibble(x = qnorm(ppoints(n = 1000),  mean = 0, sd = 2)) %>% 
+  ggplot() +
+  geom_density(aes(x = x), fill = theme_yellow, color = NA) +
+  ggtitle('Normal(0 ,2) for Intercept') +
+  coord_cartesian(expand = c(0)),
+tibble(x = qexp(ppoints(n = 1000), rate = 0.0333)) %>% 
+  ggplot() +
+  geom_density(aes(x = x), fill = theme_yellow, color = NA) +
+  ggtitle('exponential(0.0333) for nu') +
+  coord_cartesian(expand = 0),
+tibble(x = qcauchy(ppoints(n = 1000), location = 0, scale = 2)) %>% 
+  ggplot() +
+  geom_density(aes(x = x), fill = theme_yellow, color = NA) +
+  ggtitle('cauchy(0, 2) for sigma') +
+  coord_cartesian(expand = c(0)),
+ncol = 3)
+
+```
+
+
+```{r}
+model.2.priorchecks <- brm(
+  model.2.formula,
+  data = pose_df, 
+  family = student_t(),
+  prior = c(
+    prior(normal(0, 2), class = 'b'),
+    prior(cauchy(0, 2), class = 'b', dpar = 'sigma'),
+    prior(exponential(0.0333), class = 'nu')
+  ),
+  sample_prior = 'only',
+  #backend = BRM_BACKEND,
+  file = 'rds/model.2.priorchecks.rds',
+  file_refit = 'on_change' 
+)
+```
+
+
+```{r fig.height=2.5}
+
+model.2.priorchecks %>% 
+ epred_draws(tibble(condition = c('expansive', 'constrictive'))) %>% 
+  ggplot(aes(x = .epred, group = condition)) +
+  geom_density(alpha = .5, color = NA, adjust = 2, fill = theme_yellow) +
+  theme_density_x + 
+  ggtitle('Checks priors of model.2')
+```
+
 ## Step 2:  model fiting
 
 ```{r}
@@ -584,29 +738,27 @@ summary(model.2)
 ```
 
 ```{r}
-cowplot::plot_grid(plot_predictions(model.2), p1, nrow = 2)
+wrap_plots(plot_predictions(model.2) + scale_x_continuous(limits = c(-200,250), expand = c(0,0), breaks = seq(-150, 250, by = 50)) 
+                   , 
+                   p1 + scale_x_continuous(limits = c(-200,250), expand = c(0,0), breaks = seq(-150, 250, by = 50)) , 
+                   nrow = 2)
+```
+
+```{r fig.height=5}
+# draws.model.3 = 
+wrap_plots(
+  plot_posteriors(model.2), 
+  p1,
+nrow = 2)
 ```
 
 
 ```{r}
-cowplot::plot_grid(plot_posteriors(model.2), p1, nrow = 2)
-```
-
-```{r fig.height=4}
-model.2.posteriors <-  model.2 %>% 
-    epred_draws(tibble(condition = c('expansive', 'constrictive'))) %>% 
-  mutate(model = 'model 2') 
-model.2.posteriors %>% 
-  rbind(
-    model.1.posteriors %>% 
-      mutate(model = 'model 1')) %>% 
-  ggplot() + 
-  geom_density(aes(x = .epred, fill = condition), color = NA, alpha = .5) +
-  facet_grid(model ~ .) +
-  scale_x_continuous(limits = c(-40, 100), breaks = seq(-40, 100, by = 20)) +
-  scale_color_theme() +
-  theme_density_x +
-  ggtitle('Comparing model.1 with model.2')
+model.2.posteriors <- model.2 %>% 
+                epred_draws(tibble(condition = c('expansive', 'constrictive')), 
+                #seed = 1234,
+                ndraws = NULL,
+                re_formula = NA) 
 ```
 
 
@@ -629,37 +781,61 @@ pose_raw_df = read.csv("data/posture_data-raw.csv") %>%
   mutate(participant = factor(participant)) %>%
   rename(trial = trial.number)
 
-pose_raw_df
+head(pose_raw_df)
 ```
 
 
 ```{r}
-model.3.formula = brm(pumps ~ 1 + condition + trial + (trial | participant),
+model.3= brm(pumps ~ 1 + condition + trial + (trial | participant),
                       data = pose_raw_df, family = negbinomial,
                       prior = c(prior(normal(0, 10), class = Intercept),
                                 prior(normal(0, 1), class = b),
                                 prior(gamma(0.01, 0.01), class = shape)
                       ),  # this is the brms default
+                      file = 'rds/model.3.rds',
+                      file_refit = 'on_change' ,
                       iter = 4000, warmup = 1000, cores = 4, chains = 4)
 ```
 
 
 ```{r}
-summary(model.3.formula)
+summary(model.3)
 ```
 
 ## Step 2: model interpretation
 The results of this model are on the log-odds scale. What do the coefficients mean? The simplest way is to simply transform the data into a more interpretable scale and visualise the results:
 
-```{r}
+```{r fig.height=5}
 # draws.model.3 = 
-data_grid(pose_raw_df, condition, trial) %>%
-  add_epred_draws(model.3.formula, re_formula = NA) %>%
-  ggplot() +
-  stat_halfeye(aes(x = .epred, y = condition, fill = condition), alpha = .5)
+wrap_plots(
+  plot_predictions(model.3, df = crossing(condition = c('expansive', 'constrictive'), 
+                                          trial = 29,
+                                          participant = 0)), 
+  p1,
+nrow = 2)
+```
+
+```{r fig.height=5}
+# draws.model.3 = 
+wrap_plots(
+  plot_posteriors(model.3, df = tibble(condition = c('expansive', 'constrictive'), 
+                                       trial = 29,
+                                       participant = 0)), 
+  p1,
+nrow = 2)
+```
+
+```{r}
+model.3.posteriors <-  model.3 %>% 
+    epred_draws(tibble(condition = c('expansive', 'constrictive'),     
+                       trial = 29,
+                       participant = 0),
+                allow_new_levels  = TRUE) %>% 
+  mutate(model = 'model 3') 
 ```
 
 From this, we can see that there does not appear to be a difference between the two conditions.
+
 
 # Model 4: the SAYA model
 
@@ -683,7 +859,7 @@ j & \in \{1, ..., \mathrm{N}\}
 $$
 
 ```{r}
-model.3.formula <- bf(# we think change is affected by different conditions.
+model.4.formula <- bf(# we think change is affected by different conditions.
                       change ~ condition + (1|participant),
                       sigma ~ condition,
                       # to tell brms which response distribution to use
@@ -691,14 +867,14 @@ model.3.formula <- bf(# we think change is affected by different conditions.
 ```
 
 ```{r}
-tibble(get_prior(model.3.formula, pose_df))
+tibble(get_prior(model.4.formula, pose_df))
 ```
 
 ## Step 2:  model fiting
 
 ```{r}
-model.3 <- brm(
-  model.3.formula,
+model.4 <- brm(
+  model.4.formula,
   data = pose_df, 
   family = student_t(),
   prior = c(
@@ -707,8 +883,8 @@ model.3 <- brm(
     prior(normal(0, 2), class = 'sd', group = 'participant', lb = 0),
     prior(exponential(0.0333), class = 'nu')
   ),
-  backend = BRM_BACKEND,
-  file = 'rds/model.3.rds',
+  #backend = BRM_BACKEND,
+  file = 'rds/model.4.rds',
   file_refit = 'on_change' 
 )
 ```
@@ -717,12 +893,12 @@ model.3 <- brm(
 ## Step 3: posterior checks
 
 ```{r}
-summary(model.3)
+summary(model.4)
 ```
 
 
 ```{r}
-cowplot::plot_grid(plot_predictions(model.3), p1, nrow = 2)
+cowplot::plot_grid(plot_predictions(model.4), p1, nrow = 2)
 ```
 
 
@@ -730,15 +906,23 @@ cowplot::plot_grid(plot_predictions(model.3), p1, nrow = 2)
 
 
 ```{r}
-cowplot::plot_grid(plot_posteriors(model.3), p1, nrow = 2)
+cowplot::plot_grid(plot_posteriors(model.4), p1, nrow = 2)
+```
+```{r}
+model.4.posteriors <-
+  model.4 %>% 
+  epred_draws(tibble(condition = c('expansive', 'constrictive')),
+               re_formula = NA)
 ```
 
 
-```{r}
-model.3 %>% 
-   epred_draws(tibble(condition = c('expansive', 'constrictive')),
-               re_formula = NA) %>% 
-  mutate(model = 'model 3') %>% 
+```{r fig.height=7, fig.width=10}
+wrap_plots(
+model.4.posteriors %>% 
+  mutate(model = 'model 4') %>% 
+    rbind(
+    model.3.posteriors %>% 
+      mutate(model = 'model 3'))  %>% 
   rbind(
     model.2.posteriors %>% 
       mutate(model = 'model 2'))  %>% 
@@ -746,13 +930,93 @@ model.3 %>%
     model.1.posteriors %>% 
       mutate(model = 'model 1')) %>% 
 ggplot() + 
-  geom_density(aes(x = .epred, fill = condition), color = NA, alpha = .5) +
+  geom_density(aes(x = .epred, fill = condition), adjust = 1.5, color = NA, alpha = .5) +
   facet_grid(model ~ .) +
-  scale_x_continuous(limits = c(-40, 100), breaks = seq(-40, 100, by = 20)) +
+  scale_x_continuous(limits = c(-150, 250), breaks = seq(-150, 250, by = 50)) +
   scale_color_theme() +
-  theme_density_x
+  theme_density_x +
+  ggtitle('Compare the means of all four models'),
+p1, nrow = 2, heights = c(4,1.5))
 ```
 
+# Reporting
+
+Let's use model 4
+
+## model 
+
+```{r}
+summary(model.4)
+```
+
+## CI
+
+```{r}
+model.4.posteriors.CI <- 
+model.4.posteriors %>% 
+  group_by(condition) %>% 
+  median_qi(.epred, width = .95)
+```
+
+
+```{r fig.height=3, fig.width=7}
+model.4.posteriors %>% 
+ggplot() +
+  geom_density(aes(x = .epred, fill = condition), alpha = .5, adjust = 2, color = NA) +
+  geom_point(model.4.posteriors.CI, 
+             mapping = aes(x = .epred, y = 0), size = 3) + 
+  geom_errorbarh(model.4.posteriors.CI, 
+                 mapping = aes(x = .epred, xmin = .epred.lower, xmax = .epred.upper, y = 0), height = 0, linewidth = 1.5) + 
+  facet_wrap(condition ~ ., ncol = 1) + 
+  scale_x_continuous(limits = c(0, 50)) + 
+  scale_y_continuous(expand = c(.02,.02)) + 
+  scale_color_theme() +
+  theme_density_x 
+
+```
+
+## subtraction
+
+```{r}
+model.4.posteriors_diff <- 
+model.4.posteriors %>% 
+  compare_levels(variable = .epred, by = condition) %>% 
+  select(-.chain, -.iteration) %>% 
+  ungroup()
+```
+
+```{r}
+head(model.4.posteriors_diff)
+```
+
+
+```{r}
+model.4.posteriors_diff.CI <-
+model.4.posteriors_diff %>% 
+  median_qi(.epred)
+
+model.4.posteriors_diff.CI
+```
+
+
+```{r fig.height=3, fig.width=10}
+model.4.posteriors_diff %>% 
+ggplot() +
+  geom_density(aes(x = .epred), alpha = .5,  fill = theme_blue, color = NA, adjust = 2) +
+  geom_point(model.4.posteriors_diff.CI, 
+             mapping = aes(x = .epred, y = 0), size = 3) + 
+  geom_errorbarh(model.4.posteriors_diff.CI, 
+                 mapping = aes(x = .epred, xmin = .lower, xmax = .upper, y = 0), height = 0, linewidth = 1.5) + 
+  #scale_x_continuous(limits = c(-50, 50)) + 
+  xlab('expansive - constrictive') +
+  ggtitle('Mean difference in expansive and constrictive') + 
+  geom_vline(xintercept = 0, linetype = 2) + 
+  scale_y_continuous(expand = c(.02,.02)) + 
+  scale_x_continuous(limits = c(-10, 10), breaks = seq(-10, 10, by = 5)) + 
+  scale_color_theme() +
+  theme_density_x 
+
+```
 
 
 # Session info
