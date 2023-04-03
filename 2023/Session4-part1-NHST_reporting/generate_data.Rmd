@@ -1,0 +1,35 @@
+---
+title: "generate_more_data.Rmd"
+output: html_document
+date: "2023-04-03"
+---
+
+
+```{r}
+d <- read_csv('df_between.csv')
+```
+
+
+```{r}
+more_data <-
+ d %>% 
+  # mutate(sd = c(rnorm(10, 5, 1),  rnorm(10, 5.5, 1),  rnorm(10, 5, 1))) %>% 
+  mutate(sd = rep(c(5, 7, 9), each = 10)) %>% 
+  rowwise() %>% 
+  mutate(draw_wpm = list(rnorm(100, mean = wpm, sd = sd))) %>% 
+  unnest(draw_wpm)
+```
+`
+
+
+```{r fig.height=10, fig.width=5}
+more_data %>% 
+  ggplot() +
+  stat_slab(aes(x = draw_wpm, y = user_id))
+```
+
+
+```{r}
+write_csv(more_data, 'df_between_more.csv')
+```
+
