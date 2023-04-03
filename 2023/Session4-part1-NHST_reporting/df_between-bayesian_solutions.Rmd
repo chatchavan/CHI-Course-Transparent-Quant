@@ -26,7 +26,6 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width =
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(brms)
-library(rlang)
 library(tidybayes)
 library(cowplot)
 BRM_BACKEND <- ifelse(require("cmdstanr"), 'cmdstanr', 'rstan')
@@ -39,7 +38,10 @@ theme_set(theme_ggdist())
 
 ```{r}
 df_between <- read_csv("df_between.csv")
-head(df_between)
+```
+
+```{r}
+df_between
 ```
 
 
@@ -53,11 +55,7 @@ ggplot(df_between) +
 Use the get_prior function to check out the default priors:
 
 ```{r}
-get_prior(
-  # write down the model syntax ...
-  ,  
-  data = df_between
-)
+get_prior(wpm ~ cond,  data = df_between)
 ```
 
 
@@ -66,6 +64,7 @@ get_prior(
 Update to proper priors to 
 
 ```{r}
+
 priors_choice <-  c(
     prior(
           # plug-in your choice here
@@ -78,21 +77,20 @@ priors_choice <-  c(
           # normal(0, 5), 
           class = 'sigma', lb = 0)
   )
+
 ```
 
 ```{r}
 priors_choice <- c(
   prior(normal(0, 5), class = 'b'),
-  prior(student_t(3, 50, 10), class = 'Intercept'),
+  prior(normal(50, 10), class = 'Intercept'),
   prior(normal(0, 2), class = 'sigma', lb = 0)
 )
 ```
 
 
-this is a placeholder for visualizing the priors that abhraneel is working on...
+this is a placeholder for visualizing the priors
 
-
-## Prior check
 
 ```{r}
 m_prior_check <- brm(
@@ -107,6 +105,8 @@ m_prior_check <- brm(
 ```
 
 
+Prior check
+
 What they should see here
 1. positive-only
 2. on average, it should be around 50
@@ -120,45 +120,52 @@ add_predicted_draws(
     m_prior_check
 ) %>% 
 ggplot(aes(
-  x = # enter the variable for predictions here
-  y = # enter the variable for conditions here
+  x = .prediction, # put the correct variable here
+  y = cond # 
 )) +
 stat_halfeye()
+  
 ```
 
-## Step 2: Running the model
+
 
 ```{r}
 m <- brm(
-  # write out the model formula 
+  wpm ~ cond,
   data = df_between,
   family = student(), 
   prior = priors_choice,
   seed = 1234
 )
+
+m <- brm(
+  # write out the model formula 
+  data = df_between,
+  family = # specify family, 
+  prior = priors_choice,
+  seed = 1234,
+  chains = # specify num of chains,
+  cores = # specify num of cores,
+  file = 
+)
+
 ```
 
-## Step 3: Checking the model results and reporting them
+## Step 3 
 
 ```{r}
 summary(m)
 ```
 
-## Posterior predictive checks
-
-The code below implements a posterior predictive checks. We have provided the code which will extract posterior predictive draws from your model. You'll need to inspect the model, identify the variables and enter them to implement a posterior predictive check. 
+prediction?
 
 ```{r}
-posterior_predictive_draws = newdata %>%
-  add_predicted_draws(m, ndraws = NULL, seed = 1234)
 
-posterior_predictive_draws %>% 
+newdata %>%
+  add_predicted_draws(m, ndraws = NULL, seed = 1234) %>% 
   ggplot() +
   stat_halfeye(
-    aes(
-      x = # enter the variable here
-      y = # enter the variable here
-    )
+    aes(x = .prediction, y = cond), # should be changed
     position = position_nudge(y = .1),
     height = .8
   ) +
@@ -168,8 +175,7 @@ posterior_predictive_draws %>%
   
   
 ```
-## Posterior means for each of the three conditions
-
+mean?
 
 ```{r}
 
@@ -181,8 +187,8 @@ posterior_draws %>%
   ggplot() +
   stat_halfeye(
     aes(
-      x = # enter the variable here, 
-      y = # enter the variable here
+      x = .epred, 
+      y = cond
     ),
     position = position_nudge(y = .1),
     height = .8
