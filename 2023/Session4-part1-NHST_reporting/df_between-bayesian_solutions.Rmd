@@ -34,7 +34,7 @@ theme_set(theme_ggdist())
 ```
 
 
-# plot
+
 
 ```{r}
 df_between <- read_csv("df_between.csv")
@@ -51,7 +51,9 @@ ggplot(df_between) +
 ```
 
 
-### Step 1:
+#  model 1
+
+## Step 1
 Use the get_prior function to check out the default priors:
 
 ```{r}
@@ -59,26 +61,9 @@ get_prior(wpm ~ cond,  data = df_between)
 ```
 
 
-### Step 2:
+## Step 2
 
-Update to proper priors to 
-
-```{r}
-
-priors_choice <-  c(
-    prior(
-          # plug-in your choice here
-          # hint: normal, student_t
-          # normal(0, 2), 
-          class = 'b'),
-    prior(
-          # plug-in your choice
-          # hint: normal, student_t
-          # normal(0, 5), 
-          class = 'sigma', lb = 0)
-  )
-
-```
+Update to proper priors 
 
 ```{r}
 priors_choice <- c(
@@ -94,7 +79,7 @@ this is a placeholder for visualizing the priors
 
 ```{r}
 m_prior_check <- brm(
-  # write down the model syntax ...
+  wpm ~ cond, 
   data = df_between,
   family = student(), 
   prior = priors_choice,
@@ -143,10 +128,7 @@ m <- brm(
   data = df_between,
   family = # specify family, 
   prior = priors_choice,
-  seed = 1234,
-  chains = # specify num of chains,
-  cores = # specify num of cores,
-  file = 
+  seed = 1234
 )
 
 ```
@@ -175,6 +157,7 @@ newdata %>%
   
   
 ```
+
 mean?
 
 ```{r}
@@ -229,6 +212,60 @@ posterior_draws_diff %>%
   geom_vline(xintercept = 0, linetype = 2)
 ```
 
+
+# model 2
+
+```{r}
+df_between_more <- read_csv('df_between_more.csv')
+```
+
+
+## Step 1
+Use the get_prior function to check out the default priors:
+
+```{r}
+get_prior(wpm ~ cond + (1|user_id),  data = df_between_more)
+```
+
+
+## Step 2
+
+Update to proper priors 
+
+```{r}
+priors_choice <- c(
+  prior(normal(0, 5), class = 'b'),
+  prior(normal(50, 10), class = 'Intercept'),
+  prior(normal(0, 2), class = 'sd', lb = 0),
+  prior(normal(0, 2), class = 'sigma', lb = 0)
+)
+```
+
+
+this is a placeholder for visualizing the priors
+
+
+```{r}
+m_rand_intercepts <- brm(
+  wpm ~ cond + (1|user_id), 
+  data = df_between_more,
+  family = student(), 
+  prior = priors_choice,
+  seed = 1234
+)
+
+```
+
+
+```{r}
+m_rand_intercepts %>% 
+  add_epred_draws(
+    newdata,
+    re_formula = NA # remove random intercepts
+  ) %>% 
+ggplot() +
+  stat_slab(aes(x = .epred, y = cond))
+```
 
 
 
