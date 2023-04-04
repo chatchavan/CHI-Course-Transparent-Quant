@@ -906,24 +906,26 @@ nrow = 2)
 ```
 
 
-We generate the average of 30 trials.
+We generate the average of 30 trials using an average participant.
 
 ```{r}
 model.4.posteriors <-  model.4 %>% 
     epred_draws(crossing(condition = c('expansive', 'constrictive'),     
-                       trial = 0:29,
-                       participant = 0),
-                allow_new_levels  = TRUE) %>% 
+                       trial = 0:29),
+                re_formula = NA,
+                allow_new_levels  = FALSE) %>% 
   mutate(model = 'model 4')  %>% 
   group_by(.draw, condition) %>% 
   summarise(.epred = mean(.epred))
 ```
 
+Plot out the posteriors for mean.
+
 ```{r fig.height=7}
 wrap_plots(
   model.4.posteriors %>% 
  ggplot(aes(x = .epred, fill = condition)) +
-    geom_histogram(alpha = .5, size = 1, binwidth = 5, color = NA) +
+    geom_density(alpha = .5, size = 1, color = NA) +
     scale_color_theme() +
     facet_wrap(condition ~ ., ncol = 1) + 
     theme_density_x + 
@@ -950,6 +952,8 @@ summary(model.4)
 
 ## Credible Intervals
 
+We compute the credible intervals (CIs; Bayesian analogy to confidence intervals) for the two conditions. 
+
 ```{r}
 model.4.posteriors.CI <- 
 model.4.posteriors %>% 
@@ -966,7 +970,7 @@ model.4.posteriors.CI
 ```{r fig.height=5, fig.width=10}
 model.4.posteriors %>% 
 ggplot() +
-  geom_histogram(aes(x = .epred, fill = condition), alpha = .5, color = NA) +
+  geom_density(aes(x = .epred, fill = condition), alpha = .5, color = NA) +
   geom_point(model.4.posteriors.CI, 
              mapping = aes(x = .epred, y = 0), size = 3) + 
   geom_errorbarh(model.4.posteriors.CI, 
@@ -1006,7 +1010,7 @@ model.4.posteriors_diff.CI
 ```{r fig.height=4, fig.width=10}
 model.4.posteriors_diff %>% 
 ggplot() +
-  geom_histogram(aes(x = .epred), alpha = .5,  fill = theme_blue, color = NA, adjust = 2) +
+  geom_density(aes(x = .epred), alpha = .5,  fill = 'skyblue', color = NA, adjust = 2) +
   geom_point(model.4.posteriors_diff.CI, 
              mapping = aes(x = .epred, y = 0), size = 3) + 
   geom_errorbarh(model.4.posteriors_diff.CI, 
