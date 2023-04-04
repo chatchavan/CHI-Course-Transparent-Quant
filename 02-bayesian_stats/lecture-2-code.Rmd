@@ -592,6 +592,7 @@ plot_posteriors <- function(model, df = NULL, title = ''){
   
   if(is.null(df))
      df = tibble(condition = c('expansive', 'constrictive'))
+  
   model %>% 
     epred_draws(df, 
                 # ignoring random effects if there is any
@@ -854,7 +855,7 @@ $$
 \begin{align}
 y_{i} &\sim \mathrm{Neg-Binomial}(\mu, \phi) \\
 \mu &= \beta_{i,j} + \beta_{1} * x_i \\
-\beta_{1} &\sim \mathrm{Normal}(0, 2) \\
+\beta_{1} &\sim \mathrm{Normal}(0, 1) \\
 i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}\\
 j & \in \{1, ..., \mathrm{N}\}
 \end{align}
@@ -881,6 +882,11 @@ model.4 = brm(pumps ~ 1 + condition + trial + (trial | participant),
                       iter = 4000, warmup = 1000, cores = 4, chains = 4)
 ```
 
+```{r}
+prior_summary(model.4)
+```
+
+
 
 ```{r}
 summary(model.4)
@@ -893,29 +899,38 @@ The results of this model are on the log-odds scale. What do the coefficients me
 # draws.model.4 = 
 wrap_plots(
   plot_predictions(model.4, df = crossing(condition = c('expansive', 'constrictive'), 
-                                          trial = 29,
+                                          trial = 0:29,
                                           participant = 0)), 
   p1,
 nrow = 2)
 ```
 
-```{r fig.height=5}
-# draws.model.4 = 
-wrap_plots(
-  plot_posteriors(model.4, df = tibble(condition = c('expansive', 'constrictive'), 
-                                       trial = 29,
-                                       participant = 0)), 
-  p1,
-nrow = 2)
-```
+
+We generate the average of 30 trials.
 
 ```{r}
 model.4.posteriors <-  model.4 %>% 
-    epred_draws(tibble(condition = c('expansive', 'constrictive'),     
-                       trial = 29,
+    epred_draws(crossing(condition = c('expansive', 'constrictive'),     
+                       trial = 0:29,
                        participant = 0),
                 allow_new_levels  = TRUE) %>% 
-  mutate(model = 'model 3') 
+  mutate(model = 'model 4')  %>% 
+  group_by(.draw, condition) %>% 
+  summarise(.epred = mean(.epred))
+```
+
+```{r fig.height=7}
+wrap_plots(
+  model.4.posteriors %>% 
+ ggplot(aes(x = .epred, fill = condition)) +
+    geom_histogram(alpha = .5, size = 1, binwidth = 5, color = NA) +
+    scale_color_theme() +
+    facet_wrap(condition ~ ., ncol = 1) + 
+    theme_density_x + 
+    scale_x_continuous(limits = c(-100, 250), breaks = seq(-100, 250, by = 50)) +
+    ggtitle(paste0('Posterior means of ', deparse(substitute(model)))), 
+  p1,
+nrow = 2)
 ```
 
 From this, we can see that there does not appear to be a difference between the two conditions.
@@ -927,11 +942,13 @@ Let's use model 4
 
 ## model 
 
+We will need the ESSs and RHat from this print. Also, if you want to report the standard deviation of random intercepts or CIs for other paramaters. You can find them via `summary(..)`
+
 ```{r}
 summary(model.4)
 ```
 
-## CI
+## Credible Intervals
 
 ```{r}
 model.4.posteriors.CI <- 
@@ -941,10 +958,15 @@ model.4.posteriors %>%
 ```
 
 
-```{r fig.height=3, fig.width=7}
+```{r}
+model.4.posteriors.CI
+```
+
+
+```{r fig.height=5, fig.width=10}
 model.4.posteriors %>% 
 ggplot() +
-  geom_density(aes(x = .epred, fill = condition), alpha = .5, adjust = 2, color = NA) +
+  geom_histogram(aes(x = .epred, fill = condition), alpha = .5, color = NA) +
   geom_point(model.4.posteriors.CI, 
              mapping = aes(x = .epred, y = 0), size = 3) + 
   geom_errorbarh(model.4.posteriors.CI, 
@@ -962,8 +984,8 @@ ggplot() +
 ```{r}
 model.4.posteriors_diff <- 
 model.4.posteriors %>% 
+  ungroup() %>% 
   compare_levels(variable = .epred, by = condition) %>% 
-  select(-.chain, -.iteration) %>% 
   ungroup()
 ```
 
@@ -981,10 +1003,10 @@ model.4.posteriors_diff.CI
 ```
 
 
-```{r fig.height=3, fig.width=10}
+```{r fig.height=4, fig.width=10}
 model.4.posteriors_diff %>% 
 ggplot() +
-  geom_density(aes(x = .epred), alpha = .5,  fill = theme_blue, color = NA, adjust = 2) +
+  geom_histogram(aes(x = .epred), alpha = .5,  fill = theme_blue, color = NA, adjust = 2) +
   geom_point(model.4.posteriors_diff.CI, 
              mapping = aes(x = .epred, y = 0), size = 3) + 
   geom_errorbarh(model.4.posteriors_diff.CI, 
