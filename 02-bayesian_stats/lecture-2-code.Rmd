@@ -100,14 +100,9 @@ pose_df = readr::read_csv("data/poses_data.csv", show_col_types = FALSE) %>%
   group_by(participant)
 ```
 
-
 The data has been aggregated for each participant: - `condition = expansive` indicates expansive posture, and `condition = constrictive` indicates constrictive posture - The dependent variable is `change` which indicates the percentage change in risk-taking behavior. Thus, it is a continuous variable.
 
-For the purposes of this demo, we are only concerned with these two variables. We can ignore the other variables for now.
-
-```{r show-dataset}
-head(pose_df %>% select(participant, condition, change))
-```
+For the purposes of this demo, we are only concerned with these two variables. We can ignore the other variables for now. 
 
 # Intuition of Bayesian Statistics
 
@@ -333,6 +328,39 @@ Fumeng: the content below needs better documentation....
 
 # Model 1: Equal standard deviations
 
+## Understanding the data
+
+```{r}
+pose_df %>%
+  mutate(c = as.factor(condition)) %>%
+  ggplot(aes(x = change)) +
+  geom_histogram(
+    aes(y = ..density..),
+    binwidth = 10,
+    fill = theme_yellow,
+    alpha = .5,
+    color = 'white'
+  ) +
+  geom_density(size = 1,
+               adjust = 1.5,
+               color = theme_blue) +
+   geom_function(
+    color = "#222222",
+    linetype = 'dashed',
+    fun = function(x)
+      dstudent_t(x, mu = 16,  sigma = 39, df = 6),
+    size = 1
+  ) + 
+  scale_x_continuous(limits = c(-200, 200)) +
+  theme(
+    axis.line.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank()
+  )
+```
+
+
 ## Step 1: model specification
 
 Fumeng: I hope to keep this example simple. Is there a __simple__ way to justify the choice of $\nu$? 
@@ -417,7 +445,7 @@ plot
 ```{r}
 model.1.defaultpriorsamples <- 
   model.1.checks_default %>% 
-    epred_draws(tibble(condition = c('expansive', 'constrictive')))
+    predicted_draws(tibble(condition = c('expansive', 'constrictive')))
 ```
 
 ```{r}
@@ -426,7 +454,7 @@ head(model.1.defaultpriorsamples)
 
 ```{r  fig.height=2.5}
 model.1.defaultpriorsamples %>% 
-  ggplot(aes(x = .epred, group = condition)) +
+  ggplot(aes(x = .prediction, group = condition)) +
   geom_density(alpha = .5, color = NA, adjust = 2, fill = theme_yellow) +
   theme_density_x + 
   ggtitle('Checks default priors of model.1')
@@ -447,7 +475,6 @@ tibble(x = qnorm(ppoints(n = 1000), mean = 0, sd = 10)) %>%
   ggtitle('HalfNormal(0, 10) for sigma') +
   coord_cartesian(xlim = c(0, 50), expand = c(0)),
 ncol = 2)
-
 ```
 
 
@@ -458,6 +485,7 @@ model.1.checks <- brm(
   data = pose_df, 
   family = student_t(),
   prior = c(
+    prior(student_t(3, 22.6, 10), class = "Intercept"),
     prior(normal(0, 2), class = 'b'),
     prior(normal(0, 10), class = 'sigma', lb = 0)
   ),
@@ -473,7 +501,7 @@ plot
 ```{r}
 model.1.priorsamples <- 
   model.1.checks %>% 
-    epred_draws(tibble(condition = c('expansive', 'constrictive')))
+    predicted_draws(tibble(condition = c('expansive', 'constrictive')))
 ```
 
 
@@ -483,14 +511,14 @@ Compare two sets of priors
 cowplot::plot_grid(
   
 model.1.defaultpriorsamples %>% 
-  ggplot(aes(x = .epred, group = condition)) +
+  ggplot(aes(x = .prediction, group = condition)) +
   geom_density(alpha = .5, color = NA, adjust = 2, fill = theme_yellow) +
   theme_density_x + 
   #coord_cartesian(xlim = c(-800, 800)) + 
   ggtitle('Checks default priors of model.1')
 ,
 model.1.priorsamples %>% 
-  ggplot(aes(x = .epred, group = condition)) +
+  ggplot(aes(x = .prediction, group = condition)) +
   geom_density(alpha = .5, color = NA, adjust = 2, fill = theme_yellow) +
   theme_density_x + 
   #coord_cartesian(xlim = c(-800, 800)) + 
@@ -524,6 +552,9 @@ model.1 <- brm(
 color_scheme_set("teal")
 mcmc_trace(model.1, facet_args = list(ncol = 4))
 ```
+```{r}
+plot(model.1)
+```
 
 
 ### aspect 2: model metrics
@@ -533,7 +564,17 @@ Rhat, ESS, etc here
 ```{r}
 summary(model.1)
 ```
+
 ### aspect 3: visually
+
+```{r}
+pose_df.bayesiant.y <- pose_df$change
+
+pose_df.bayesiant.yrep <- posterior_predict(model.1, ndraws = 30, seed = 1234)
+
+ppc_dens_overlay(pose_df.bayesiant.y, pose_df.bayesiant.yrep)
+```
+
 
 Fumeng: do we need this?
 
@@ -559,8 +600,8 @@ plot_predictions <- function(model, df = NULL, title = ''){
                     ndraws = NULL,
                     allow_new_levels = TRUE,
                     sample_new_levels = 'uncertainty') %>% 
-    ggplot(aes(x = .prediction, fill = condition)) +
-    geom_density(alpha = .5, size = 1, adjust = 2, color = NA) +
+    ggplot(aes(x = .prediction, colour = condition), fill = NA) +
+    geom_density(alpha = .5, size = 1, adjust = 2) +
     scale_color_theme() +
     theme_density_x + 
     scale_y_continuous(breaks = 0, labels = 'constrictive') + 
@@ -568,10 +609,7 @@ plot_predictions <- function(model, df = NULL, title = ''){
     coord_cartesian(xlim = c(-150, 250)) + 
     ggtitle(paste0('Posterior predictions of ', deparse(substitute(model))))
 }
-```
 
-
-```{r}
 cowplot::plot_grid(plot_predictions(model.1), 
                    p1 + 
                     scale_x_continuous(breaks = seq(-150, 250, by = 100)) +
@@ -585,6 +623,25 @@ model.1.posteriors <-
   model.1 %>% 
     epred_draws(tibble(condition = c('expansive', 'constrictive')))
 ```
+
+```{r fig.height = 2, fig.width = 9}
+# model.1.posteriors %>%
+#   ungroup() %>%
+#   compare_levels(variable = .epred, by = condition) %>%
+  median_qi(.width = .95) %>%
+  ggplot() + 
+  geom_pointinterval(aes(x = .epred, y = condition, xmin = .lower, xmax = .upper)) +
+  geom_vline(xintercept = 0, linetype = 2, color = "#979797") +
+  coord_cartesian(xlim = c(-5, 5)) +
+  xlab("Difference in Mean") +
+  theme(
+    axis.text.x = element_text(size = 14),
+    axis.text.y = element_text(size = 14),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_blank()
+  )
+```
+
 
 
 ```{r}
@@ -607,10 +664,7 @@ plot_posteriors <- function(model, df = NULL, title = ''){
     scale_x_continuous(limits = c(-150, 250), breaks = seq(-150, 250, by = 50)) +
     ggtitle(paste0('Posterior means of ', deparse(substitute(model))))
 }
-```
 
-
-```{r}
 cowplot::plot_grid(plot_posteriors(model.1), p1, nrow = 2)
 ```
 
@@ -849,17 +903,7 @@ p1, nrow = 2, heights = c(4,1.5))
 
 # Model 4: Poisson / Negative-Binomial Regression model
 
-## Step 1: model specification
-
-$$
-\begin{align}
-y_{i} &\sim \mathrm{Neg-Binomial}(\mu, \phi) \\
-\mu &= \beta_{i,j} + \beta_{1} * x_i \\
-\beta_{1} &\sim \mathrm{Normal}(0, 1) \\
-i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}\\
-j & \in \{1, ..., \mathrm{N}\}
-\end{align}
-$$
+## Understanding the data
 
 ```{r}
 pose_raw_df = read.csv("data/posture_data-raw.csv") %>%
@@ -871,37 +915,139 @@ head(pose_raw_df)
 
 
 ```{r}
-model.4 = brm(pumps ~ 1 + condition + trial + (trial | participant),
-                      data = pose_raw_df, family = negbinomial,
-                      prior = c(prior(normal(0, 10), class = Intercept),
-                                prior(normal(0, 1), class = b),
-                                prior(gamma(0.01, 0.01), class = shape)
+pose_raw_df %>%
+  mutate(c = as.factor(condition)) %>%
+  ggplot(aes(x = pumps)) +
+  geom_histogram(
+    aes(y = ..density..),
+    binwidth = 10,
+    fill = theme_yellow,
+    alpha = .5,
+    color = 'white'
+  ) +
+  geom_density(size = 1,
+               adjust = 1.5,
+               color = theme_blue) +
+   geom_function(
+    color = "#222222",
+    linetype = 'dashed',
+    fun = function(x) # need to fix
+      dpois(x, lambda = 37), # this does not use the log-link but brm does so the prior below is # log(387)
+    size = 1
+  ) + 
+  theme(
+    axis.line.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank()
+  )
+```
+
+## Step 1: model specification
+
+$$
+\begin{align}
+y_{i} &\sim \mathrm{Poisson}(\lambda) \\
+log(\lambda) &= \beta_{i,j} + \beta_{1} * x_i \\
+\beta_{1} &\sim \mathrm{Normal}(0, 1) \\
+i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}\\
+j & \in \{1, ..., \mathrm{N}\}
+\end{align}
+$$
+
+
+## Step 2: prior predictive checks
+
+```{r}
+model.4.prior_pred = brm(pumps ~ 1 + condition + (1 | participant),
+                      data = pose_raw_df, family = poisson,
+                      prior = c(prior(normal(3.6, 0.5), class = Intercept),
+                                prior(normal(0, 0.5), class = b)
+                      ),  # this is the brms default
+                      sample_prior = "only",
+                      iter = 4000, warmup = 1000, cores = 4, chains = 4)
+```
+
+
+```{r}
+model.4.prior_pred.samples <- model.4.prior_pred %>% 
+    predicted_draws(tibble(condition = c('expansive', 'constrictive')), re_formula = NA)
+
+head(model.4.prior_pred.samples)
+```
+
+
+```{r  fig.height=2.5}
+model.4.prior_pred.samples %>% 
+  ggplot() +
+  geom_histogram(
+    data = pose_raw_df,
+    aes(x = pumps, y = ..density..),
+    binwidth = 10,
+    alpha = .5,
+    fill = theme_yellow,
+    color = 'white'
+  ) +
+  geom_density(aes(x = .prediction), adjust = 2, stroke = theme_blue) +
+  theme_density_x #+ 
+  # coord_cartesian(xlim = c(0, 200))
+```
+
+## Step 3: model fitting
+
+```{r}
+model.4 = brm(pumps ~ 1 + condition + (1 | participant),
+                      data = pose_raw_df, family = poisson,
+                      prior = c(prior(normal(3.6, 0.5), class = Intercept),
+                                prior(normal(0, 0.5), class = b)
                       ),  # this is the brms default
                       file = 'rds/model.4.rds',
                       file_refit = 'on_change' ,
                       iter = 4000, warmup = 1000, cores = 4, chains = 4)
 ```
 
-```{r}
-prior_summary(model.4)
-```
-
-
 
 ```{r}
 summary(model.4)
 ```
 
-## Step 2: model interpretation
+```{r}
+pose_raw_df.bayesian_poisson.y <- pose_raw_df$pumps
+
+pose_raw_df.bayesian_poisson.yrep <- posterior_predict(model.4, ndraws = 30, seed = 1234)
+
+ppc_dens_overlay(y = pose_raw_df.bayesian_poisson.y,
+                 yrep = pose_raw_df.bayesian_poisson.yrep)
+```
+
+
+## Step 4: model interpretation
 The results of this model are on the log-odds scale. What do the coefficients mean? The simplest way is to simply transform the data into a more interpretable scale and visualise the results:
 
 ```{r fig.height=5}
-# draws.model.4 = 
-wrap_plots(
-  plot_predictions(model.4, df = crossing(condition = c('expansive', 'constrictive'), 
+p.model.4 = pose_raw_df %>%
+  ggplot() +
+  geom_point(aes(x = pumps, y = condition, colour = condition), 
+             position = position_jitter(height = 0.1), alpha = 0.7) +
+  scale_color_theme() + 
+  labs(y = "Condition") +
+  theme(
+    legend.position = "none", 
+    axis.line.y = element_blank(), 
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  scale_x_continuous(limits = c(0, 130), breaks = seq(0, 150, by = 30))
+
+draws.model.4 = plot_predictions(model.4, df = crossing(condition = c('expansive', 'constrictive'), 
                                           trial = 0:29,
-                                          participant = 0)), 
-  p1,
+                                          participant = 0)) + 
+    scale_x_continuous(breaks = seq(0, 150, by = 30)) +
+    coord_cartesian(xlim = c(0, 150))
+
+wrap_plots(
+  draws.model.4, 
+  p.model.4,
 nrow = 2)
 ```
 
@@ -918,6 +1064,26 @@ model.4.posteriors <-  model.4 %>%
   group_by(.draw, condition) %>% 
   summarise(.epred = mean(.epred))
 ```
+
+```{r, fig.height = 2, fig.width = 9}
+model.4.posteriors %>%
+  ungroup() %>%
+  compare_levels(.epred, by = condition) %>%
+  median_qi(.width = .95) %>%
+  ggplot() + 
+  geom_pointinterval(aes(x = .epred, y = condition, xmin = .lower, xmax = .upper)) +
+  geom_vline(xintercept = 0, linetype = 2, color = "#979797") +
+  scale_x_continuous(breaks = seq(-10, 10, by = 2)) +
+  coord_cartesian(xlim = c(-10, 10)) +
+  xlab("Difference in Mean") +
+  theme(
+    axis.text.x = element_text(size = 14),
+    axis.text.y = element_text(size = 14),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_blank()
+  )
+```
+
 
 Plot out the posteriors for mean.
 
