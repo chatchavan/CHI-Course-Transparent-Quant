@@ -1,5 +1,5 @@
 ---
-title: "Session4: preliminaries"
+title: "Session4: Setup R, RStudio, and packages"
 output: html_document
 date: "2023-04-07"
 ---
@@ -20,7 +20,9 @@ You should see something like this. The theme and layout might be different.
 
 # Step 3：Install packages
 
-Here are all the packages we need. Click the little triangle on the left most. The color might be different.
+The first code block lists all the packages we need. Click the little triangle on the left most to **execute** the code. The color might be different.
+
+![](pic/exec.png)
 
 This allows you to install all packages you need for this session. This process may take more than half an hour. So be patient.
 
@@ -40,12 +42,16 @@ if(!require('cmdstanr'))  install.packages('brms')
 
 ## check packages
 
+Execute the code by clicking the triangle. 
+
 ```{r}
 library(cmdstanr)
 check_cmdstan_toolchain(fix = TRUE, quiet = TRUE)
 ```
 
 ## load packages
+
+Execute the code by clicking the triangle. 
 
 ```{r}
 library(tidyverse)
