@@ -21,12 +21,13 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width =
 
 # Introduction
 
-# Load packages
+## Load necessary packages
 
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
-library(brms)
 library(rlang)
+library(distributional)
+library(brms)
 library(tidybayes)
 library(cowplot)
 BRM_BACKEND <- ifelse(require("cmdstanr"), 'cmdstanr', 'rstan')
@@ -34,14 +35,16 @@ BRM_BACKEND <- ifelse(require("cmdstanr"), 'cmdstanr', 'rstan')
 theme_set(theme_ggdist())
 ```
 
+## Load the data
 
-# plot
+In this exercise, you will use the dataset in the file `df_between.csv` which contains the results of a between-subejects experiment where 30 participants are placed in three different conditions `cond` (levels: `off`, `constant`, `adaptive`), and the measure was `wpm`. The researchers want to see if participants `wpm` varies based on the condition, `cond`
 
 ```{r}
 df_between <- read_csv("df_between.csv")
 head(df_between)
 ```
 
+Next, let's plot the data to get a better understanding:
 
 ```{r}
 ggplot(df_between) +
@@ -49,8 +52,9 @@ ggplot(df_between) +
 ```
 
 
-### Step 1:
-Use the get_prior function to check out the default priors:
+## Step 1: Identify which priors you will need to specify
+
+First, use the `get_prior` function to check out the default priors. You will need to specify the model syntax for this research question.
 
 ```{r}
 get_prior(
@@ -60,10 +64,9 @@ get_prior(
 )
 ```
 
+## Step 2: Set your priors
 
-### Step 2:
-
-Update to proper priors to 
+Change the priors on the population-level effect coefficient (`class - "b"`) and standard deviation parameter (`class = "sigma"`):
 
 ```{r}
 priors_choice <-  c(
@@ -78,16 +81,7 @@ priors_choice <-  c(
   )
 ```
 
-```{r}
-priors_choice <- c(
-  prior(normal(0, 5), class = 'b'),
-  prior(student_t(3, 50, 10), class = 'Intercept'),
-  prior(normal(0, 2), class = 'sigma', lb = 0)
-)
-```
-
-
-this is a placeholder for visualizing the priors that abhraneel is working on...
+Run the code below to visualise the priors specified.
 
 ```{r}
 get_prior_dist = function(priors) {
@@ -101,7 +95,9 @@ get_prior_dist(priors_choice) |>
 ```
 
 
-## Prior check
+## Step 3: Prior predictive checks
+
+Enter the model syntax and model family below, and run the code. This will sample from the prior predictive distribution, which we will visualise in the next code block.
 
 ```{r}
 m_prior_check <- brm(
@@ -112,15 +108,14 @@ m_prior_check <- brm(
   seed = 1234,
   sample_prior = 'only'
 )
-
 ```
 
 
-What they should see here
-1. positive-only
-2. on average, it should be around 50
-3. symmetric
-4. < 100
+Fill in the aesthetics for ggplot to show the prior predictive distribution for each condition. To verify that your specified prior predictive distributions are appropriate, here are somethings to check:
+
+1. The distribution should be positive-only, as the `wpm` variable cannot take negative-values
+2. On average, the mean of the distributions should be around 50
+4. The distributions should assign probability for values less than 100 (as values greater than 100 are quite unlikely)
 
 ```{r}
 newdata <-   crossing(cond = df_between$cond)
@@ -135,7 +130,9 @@ ggplot(aes(
 stat_halfeye()
 ```
 
-## Step 2: Running the model
+## Step 4: Running the model
+
+In this step you will run the Bayesian model. Fill in the model syntax and family (from Step 2) here:
 
 ```{r}
 m <- brm(
@@ -147,15 +144,21 @@ m <- brm(
 )
 ```
 
-## Step 3: Checking the model results and reporting them
+## Step 4: Checking the model results and reporting them
 
 ```{r}
 summary(m)
 ```
 
-## Posterior predictive checks
+**Task:** Describe below how you would interpret and report these results
 
-The code below implements a posterior predictive checks. We have provided the code which will extract posterior predictive draws from your model. You'll need to inspect the model, identify the variables and enter them to implement a posterior predictive check. 
+
+
+## Step 5: Posterior predictive checks
+
+The code below implements a posterior predictive checks. In other words, it compares the posterior predictive distribution from your Bayesian model with the distribution of the data. We have provided the code which will extract posterior predictive draws from your model (stored in the data frame `posterior_predictive_draws`). 
+
+To run the code below, you'll need to inspect the data frame `posterior_predictive_draws`, identify the variables and enter them to implement a posterior predictive check.
 
 ```{r}
 posterior_predictive_draws = newdata %>%
@@ -167,23 +170,29 @@ posterior_predictive_draws %>%
     aes(
       x = # TODO: enter the variable here
       y = # TODO: enter the variable here
-    )
+    ),
     position = position_nudge(y = .1),
     height = .8
   ) +
   geom_point(df_between,
-             mapping = aes(x = # TODO: plug in x, 
-                           y = # TODO: plug in y
-                           ),
+             mapping = aes(
+                x = # TODO: plug in x, 
+                y = # TODO: plug in y
+             ),
              size = 5, shape = 20, alpha = .4) 
   
   
 ```
-## Posterior means for each of the three conditions
 
+**Task:** Based on the posterior predictive distribution, describe below why or why not the model is a good fit for the data.
+
+## Step 6: Making inferences using Posterior means
+
+The code below extract posterior draws for the mean of each condition (stored in the data frame `posterior_draws`). Recall that your research question was to determine if the three conditions have an effect on the variable `wpm`.
+
+To run the code below, you'll need to inspect the data frame `posterior_draws`, identify the variables and enter them to visualise the results.
 
 ```{r}
-
 posterior_draws <- 
 newdata %>%
   add_epred_draws(m, seed = 1234)  
@@ -199,28 +208,31 @@ posterior_draws %>%
     height = .8
   ) +
   geom_point(df_between,
-             mapping = aes(x = # TODO: plug in x, 
-                           y = # TODO: plug in y
-                           ),
-             size = 5, shape = 20, alpha = .4) 
-  
-  
+             mapping = aes(
+                x = # TODO: plug in x, 
+                y = # TODO: plug in y
+             ),
+             size = 5, shape = 20, alpha = .4)
 ```
 
+Next, you will estimate the median point estimate and 95% posterior credible intervals for each condition using the `median_qi` function. 
+
+The `median_qi` function calculates the median point estimate and upper and lower 95% quantile intervals based on your posterior draws (samples). However, as you want to calculate the point and interval estimates for each condition, you will need to `group_by` the condition
 
 ```{r}
 posterior_draws %>% 
   group_by( 
-          # TODO: plug in the variable, 
-         ) %>% 
+      # TODO: plug in the variable, 
+  ) %>% 
   median_qi(
-          # TODO: plug in the variable
+      # TODO: plug in the variable
   )
 ```
 
+The `compare_levels` function allows you to calculate the difference between the conditions. In a Bayesian model, we can simply take the difference between draws from two conditions. We have implemented the code for you---please take your time to inspect the resultant data frame
+
 ```{r}
-posterior_draws_diff <-
-posterior_draws %>% 
+posterior_draws_diff <- posterior_draws %>% 
   compare_levels(variable = .epred, 
                  by = cond, 
                  comparison = list(c('adaptive', 'constant'), 
@@ -229,17 +241,19 @@ posterior_draws %>%
 ```
 
 
+Next, you will estimate the median point estimate and 95% posterior credible intervals for the difference between the conditions using the `median_qi` function.
 
 ```{r}
 posterior_draws_diff %>% 
   group_by( 
-           # TODO: plug in the variable, 
-           ) %>% 
+     # TODO: plug in the variable, 
+  ) %>% 
   median_qi(
-           # TODO: plug in the variable
+     # TODO: plug in the variable
   )
 ```
 
+Finally, we can visualise the result i.e. the mean difference between each pair of conditions. Enter the `x` and `y` variables to visualise the posterior mean difference between each pair of conditions:
 
 ```{r}
 posterior_draws_diff %>% 
@@ -250,10 +264,6 @@ posterior_draws_diff %>%
     )) + 
   geom_vline(xintercept = 0, linetype = 2)
 ```
-
-
-
-
 
 
 
