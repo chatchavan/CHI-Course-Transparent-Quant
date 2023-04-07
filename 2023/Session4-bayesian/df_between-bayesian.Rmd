@@ -179,6 +179,7 @@ posterior_predictive_draws %>%
   
   
 ```
+
 ## Posterior means for each of the three conditions
 
 

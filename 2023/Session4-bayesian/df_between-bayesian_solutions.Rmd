@@ -193,7 +193,7 @@ posterior_draws %>%
 ```{r}
 posterior_draws_diff <-
 posterior_draws %>% 
-  compare_levels(variable = .epred, by = cond, comparison = list(c('adaptive', 'constant'), c('off', 'constant'), c('adaptive', '')))
+  compare_levels(variable = .epred, by = cond, comparison = list(c('adaptive', 'constant'), c('off', 'constant'), c('adaptive', 'off')))
 ```
 
 
@@ -211,62 +211,6 @@ posterior_draws_diff %>%
   stat_halfeye(aes(x = .epred, y = cond)) + 
   geom_vline(xintercept = 0, linetype = 2)
 ```
-
-
-# model 2
-
-```{r}
-df_between_more <- read_csv('df_between_more.csv')
-```
-
-
-## Step 1
-Use the get_prior function to check out the default priors:
-
-```{r}
-get_prior(wpm ~ cond + (1|user_id),  data = df_between_more)
-```
-
-
-## Step 2
-
-Update to proper priors 
-
-```{r}
-priors_choice <- c(
-  prior(normal(0, 5), class = 'b'),
-  prior(normal(50, 10), class = 'Intercept'),
-  prior(normal(0, 2), class = 'sd', lb = 0),
-  prior(normal(0, 2), class = 'sigma', lb = 0)
-)
-```
-
-
-this is a placeholder for visualizing the priors
-
-
-```{r}
-m_rand_intercepts <- brm(
-  wpm ~ cond + (1|user_id), 
-  data = df_between_more,
-  family = student(), 
-  prior = priors_choice,
-  seed = 1234
-)
-
-```
-
-
-```{r}
-m_rand_intercepts %>% 
-  add_epred_draws(
-    newdata,
-    re_formula = NA # remove random intercepts
-  ) %>% 
-ggplot() +
-  stat_slab(aes(x = .epred, y = cond))
-```
-
 
 
 
