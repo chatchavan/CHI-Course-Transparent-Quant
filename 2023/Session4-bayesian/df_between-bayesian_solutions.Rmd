@@ -411,6 +411,3 @@ posterior_draws_diff %>%
 ```
 
 
-
-
-

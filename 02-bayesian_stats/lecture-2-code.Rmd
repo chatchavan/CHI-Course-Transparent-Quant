@@ -100,6 +100,12 @@ pose_df = readr::read_csv("data/poses_data.csv", show_col_types = FALSE) %>%
   group_by(participant)
 ```
 
+
+```{r}
+head(pose_df %>% select(participant, condition, change))
+```
+
+
 The data has been aggregated for each participant: - `condition = expansive` indicates expansive posture, and `condition = constrictive` indicates constrictive posture - The dependent variable is `change` which indicates the percentage change in risk-taking behavior. Thus, it is a continuous variable.
 
 For the purposes of this demo, we are only concerned with these two variables. We can ignore the other variables for now. 
@@ -589,12 +595,12 @@ summary(model.1)
 
 Fumeng: I think this is bascially predictive checks below?
 
-```{r}
+```{r fig.height=3, fig.width=7}
 pose_df.bayesiant.y <- pose_df$change
 
 pose_df.bayesiant.yrep <- posterior_predict(model.1, ndraws = 30, seed = 1234)
 
-ppc_dens_overlay(pose_df.bayesiant.y, pose_df.bayesiant.yrep)
+ppc_dens_overlay(pose_df.bayesiant.y, pose_df.bayesiant.yrep, linewidth = 2)
 ```
 
 Now we check the posterior prediction of this model to ensure that it generates reasonable predictions. 
