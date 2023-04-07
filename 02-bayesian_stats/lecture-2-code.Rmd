@@ -945,13 +945,13 @@ head(pose_raw_df)
 ```
 
 
-```{r}
+```{r fig.height = 4, fig.width = 9}
 pose_raw_df %>%
   mutate(c = as.factor(condition)) %>%
   ggplot(aes(x = pumps)) +
   geom_histogram(
     aes(y = ..density..),
-    binwidth = 1,
+    binwidth = 2,
     fill = theme_yellow,
     alpha = .5,
     color = 'white'
@@ -959,13 +959,13 @@ pose_raw_df %>%
   geom_density(size = 1,
                adjust = 3,
                color = theme_blue) +
-   geom_function(
+  geom_function(
     color = "#222222",
     linetype = 'dashed',
     fun = function(x) # need to fix
-      dpois(round(x), lambda = 37), # this does not use the log-link but brm does so the prior below is # log(387)
+      dnbinom(round(x), size = 3, mu = 40), # this does not use the log-link but brm does so the prior below is # log(387)
     size = 1
-  ) + 
+  ) +
   theme(
     axis.line.y = element_blank(),
     axis.text.y = element_blank(),
@@ -976,11 +976,16 @@ pose_raw_df %>%
 
 ## Step 1: model specification
 
+Abhraneel: not sure if this parameterisation is correct!!
+
 $$
 \begin{align}
-y_{i} &\sim \mathrm{Poisson}(\lambda) \\
-log(\lambda) &= \beta_{i,j} + \beta_{1} * x_i \\
-\beta_{1} &\sim \mathrm{Normal}(0, 1) \\
+y_{i} &\sim \mathrm{Neg-Binomial}(\mu, \phi) \\
+log(\mu) &= \beta_{0} + \beta_{0,j} + \beta_{1} * x_i \\
+\beta_{0} &\sim \mathrm{Normal}(3.5, 0.5) \\
+\beta_{0, j} &\sim \mathrm{Student\_t}(3, 0, 1) \\
+\beta_{1} &\sim \mathrm{Normal}(0, 0.5) \\
+\phi &\sim \mathrm{Gamma}(3, 1) \\
 i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}\\
 j & \in \{1, ..., \mathrm{N}\}
 \end{align}
@@ -991,10 +996,12 @@ $$
 
 ```{r}
 model.4.prior_pred = brm(pumps ~ 1 + condition + (1 | participant),
-                      data = pose_raw_df, family = poisson,
-                      prior = c(prior(normal(3.6, 0.5), class = Intercept),
-                                prior(normal(0, 0.5), class = b)
-                      ),  # this is the brms default
+                      data = pose_raw_df, family = negbinomial(),
+                      prior = c(prior(normal(3.5, 0.5), class = Intercept),
+                                prior(normal(0, 0.5), class = b),
+                                prior(student_t(3, 0, 1), class = sd),
+                                prior(gamma(3, 1), class = shape)
+                      ),
                       backend = BRM_BACKEND,
                       sample_prior = "only",
                       iter = 4000, warmup = 1000, cores = 4, chains = 4)
@@ -1010,44 +1017,36 @@ head(model.4.prior_pred.samples)
 
 
 ```{r }
-  ggplot() +
-  geom_histogram(
-    data = pose_raw_df,
-    mapping = aes(x = pumps, y = ..density..),
-    binwidth = 1,
-    alpha = 1,
-    fill = theme_yellow,
-    color = 'white'
-  ) +
-  geom_density(model.4.prior_pred.samples,
+ggplot() +
+geom_histogram(
+  data = pose_raw_df,
+  mapping = aes(x = pumps, y = ..density..),
+  binwidth = 1,
+  alpha = 1,
+  fill = theme_yellow,
+  color = 'white'
+) +
+geom_density(model.4.prior_pred.samples,
                mapping = aes(x = .prediction, y = ..density..), adjust = 2, stroke = theme_blue) +
-   geom_function(
-    color = "#222222",
-    linetype = 'dashed',
-    fun = function(x)
-        dpois(round(x), lambda = 35),
-    size = 1
- ) +
-  theme_density_x + 
- coord_cartesian(xlim = c(0, 100))
+theme_density_x + 
+coord_cartesian(xlim = c(0, 100))
 ```
 
 ## Step 3: model fitting
 
 ```{r}
 model.4 = brm(pumps ~ 1 + condition + (1 | participant),
-                      data = pose_raw_df, family = poisson,
-                      prior = c(prior(normal(3.6, 0.5), class = Intercept),
-                                prior(normal(0, 0.5), class = b)
-                      ),  # this is the brms default
+                      data = pose_raw_df, family = negbinomial(),
+                      prior = c(prior(normal(3.5, 0.5), class = Intercept),
+                                prior(normal(0, 0.5), class = b),
+                                prior(student_t(3, 0, 1), class = sd),
+                                prior(gamma(3, 1), class = shape)
+                      ),
                       backend = BRM_BACKEND,
                       file = 'rds/model.4.rds',
                       file_refit = 'on_change' ,
                       iter = 4000, warmup = 1000, cores = 4, chains = 4)
-```
 
-
-```{r}
 summary(model.4)
 ```
 
