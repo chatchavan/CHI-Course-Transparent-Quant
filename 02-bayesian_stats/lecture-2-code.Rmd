@@ -330,20 +330,25 @@ Fumeng: the content below needs better documentation....
 
 ## Understanding the data
 
+We plot the data distribution, the empirical density curve (blue line), and the theoretical density curve (black line).
+
 ```{r}
 pose_df %>%
   mutate(c = as.factor(condition)) %>%
   ggplot(aes(x = change)) +
+  # data distribution
   geom_histogram(
     aes(y = ..density..),
     binwidth = 10,
     fill = theme_yellow,
-    alpha = .5,
+    alpha = .75,
     color = 'white'
   ) +
+  # empirical density curve
   geom_density(size = 1,
                adjust = 1.5,
                color = theme_blue) +
+  #  theoretical density curve, a t distribition with mean = 16, sd = 19, and nu = 6
    geom_function(
     color = "#222222",
     linetype = 'dashed',
@@ -363,9 +368,7 @@ pose_df %>%
 
 ## Step 1: model specification
 
-Fumeng: I hope to keep this example simple. Is there a __simple__ way to justify the choice of $\nu$? 
-
-Here we use a mathematical expression for the model above. Fumeng: need explanations here...
+Here we use a mathematical expression for the model above. 
 
 $$
 \begin{align}
@@ -392,7 +395,6 @@ model.1.formula <- bf(
 
 Now we can use `get_prior()` to inspect the available priors and formula. As what we learned, we have priors for 
 
-
 ```{r}
 tibble(get_prior(model.1.formula, pose_df))
 ```
@@ -400,7 +402,7 @@ tibble(get_prior(model.1.formula, pose_df))
 
 ### prior checks
 
-Look at the default priors
+We look at the default priors from brms.
 
 ```{r fig.height=4, fig.width=15}
 cowplot::plot_grid(
@@ -423,7 +425,7 @@ ncol = 3)
 
 ```
 
-prior check for default priors
+We do a prior check for default priors to see the range of prior predictions.
 
 ```{r}
 model.1.checks_default <- brm(
@@ -431,16 +433,19 @@ model.1.checks_default <- brm(
   data = pose_df, 
   family = student_t(),
   prior = c(
+    # need some priors for brms
     prior(normal(0, 3), class = 'b')
   ),
+  # to allow draw from prior distributions
   sample_prior = 'only',
-  #backend = BRM_BACKEND,
+  backend = BRM_BACKEND,
+  # save the model
   file = 'rds/model.1.checks_default.rds',
   file_refit = 'on_change' 
 )
 ```
 
-plot 
+We draw from prior distributions using `predicted_draws`. 
 
 ```{r}
 model.1.defaultpriorsamples <- 
@@ -448,9 +453,14 @@ model.1.defaultpriorsamples <-
     predicted_draws(tibble(condition = c('expansive', 'constrictive')))
 ```
 
+
+Take a look at the prior prediction draws. You can ignore `.row`,`.chain`, '.iteration'. The `.draw` is the ID for each draw. `.prediction` is the value we care about.
+
 ```{r}
 head(model.1.defaultpriorsamples)
 ```
+
+We plot out the prediction draws. They look reasonable but have a wide range. We would expect so given the ranges of the priors.   
 
 ```{r  fig.height=2.5}
 model.1.defaultpriorsamples %>% 
@@ -460,24 +470,30 @@ model.1.defaultpriorsamples %>%
   ggtitle('Checks default priors of model.1')
 ```
 
-Our priors
+We want to use narrow priors. 
 
-```{r fig.height=3, fig.width=7}
+```{r fig.height=3, fig.width=10}
 cowplot::plot_grid(
+tibble(x = qstudent_t(ppoints(n = 1000), mu = 22.6, sigma = 10, df = 3)) %>% 
+  ggplot() +
+  geom_density(aes(x = x), fill = theme_yellow, color = NA) +
+  ggtitle('t(3, 22.6, 10) for Intercept') +
+  coord_cartesian(xlim = c(-30, 80), expand = 0),
 tibble(x = qnorm(ppoints(n = 1000), mean = 0, sd = 2)) %>% 
   ggplot() +
   geom_density(aes(x = x), fill = theme_yellow, color = NA) +
-  ggtitle('Normal(0, 2) for b & Intercept') +
+  ggtitle('Normal(0, 2) for b') +
   coord_cartesian(xlim = c(-8, 8), expand = 0),
 tibble(x = qnorm(ppoints(n = 1000), mean = 0, sd = 10)) %>% 
   ggplot() +
   geom_density(aes(x = x), fill = theme_yellow, color = NA) +
   ggtitle('HalfNormal(0, 10) for sigma') +
   coord_cartesian(xlim = c(0, 50), expand = c(0)),
-ncol = 2)
+ncol = 3)
 ```
 
 
+We can do another prior check.
 
 ```{r}
 model.1.checks <- brm(
@@ -490,13 +506,13 @@ model.1.checks <- brm(
     prior(normal(0, 10), class = 'sigma', lb = 0)
   ),
   sample_prior = 'only',
-  #backend = BRM_BACKEND,
+  backend = BRM_BACKEND,
   file = 'rds/model.1.checks.rds',
   file_refit = 'on_change' 
 )
 ```
 
-plot 
+We draw from the new prior distribution.
 
 ```{r}
 model.1.priorsamples <- 
@@ -505,7 +521,7 @@ model.1.priorsamples <-
 ```
 
 
-Compare two sets of priors
+We compare two sets of prior distributions. Visually, using our priors have a narrower range. 
 
 ```{r  fig.height=5}
 cowplot::plot_grid(
@@ -514,21 +530,23 @@ model.1.defaultpriorsamples %>%
   ggplot(aes(x = .prediction, group = condition)) +
   geom_density(alpha = .5, color = NA, adjust = 2, fill = theme_yellow) +
   theme_density_x + 
-  #coord_cartesian(xlim = c(-800, 800)) + 
-  ggtitle('Checks default priors of model.1')
+  # coord_cartesian(xlim = c(-800, 1000)) +
+  ggtitle('Checks for default priors of model.1')
 ,
 model.1.priorsamples %>% 
   ggplot(aes(x = .prediction, group = condition)) +
   geom_density(alpha = .5, color = NA, adjust = 2, fill = theme_yellow) +
   theme_density_x + 
-  #coord_cartesian(xlim = c(-800, 800)) + 
-  ggtitle('Checks our priors of model.1')
+  # coord_cartesian(xlim = c(-800, 1000)) +
+  ggtitle('Checks for our priors of model.1')
 ,
 ncol = 1)
 ```
 
 
 ## Step 2: model fitting
+
+Now we can fit the model. This model takes a
 
 ```{r}
 model.1 <- brm(
@@ -548,6 +566,8 @@ model.1 <- brm(
 
 ### aspect 1: mcmc traces
 
+First, we check the MCMC traces to ensure that the chains are mixed well.
+
 ```{r}
 color_scheme_set("teal")
 mcmc_trace(model.1, facet_args = list(ncol = 4))
@@ -559,13 +579,15 @@ plot(model.1)
 
 ### aspect 2: model metrics
 
-Rhat, ESS, etc here
+We also check Rhat and ESS. We want Rhat to be close to 1 to ensure model convergence. We want Bulk ESS (effective sample size) to be at least a few hundreds (ideally, this should be at least a thousand.) to ensure reliable estimate of mean. We also want Tail ESS to be at this level. If ESSs are too low, it means there are too many correlations in posteriors draws. You need to increase the number of iterations and perhaps the number of chains. 
 
 ```{r}
 summary(model.1)
 ```
 
 ### aspect 3: visually
+
+Fumeng: I think this is bascially predictive checks below?
 
 ```{r}
 pose_df.bayesiant.y <- pose_df$change
@@ -575,14 +597,14 @@ pose_df.bayesiant.yrep <- posterior_predict(model.1, ndraws = 30, seed = 1234)
 ppc_dens_overlay(pose_df.bayesiant.y, pose_df.bayesiant.yrep)
 ```
 
-
-Fumeng: do we need this?
+Now we check the posterior prediction of this model to ensure that it generates reasonable predictions. 
 
 ```{r}
 model.1.predictions <- 
   model.1 %>% 
     predicted_draws(tibble(condition = c('expansive', 'constrictive')))
 ```
+
 
 ```{r}
 head(model.1.predictions)
@@ -609,7 +631,10 @@ plot_predictions <- function(model, df = NULL, title = ''){
     coord_cartesian(xlim = c(-150, 250)) + 
     ggtitle(paste0('Posterior predictions of ', deparse(substitute(model))))
 }
+```
 
+
+```{r}
 cowplot::plot_grid(plot_predictions(model.1), 
                    p1 + 
                     scale_x_continuous(breaks = seq(-150, 250, by = 100)) +
@@ -617,6 +642,7 @@ cowplot::plot_grid(plot_predictions(model.1),
                    nrow = 2)
 ```
 
+We now generate the posterior predictions of means, which are of interests here. 
 
 ```{r}
 model.1.posteriors <- 
@@ -624,10 +650,14 @@ model.1.posteriors <-
     epred_draws(tibble(condition = c('expansive', 'constrictive')))
 ```
 
+
+Fumeng: I would save this
+<!--
 ```{r fig.height = 2, fig.width = 9}
-# model.1.posteriors %>%
-#   ungroup() %>%
-#   compare_levels(variable = .epred, by = condition) %>%
+model.1.posteriors %>%
+  ungroup() %>%
+  # compare the 
+  compare_levels(variable = .epred, by = condition) %>%
   median_qi(.width = .95) %>%
   ggplot() + 
   geom_pointinterval(aes(x = .epred, y = condition, xmin = .lower, xmax = .upper)) +
@@ -641,6 +671,7 @@ model.1.posteriors <-
     axis.title.y = element_blank()
   )
 ```
+-->
 
 
 
@@ -738,7 +769,7 @@ model.2.priorchecks <- brm(
     prior(exponential(0.0333), class = 'nu')
   ),
   sample_prior = 'only',
-  #backend = BRM_BACKEND,
+  backend = BRM_BACKEND,
   file = 'rds/model.2.priorchecks.rds',
   file_refit = 'on_change' 
 )
@@ -964,6 +995,7 @@ model.4.prior_pred = brm(pumps ~ 1 + condition + (1 | participant),
                       prior = c(prior(normal(3.6, 0.5), class = Intercept),
                                 prior(normal(0, 0.5), class = b)
                       ),  # this is the brms default
+                      backend = BRM_BACKEND,
                       sample_prior = "only",
                       iter = 4000, warmup = 1000, cores = 4, chains = 4)
 ```
@@ -977,20 +1009,27 @@ head(model.4.prior_pred.samples)
 ```
 
 
-```{r  fig.height=2.5}
-model.4.prior_pred.samples %>% 
+```{r }
   ggplot() +
   geom_histogram(
     data = pose_raw_df,
-    aes(x = pumps, y = ..density..),
-    binwidth = 10,
-    alpha = .5,
+    mapping = aes(x = pumps, y = ..density..),
+    binwidth = 1,
+    alpha = 1,
     fill = theme_yellow,
     color = 'white'
   ) +
-  geom_density(aes(x = .prediction), adjust = 2, stroke = theme_blue) +
-  theme_density_x #+ 
-  # coord_cartesian(xlim = c(0, 200))
+  geom_density(model.4.prior_pred.samples,
+               mapping = aes(x = .prediction, y = ..density..), adjust = 2, stroke = theme_blue) +
+   geom_function(
+    color = "#222222",
+    linetype = 'dashed',
+    fun = function(x)
+        dpois(round(x), lambda = 35),
+    size = 1
+ ) +
+  theme_density_x + 
+ coord_cartesian(xlim = c(0, 100))
 ```
 
 ## Step 3: model fitting
@@ -1001,6 +1040,7 @@ model.4 = brm(pumps ~ 1 + condition + (1 | participant),
                       prior = c(prior(normal(3.6, 0.5), class = Intercept),
                                 prior(normal(0, 0.5), class = b)
                       ),  # this is the brms default
+                      backend = BRM_BACKEND,
                       file = 'rds/model.4.rds',
                       file_refit = 'on_change' ,
                       iter = 4000, warmup = 1000, cores = 4, chains = 4)
