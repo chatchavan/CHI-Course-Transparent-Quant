@@ -951,19 +951,19 @@ pose_raw_df %>%
   ggplot(aes(x = pumps)) +
   geom_histogram(
     aes(y = ..density..),
-    binwidth = 10,
+    binwidth = 1,
     fill = theme_yellow,
     alpha = .5,
     color = 'white'
   ) +
   geom_density(size = 1,
-               adjust = 1.5,
+               adjust = 3,
                color = theme_blue) +
    geom_function(
     color = "#222222",
     linetype = 'dashed',
     fun = function(x) # need to fix
-      dpois(x, lambda = 37), # this does not use the log-link but brm does so the prior below is # log(387)
+      dpois(round(x), lambda = 37), # this does not use the log-link but brm does so the prior below is # log(387)
     size = 1
   ) + 
   theme(
