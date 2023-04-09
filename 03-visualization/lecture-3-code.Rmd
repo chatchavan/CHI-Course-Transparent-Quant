@@ -1,7 +1,7 @@
 ---
 title: "Session 3 Uncertainty visualizations"
-author: "Xiaoying Pu, Lace Padilla"
-date: "3/3/2022"
+author: "Xiaoying Pu"
+date: "4/9/2023"
 output: html_document
 editor_options: 
   markdown: 
@@ -27,7 +27,7 @@ theme_set(theme_tidybayes())
 
 ## Introduction
 
-We will revisit Dataset 1 from last time, focusing on exploring how to
+We will use the `blinded.csv` again, focusing on exploring how to
 make **visualizations** instead of doing the analysis. By the end of
 this tutorial, you will learn to:
 
@@ -38,9 +38,8 @@ this tutorial, you will learn to:
 
 ### Expectations
 
-I will run R code and use a Miro board in this tutorial. You can access
-the same code in your Rstudio Cloud. Ideally, you will follow along and
-run code with me. There are many activities where you can
+I will run R code and use a Miro board in this tutorial. Ideally, you will 
+follow along and run code with me. There are many activities where you can
 **participate** and ask **questions** (any time!).
 
 **TIP**: RStudio shows document outline
@@ -288,7 +287,8 @@ preds_t_freq %>%
 ### Activity 2.3 Putting it together
 
 A plot showing the confidence distribution for the frequentist t-test. I
-will demonstrate uncommenting code chunks to build up the plot. (Keyboard shortcut: Ctrl+Shift+C on Windows or Shift+Command+C on macOS) 
+will demonstrate uncommenting code chunks to build up the plot. 
+(Keyboard shortcut: Ctrl+Shift+C on Windows or Shift+Command+C on macOS) 
 
 **TIP** adding annotation (direct labeling) can increase usability
 
