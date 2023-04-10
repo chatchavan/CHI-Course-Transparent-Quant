@@ -131,7 +131,7 @@ mu_post = function(mu_prior, sigma_prior, mu, sigma, n = 1) {
 ```{r}
 d.p2 = tibble(
   group = c("prior", "expansive", "constrictive", "posterior"), 
-  mu = c(20, 32.82, 31.61, mu_post(20, 20, 32.82, 7.52)), 
+  mu = c(0, 32.82, 31.61, mu_post(0, 20, 32.82, 7.52)), 
   sd = c(20, 7.52, 7.06, sigma_post(20, 7.52))
 ) %>%
   mutate(
@@ -141,7 +141,7 @@ d.p2 = tibble(
   unnest(c(cutoff_group, cutoff)) %>%
   mutate(
     cutoff = if_else(group == 'prior', 100, cutoff),
-    x = map(cutoff, ~ seq(from = -40, ., by = 0.1)),
+    x = map(cutoff, ~seq(from = -100, ., by = 0.1)),
     y = pmap(list(x, mu, sd), ~ dnorm(..1, ..2, ..3))
   )
 ```
@@ -182,7 +182,7 @@ plot_preliminary <- function(data, group_num, group_name){
   #geom_line(aes(color = group), size = 1) +
   # density
   geom_area(aes(fill = group, color = group), position = "identity", linewidth = 1, alpha = 0.3) +
-  scale_x_continuous(limits = c(-40, 100)) +
+  scale_x_continuous(limits = c(-150, 250)) +
   scale_y_continuous(limits = c(0, 0.1)) +
   scale_color_theme() +
   theme_density
@@ -240,7 +240,11 @@ cowplot::plot_grid(
   plot_preliminary(d.p2, 7, 'expansive'), 
   p1, nrow = 2)
 ```
-
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 7, c('prior', 'expansive')), 
+  p1, nrow = 2)
+```
 
 
 We want to compute the posterior, which is the product of the prior and likelihood:
@@ -329,8 +333,6 @@ if(require("gganimate") & require("magick")){
 
 
 Fumeng: the content below needs better documentation....
-
-
 
 # Model 1: Equal standard deviations
 
