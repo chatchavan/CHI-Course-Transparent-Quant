@@ -254,7 +254,7 @@ cowplot::plot_grid(
 
 Of course, if you have `gganimate` and `magick` working on your computer, you can try the following code to get a gif! Here, we are not going to show the code.
 
-```{r fig.height = 4, fig.width = 8, message=FALSE, warning=FALSE, echo=FALSE, eval=FALSE}
+```{r fig.height = 4, fig.width = 8, message=FALSE, warning=FALSE, echo=FALSE}
 if(require("gganimate") & require("magick")){
   
   library(gganimate)
