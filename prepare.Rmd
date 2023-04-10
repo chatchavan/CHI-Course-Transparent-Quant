@@ -1,0 +1,94 @@
+---
+title: "Prepare"
+output: html_document
+date: "2023-04-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Install packages that you don't have following RStudio prompts
+
+Look out for yellow banner above the source code!
+
+```{r setup, include=FALSE}
+# session 3
+library(tidyverse)
+library(tidymodels)
+library(modelr)
+library(brms)
+library(tidybayes)
+library(ggdist)
+library(distributional)
+library(ordinal)
+library(ggrepel)
+library(glue)
+library(emmeans)
+
+# + session 2
+library(gtools)
+library(patchwork)
+library(broom)
+library(broom.mixed)
+library(bayesplot)
+library(knitr)
+library(rmarkdown)
+```
+
+If RStudio doesn't help you install, try `pacman`
+
+```{r}
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(
+  tidyverse, 
+  tidymodels,
+  modelr,
+  brms,
+  tidybayes,
+  ggdist,
+  distributional,
+  ordinal,
+  ggrepel,
+  glue,
+  emmeans,
+  gtools,
+  patchwork,
+  broom,
+  broom.mixed,
+  bayesplot,
+  knitr,
+  rmarkdown
+)
+```
+
+To trouble-shoot, run `library()` one at a time
+
+Install missing packages manually with `install.packages("the_missing_package")`
+
+You may need to install the packages below for `brms`
+
+```{r}
+# install.packages("igraph")
+# install.packages("shiny")
+```
+
+Also try restarting your R session/RStudio
+
+Optional packages from session 2
+
+```{r setup, include=FALSE}
+# library(gganimate)
+# library(magick)
+```
+
+
+Run a simple Bayesian model to verify `brms` installation
+From: https://cran.r-project.org/web/packages/brms/readme/README.html
+
+```{r}
+fit1 <- brm(count ~ zAge + zBase * Trt + (1|patient),
+            data = epilepsy, family = poisson())
+summary(fit1)
+```
+
