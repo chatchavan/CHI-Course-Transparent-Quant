@@ -105,6 +105,27 @@ pose_df = readr::read_csv("data/poses_data.csv", show_col_types = FALSE) %>%
 head(pose_df %>% select(participant, condition, change))
 ```
 
+Let's plot out data
+
+```{r fig.height=5, fig.width=7}
+
+wrap_plots(
+pose_df %>% 
+  ggplot(aes(x = change, fill = condition)) +
+    geom_histogram(binwidth = 10) +
+    coord_cartesian(xlim = c(-50, 200)) +
+    scale_color_theme() + 
+    theme_density_x,
+pose_df %>% 
+  ggplot(aes(x = change)) +
+    geom_point(aes(y = 0, color = condition), size = 2) +
+    coord_cartesian(xlim = c(-50, 200)) +
+    scale_color_theme() + 
+    theme_density_x,
+nrow = 2)
+
+```
+
 
 The data has been aggregated for each participant: - `condition = expansive` indicates expansive posture, and `condition = constrictive` indicates constrictive posture - The dependent variable is `change` which indicates the percentage change in risk-taking behavior. Thus, it is a continuous variable.
 
@@ -131,7 +152,7 @@ mu_post = function(mu_prior, sigma_prior, mu, sigma, n = 1) {
 ```{r}
 d.p2 = tibble(
   group = c("prior", "expansive", "constrictive", "posterior"), 
-  mu = c(20, 32.82, 31.61, mu_post(20, 20, 32.82, 7.52)), 
+  mu = c(0, 32.82, 31.61, mu_post(0, 20, 32.82, 7.52)), 
   sd = c(20, 7.52, 7.06, sigma_post(20, 7.52))
 ) %>%
   mutate(
@@ -141,10 +162,12 @@ d.p2 = tibble(
   unnest(c(cutoff_group, cutoff)) %>%
   mutate(
     cutoff = if_else(group == 'prior', 100, cutoff),
-    x = map(cutoff, ~ seq(from = -40, ., by = 0.1)),
+    x = map(cutoff, ~seq(from = -100, ., by = 0.1)),
     y = pmap(list(x, mu, sd), ~ dnorm(..1, ..2, ..3))
   )
 ```
+
+
 
 In the plot below, we show the raw data distribution for the two conditions:
 
@@ -174,18 +197,28 @@ cowplot::plot_grid(p2.blank, p1, nrow = 2)
 First, we define a function to help us plot different cutoff groups.
 
 ```{r plot-preliminaries}
-plot_preliminary <- function(data, group_num, group_name){
+
+plot_preliminary <- function(data, group_num, group_name, linewidth_in = 1){
   data %>%
   filter(cutoff_group == group_num & group %in% group_name) %>%
   unnest(c(x, y)) %>%
   ggplot(aes(x, y)) +
   #geom_line(aes(color = group), size = 1) +
   # density
-  geom_area(aes(fill = group, color = group), position = "identity", linewidth = 1, alpha = 0.3) +
-  scale_x_continuous(limits = c(-40, 100)) +
+  geom_area(aes(fill = group, color = group, alpha = as.character(group)), position = "identity", linewidth = linewidth_in) +
+  scale_x_continuous(limits = c(-150, 250)) +
   scale_y_continuous(limits = c(0, 0.1)) +
+  scale_alpha_manual(
+    values = c(
+      'posterior' = .5,
+      'prior' = .3,
+      'expansive' = .3,
+      'constrictive' = .3
+    ),
+  ) + 
   scale_color_theme() +
-  theme_density
+  theme_density +
+  theme(legend.position = 'none')
 }
 ```
 
@@ -242,19 +275,34 @@ cowplot::plot_grid(
 ```
 
 
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 7, c('prior', 'expansive')), 
+  p1, nrow = 2)
+```
+
+
+
 
 We want to compute the posterior, which is the product of the prior and likelihood:
 
 ```{r, fig.height = 4, fig.width = 8}
 cowplot::plot_grid(
-  plot_preliminary(d.p2, 7, c('prior', 'expansive', 'posterior')), 
+  plot_preliminary(d.p2, 7, c('prior', 'expansive'), linewidth_in = 0), 
+  p1, nrow = 2)
+```
+
+
+```{r, fig.height = 4, fig.width = 8}
+cowplot::plot_grid(
+  plot_preliminary(d.p2, 7, c('posterior')), 
   p1, nrow = 2)
 ```
 
 
 Of course, if you have `gganimate` and `magick` working on your computer, you can try the following code to get a gif! Here, we are not going to show the code.
 
-```{r fig.height = 4, fig.width = 8, message=FALSE, warning=FALSE, echo=FALSE, eval=FALSE}
+```{r fig.height = 4, fig.width = 8, message=FALSE, warning=FALSE, echo=FALSE}
 if(require("gganimate") & require("magick")){
   
   library(gganimate)
@@ -325,11 +373,6 @@ if(require("gganimate") & require("magick")){
   new_gif
 }
 ```
-
-
-
-Fumeng: the content below needs better documentation....
-
 
 
 # Model 1: Equal standard deviations
@@ -593,7 +636,6 @@ summary(model.1)
 
 ### aspect 3: visually
 
-Fumeng: I think this is bascially predictive checks below?
 
 ```{r fig.height=3, fig.width=7}
 pose_df.bayesiant.y <- pose_df$change
@@ -657,7 +699,7 @@ model.1.posteriors <-
 ```
 
 
-Fumeng: I would save this
+
 <!--
 ```{r fig.height = 2, fig.width = 9}
 model.1.posteriors %>%
@@ -739,8 +781,6 @@ tibble(get_prior(model.2.formula, pose_df))
 ```
 
 ### prior check
-
-Fumeng: not sure qcauchy has the correct paramaterization
 
 ```{r fig.height=4, fig.width=15}
 cowplot::plot_grid(
@@ -826,7 +866,6 @@ wrap_plots(plot_predictions(model.2) + scale_x_continuous(limits = c(-200,250), 
 ```
 
 ```{r fig.height=5}
-# draws.model.3 = 
 wrap_plots(
   plot_posteriors(model.2), 
   p1,
