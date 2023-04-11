@@ -34,6 +34,11 @@ library(broom.mixed)
 library(bayesplot)
 library(knitr)
 library(rmarkdown)
+
+# + session 1 and 4
+library(multcomp)
+library(afex)
+library(papaja)
 ```
 
 If RStudio doesn't help you install, try `pacman`
@@ -58,7 +63,10 @@ pacman::p_load(
   broom.mixed,
   bayesplot,
   knitr,
-  rmarkdown
+  rmarkdown,
+  multcomp,
+  afex,
+  papaja
 )
 ```
 
@@ -71,15 +79,6 @@ You may need to install the packages below for `brms`
 ```{r}
 # install.packages("igraph")
 # install.packages("shiny")
-```
-
-Also try restarting your R session/RStudio
-
-Optional packages from session 2
-
-```{r setup, include=FALSE}
-# library(gganimate)
-# library(magick)
 ```
 
 
