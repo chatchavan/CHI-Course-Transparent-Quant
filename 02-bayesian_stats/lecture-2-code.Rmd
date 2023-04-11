@@ -439,7 +439,7 @@ model.1.checks_default <- brm(
   data = pose_df, 
   family = student_t(),
   prior = c(
-    # need some priors for brms
+    # need proper priors for prior predictive checks
     prior(normal(0, 3), class = 'b')
   ),
   # to allow draw from prior distributions
@@ -938,7 +938,7 @@ p1, nrow = 2, heights = c(4,1.5))
 ```
 
 
-# Model 4: Poisson / Negative-Binomial Regression model
+# Model 4: Negative-Binomial Regression model
 
 ## Understanding the data
 
@@ -948,6 +948,26 @@ pose_raw_df = read.csv("data/posture_data-raw.csv") %>%
   rename(trial = trial.number)
 
 head(pose_raw_df)
+```
+
+```{r fig.height = 3, fig.width = 9}
+tibble(x = seq(1, 160, by = 1)) %>%
+  ggplot(aes(x)) +
+  geom_function(
+    color = theme_blue,
+    linetype = 'dashed',
+    fun = function(x) # need to fix
+      dnbinom(round(x), size = 5, mu = 64),
+    size = 1
+  ) +
+  coord_cartesian(xlim = c(0, 160)) +
+  theme(
+    axis.line.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank(),
+    axis.text.x = element_text(size = 16)
+  )
 ```
 
 
@@ -982,18 +1002,15 @@ pose_raw_df %>%
 
 ## Step 1: model specification
 
-Abhraneel: not sure if this parameterisation is correct!!
-
 $$
 \begin{align}
 y_{i} &\sim \mathrm{Neg-Binomial}(\mu, \phi) \\
-log(\mu) &= \beta_{0} + \beta_{0,j} + \beta_{1} * x_i \\
-\beta_{0} &\sim \mathrm{Normal}(3.5, 0.5) \\
+log(\mu) &= \beta_{0} + \beta_{1} . x_i \\
+\beta_{0} &\sim \mathrm{Normal}(4.1, 0.5) \\
 \beta_{0, j} &\sim \mathrm{Student\_t}(3, 0, 1) \\
 \beta_{1} &\sim \mathrm{Normal}(0, 0.5) \\
-\phi &\sim \mathrm{Gamma}(3, 1) \\
+\phi &\sim \mathrm{Gamma}(5, 1) \\
 i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}\\
-j & \in \{1, ..., \mathrm{N}\}
 \end{align}
 $$
 
@@ -1001,14 +1018,15 @@ $$
 ## Step 2: prior predictive checks
 
 ```{r}
-model.4.prior_pred = brm(pumps ~ 1 + condition + (1 | participant),
+model.4.prior_pred = brm(pumps ~ 1 + condition,
                       data = pose_raw_df, family = negbinomial(),
-                      prior = c(prior(normal(3.5, 0.5), class = Intercept),
+                      prior = c(prior(normal(4.1, 0.5), class = Intercept),
                                 prior(normal(0, 0.5), class = b),
-                                prior(student_t(3, 0, 1), class = sd),
-                                prior(gamma(3, 1), class = shape)
+                                prior(gamma(5, 1), class = shape)
                       ),
                       backend = BRM_BACKEND,
+                      file = 'rds/model.4.prior_predictive.rds',
+                      file_refit = 'on_change' ,
                       sample_prior = "only",
                       iter = 4000, warmup = 1000, cores = 4, chains = 4)
 ```
@@ -1021,32 +1039,33 @@ model.4.prior_pred.samples <- model.4.prior_pred %>%
 head(model.4.prior_pred.samples)
 ```
 
-
-```{r }
+```{r, fig.height = 4, fig.width = 9}
 ggplot() +
 geom_histogram(
   data = pose_raw_df,
   mapping = aes(x = pumps, y = ..density..),
-  binwidth = 1,
-  alpha = 1,
+  binwidth = 10,
+  alpha = 0.5,
   fill = theme_yellow,
   color = 'white'
 ) +
 geom_density(model.4.prior_pred.samples,
-               mapping = aes(x = .prediction, y = ..density..), adjust = 2, stroke = theme_blue) +
+               mapping = aes(x = .prediction, y = ..density..), adjust = 1, stroke = theme_blue, size = 1) +
 theme_density_x + 
-coord_cartesian(xlim = c(0, 100))
+coord_cartesian(xlim = c(0, 150)) +
+theme(
+  axis.text.x = element_text(size = 16)
+)
 ```
 
 ## Step 3: model fitting
 
 ```{r}
-model.4 = brm(pumps ~ 1 + condition + (1 | participant),
+model.4 = brm(pumps ~ 1 + condition,
                       data = pose_raw_df, family = negbinomial(),
-                      prior = c(prior(normal(3.5, 0.5), class = Intercept),
+                      prior = c(prior(normal(4.1, 0.5), class = Intercept),
                                 prior(normal(0, 0.5), class = b),
-                                prior(student_t(3, 0, 1), class = sd),
-                                prior(gamma(3, 1), class = shape)
+                                prior(gamma(5, 1), class = shape)
                       ),
                       backend = BRM_BACKEND,
                       file = 'rds/model.4.rds',
@@ -1132,18 +1151,15 @@ model.4.posteriors %>%
 
 Plot out the posteriors for mean.
 
-```{r fig.height=7}
-wrap_plots(
-  model.4.posteriors %>% 
+```{r}
+model.4.posteriors %>% 
  ggplot(aes(x = .epred, fill = condition)) +
-    geom_density(alpha = .5, size = 1, color = NA) +
+    stat_halfeye(.width = .95) +
     scale_color_theme() +
     facet_wrap(condition ~ ., ncol = 1) + 
     theme_density_x + 
-    scale_x_continuous(limits = c(-100, 250), breaks = seq(-100, 250, by = 50)) +
-    ggtitle(paste0('Posterior means of ', deparse(substitute(model)))), 
-  p1,
-nrow = 2)
+    scale_x_continuous(limits = c(30, 50), breaks = seq(0, 60, by = 10)) +
+    ggtitle(paste0('Posterior means of ', deparse(substitute(model))))
 ```
 
 From this, we can see that there does not appear to be a difference between the two conditions.
@@ -1237,6 +1253,134 @@ ggplot() +
 
 ```
 
+
+# Model 5 (Bonus): Negative-Binomial Regression model with other predictors
+
+## Step 1: model specification
+
+$$
+\begin{align}
+y_{i} &\sim \mathrm{Neg-Binomial}(\mu, \phi) \\
+log(\mu) &= \beta_{0,k} + \beta_{1} . x_i + \beta_j . x_j  \\
+\beta_{0, j} &\sim \mathrm{Normal}(\alpha, \sigma) \\
+\alpha &\sim \mathrm{Normal}(4.1, 0.5) \\
+\sigma &\sim \mathrm{Exponential}(2) \\
+\beta_{0, j} &\sim \mathrm{Student\_t}(3, 0, 1) \\
+\beta_{1} &\sim \mathrm{Normal}(0, 0.5) \\
+\phi &\sim \mathrm{Gamma}(5, 1) \\
+i & \in \{\mathrm{expansive}, \mathrm{constrictive}\}\\
+j & \in \{1, ..., \mathrm{N}\}
+\end{align}
+$$
+
+## Step 2: model fitting
+
+```{r}
+model.5 = brm(pumps ~ 1 + condition + trial + (1|participant),
+                      data = pose_raw_df, family = negbinomial(),
+                      prior = c(prior(normal(4.1, 0.5), class = Intercept),
+                                prior(normal(0, 0.5), class = b),
+                                prior(exponential(2), class = sd),
+                                prior(gamma(5, 1), class = shape)
+                      ),
+                      backend = BRM_BACKEND,
+                      file = 'rds/model.4.rds',
+                      file_refit = 'on_change' ,
+                      iter = 4000, warmup = 1000, cores = 4, chains = 4)
+
+summary(model.5)
+```
+
+```{r}
+pose_raw_df.bayesian_poisson.y <- pose_raw_df$pumps
+
+pose_raw_df.bayesian_poisson.yrep <- posterior_predict(model.5, ndraws = 30, seed = 1234)
+
+ppc_dens_overlay(y = pose_raw_df.bayesian_poisson.y,
+                 yrep = pose_raw_df.bayesian_poisson.yrep)
+```
+
+```{r}
+summary(model.5)
+```
+
+
+## Step 3: model interpretation
+The results of this model are on the log-odds scale. What do the coefficients mean? The simplest way is to simply transform the data into a more interpretable scale and visualise the results:
+
+```{r fig.height=5}
+p.model.5 = pose_raw_df %>%
+  ggplot() +
+  geom_point(aes(x = pumps, y = condition, colour = condition), 
+             position = position_jitter(height = 0.1), alpha = 0.7) +
+  scale_color_theme() + 
+  labs(y = "Condition") +
+  theme(
+    legend.position = "none", 
+    axis.line.y = element_blank(), 
+    axis.ticks.y = element_blank(),
+    axis.title.y = element_blank()
+  ) +
+  scale_x_continuous(limits = c(0, 130), breaks = seq(0, 150, by = 30))
+
+draws.model.5 = plot_predictions(model.5, df = crossing(condition = c('expansive', 'constrictive'), 
+                                          trial = 0:29,
+                                          participant = 0)) + 
+    scale_x_continuous(breaks = seq(0, 150, by = 30)) +
+    coord_cartesian(xlim = c(0, 150))
+
+wrap_plots(
+  draws.model.5, 
+  p.model.5,
+nrow = 2)
+```
+
+
+We generate the average of 30 trials using an average participant.
+
+```{r, fig.height = 2, fig.width = 9}
+model.5.posteriors <-  model.5 %>% 
+    epred_draws(crossing(condition = c('expansive', 'constrictive'),     
+                       trial = 0:29),
+                re_formula = NA,
+                allow_new_levels  = FALSE) %>% 
+  mutate(model = 'model 5')  %>% 
+  group_by(.draw, condition) %>% 
+  summarise(.epred = mean(.epred))
+
+model.5.posteriors %>%
+  ungroup() %>%
+  compare_levels(.epred, by = condition) %>%
+  median_qi(.width = .95) %>%
+  ggplot() + 
+  geom_pointinterval(aes(x = .epred, y = condition, xmin = .lower, xmax = .upper)) +
+  geom_vline(xintercept = 0, linetype = 2, color = "#979797") +
+  scale_x_continuous(breaks = seq(-10, 10, by = 2)) +
+  coord_cartesian(xlim = c(-10, 10)) +
+  xlab("Difference in Mean") +
+  theme(
+    axis.text.x = element_text(size = 14),
+    axis.text.y = element_text(size = 14),
+    axis.title.x = element_text(size = 16),
+    axis.title.y = element_blank()
+  )
+```
+
+
+Plot out the posteriors for mean.
+
+```{r}
+model.5.posteriors %>% 
+ ggplot(aes(x = .epred, fill = condition)) +
+    stat_halfeye(.width = .95) +
+    scale_color_theme() +
+    facet_wrap(condition ~ ., ncol = 1) + 
+    theme_density_x + 
+    scale_x_continuous(limits = c(30, 50), breaks = seq(0, 60, by = 10)) +
+    ggtitle(paste0('Posterior means of ', deparse(substitute(model))))
+```
+
+From this, we can see that there does not appear to be a difference between the two conditions.
 
 # Session info
 
