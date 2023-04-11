@@ -108,7 +108,6 @@ head(pose_df %>% select(participant, condition, change))
 Let's plot out data
 
 ```{r fig.height=5, fig.width=7}
-
 wrap_plots(
 pose_df %>% 
   ggplot(aes(x = change, fill = condition)) +
@@ -410,7 +409,9 @@ pose_df %>%
     axis.line.y = element_blank(),
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank(),
-    axis.title.y = element_blank()
+    axis.title.y = element_blank(),
+    axis.text.x = element_text(size = 20),
+    axis.title.x = element_text(size = 24)
   )
 ```
 
@@ -999,13 +1000,17 @@ tibble(x = seq(1, 160, by = 1)) %>%
       dnbinom(round(x), size = 5, mu = 64),
     size = 1
   ) +
+  # stat_function(geom = "area", fill = theme_red, fun = function(x) dnbinom(round(x), size = 5, mu = 64), xlim = c(128, 160), alpha = 0.5) +
+  geom_vline(xintercept = 0, color = "red", size = 1, alpha = 0.5) +
+  geom_vline(xintercept = 128, color = "red", size = 1, alpha = 0.5) +
   coord_cartesian(xlim = c(0, 160)) +
   theme(
     axis.line.y = element_blank(),
     axis.text.y = element_blank(),
     axis.ticks.y = element_blank(),
     axis.title.y = element_blank(),
-    axis.text.x = element_text(size = 16)
+    axis.text.x = element_text(size = 16),
+    axis.title.x = element_blank()
   )
 ```
 
