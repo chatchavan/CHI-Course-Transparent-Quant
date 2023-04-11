@@ -8,9 +8,15 @@ date: "2023-04-09"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Install packages that you don't have following RStudio prompts
+Open this file in RStudio.
 
-Look out for yellow banner above the source code!
+Install packages that you don't have following RStudio prompts.
+(Look out for yellow banner above this source code file.)
+
+If you are on Linux, and there's a problem installing the `tidyverse` packages, you may need to install some libraries. See this page: https://stackoverflow.com/questions/45719942/how-to-install-tidyverse-on-ubuntu-16-04-and-17-04#:~:text=6,openssl%2Ddev 
+
+If you couldn't get it to work, plan to spend sometimes with us at the end of session 2. We will help you.
+
 
 ```{r setup, include=FALSE}
 # session 3
@@ -41,6 +47,26 @@ library(afex)
 library(papaja)
 ```
 
+# Testing
+Run the following simple Bayesian model to verify `brms` installation.
+
+```{r}
+fit1 <- brm(count ~ zAge + zBase * Trt + (1|patient),
+            data = epilepsy, family = poisson())
+summary(fit1)
+```
+
+If this part runs without error and you see the last line of the output like the following, you are good to go!:
+```
+(at convergence, Rhat = 1).
+```
+
+
+Note: This model is from [the README file of the `brms` package](https://cran.r-project.org/web/packages/brms/readme/README.html). You do not need to read this file.
+
+
+# Another way to install packages
+
 If RStudio doesn't help you install, try `pacman`
 
 ```{r}
@@ -70,24 +96,19 @@ pacman::p_load(
 )
 ```
 
-To trouble-shoot, run `library()` one at a time
+# Troubleshooting
 
-Install missing packages manually with `install.packages("the_missing_package")`
-
-You may need to install the packages below for `brms`
+1. In some cases, you may need to manually install the following packages for `brms` to work.
 
 ```{r}
 # install.packages("igraph")
 # install.packages("shiny")
 ```
 
+2. Also try restarting your R session/RStudio. Choose the menu Session -> Restart R.
 
-Run a simple Bayesian model to verify `brms` installation
-From: https://cran.r-project.org/web/packages/brms/readme/README.html
 
-```{r}
-fit1 <- brm(count ~ zAge + zBase * Trt + (1|patient),
-            data = epilepsy, family = poisson())
-summary(fit1)
-```
+3. Try running `library()` one at a time. Install missing packages manually with `install.packages("the_missing_package")` If it doesn't work, keep a screenshot of the error message and move on to the next packages. 
+
+If you couldn't get it to work, plan to spend sometimes with us at the end of session 2. We will help you.
 
