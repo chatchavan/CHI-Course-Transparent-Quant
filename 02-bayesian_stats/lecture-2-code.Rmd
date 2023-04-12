@@ -28,7 +28,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width =
 
 # Introduction
 
-In this document, we will outline the Bayesian analogs of the statistical analyses described in lecture 1 ([Github code](https://github.com/chatchavan/CHI-Course-Transparent-Quant-Lecture-1)).
+In this document, we will give you several examples of Bayesian data analysis.
 
 # Load packages
 
@@ -279,8 +279,6 @@ cowplot::plot_grid(
   plot_preliminary(d.p2, 7, c('prior', 'expansive')), 
   p1, nrow = 2)
 ```
-
-
 
 
 We want to compute the posterior, which is the product of the prior and likelihood:
