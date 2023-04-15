@@ -109,5 +109,4 @@ plot_grid(
   ggplot() +
   stat_histinterval(draws, mapping = aes(x = .prediction))
 )
-
 ```

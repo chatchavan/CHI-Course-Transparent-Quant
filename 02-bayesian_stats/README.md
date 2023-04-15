@@ -20,4 +20,4 @@ We thank the authors of the following paper that made their data publicly availa
 ## Citing
 See our course proposal: 
 
-> Chat Wacharamanotham, Fumeng Yang, Xiaoying Pu, and Abhraneel Sarma. 2023. Transparent Practices for Quantitative Empirical Research. In CHI Conference on Human Factors in Computing Systems Extended Abstracts (CHI ’23 Extended Abstracts), To appear
+> Chat Wacharamanotham, Fumeng Yang, Xiaoying Pu, and Abhraneel Sarma. 2023. Transparent Practices for Quantitative Empirical Research. In Extended Abstracts of the 2023 CHI Conference on Human Factors in Computing Systems (CHI EA ’23), April 23–28, 2023, Hamburg, Germany. ACM, New York, NY, USA, 5 pages. https://doi.org/10.1145/3544549.3574168
