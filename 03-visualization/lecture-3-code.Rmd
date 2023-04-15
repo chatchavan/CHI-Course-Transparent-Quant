@@ -311,7 +311,7 @@ means_t_freq %>%
   #     sigma = std.error)),
   #   scale = 0.5, fill = "#8c96c6",
   #   position = position_nudge(y = 0.15)) +
-  
+
   # # EXERCIESE 2: change `stat_halfeye` above to `stat_dots`
   
   # # EXERCISE 3: add a label for the confidence distribution
@@ -357,23 +357,23 @@ preds_t_freq %>%
   #     y = condition),
   #   data = df1, position = jitterer, shape = 21, size =2) +
   
-  # # Conf. distribution
+  # # Pred. distribution
   # stat_slab(
   #   aes(xdist = dist_student_t(
-  #     df = df, 
-  #     mu = .fitted, 
+  #     df = df,
+  #     mu = .fitted,
   #     sigma = .se.pred)),
   #   slab_color="#9ECAE1", fill = NA, scale = 0.7) +
   
-  # # Pred. distribution
-  # stat_pointinterval(            
+  # # Conf. distribution
+  # stat_pointinterval(
   #   aes(xdist =dist_student_t(
-  #     df = df.residual(m_t_test), 
-  #     mu = estimate, 
+  #     df = df.residual(m_t_test),
+  #     mu = estimate,
   #     sigma = std.error)),
   #   data = means_t_freq,
   #   scale = 0.5, fill = "#8c96c6",
-  #   position = position_nudge(y = 0.15)) + 
+  #   position = position_nudge(y = 0.15)) +
   
   scale_x_continuous(breaks = 1:9) +
   labs(title = "Frequentist lm(), effectiveness by condition",
@@ -452,7 +452,10 @@ Representation on the Cliff Effect in Statistical Inference. CoRR.
 # Your code here
 ```
 
+### Session feedback
 
+- What did you learn today?
+- What's still unclear?
 
 
 ## Packages Information

@@ -34,6 +34,9 @@ library(broom.mixed)
 library(bayesplot)
 library(knitr)
 library(rmarkdown)
+
+# + session 1
+library(MASS)
 ```
 
 If RStudio doesn't help you install, try `pacman`
@@ -58,7 +61,8 @@ pacman::p_load(
   broom.mixed,
   bayesplot,
   knitr,
-  rmarkdown
+  rmarkdown,
+  MASS
 )
 ```
 
