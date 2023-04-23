@@ -66,17 +66,17 @@ get_prior(
 
 ## Step 2: Set your priors
 
-Change the priors on the population-level effect coefficient (`class - "b"`) and standard deviation parameter (`class = "sigma"`):
+Change the priors on the population-level effect coefficient (`class - "b"`) and standard deviation parameter (`class = "sigma"`). Hint: `normal`, `student_t`. For reference, their parameters can be found on the [Stan reference page](https://mc-stan.org/docs/functions-reference/unbounded-continuous-distributions.html).
 
 ```{r}
 priors_choice <-  c(
     prior(
-          # TODO: plug-in your choice here
-          # hint: normal, student_t
+          # TODO: plug-in your choice in the line below (before the comma)
+          ,
           class = 'b'),
     prior(
           # TODO: plug-in your choice
-          # hint: normal, student_t
+          , 
           class = 'sigma', lb = 0)
   )
 ```
@@ -101,9 +101,10 @@ Enter the model syntax and model family below, and run the code. This will sampl
 
 ```{r}
 m_prior_check <- brm(
-  # TODO: write down the model syntax ...
+  # TODO: write down the model syntax on the line below (before the comma)
+  ,
   data = df_between,
-  family = # TODO: write down the likelihood function, 
+  family =  , # TODO: write down the likelihood function (before the comma) 
   prior = priors_choice,
   seed = 1234,
   sample_prior = 'only'
@@ -117,15 +118,17 @@ Fill in the aesthetics for ggplot to show the prior predictive distribution for 
 2. On average, the mean of the distributions should be around 50
 4. The distributions should assign probability for values less than 100 (as values greater than 100 are quite unlikely)
 
+To run the code below, you'll need to inspect the data frame `newdata_predicted`, identify the variables and enter them.
+
+
 ```{r}
-newdata <-   crossing(cond = df_between$cond)
-add_predicted_draws(
-    newdata, 
-    m_prior_check
-) %>% 
+newdata <- crossing(cond = df_between$cond)
+newdata_predicted <- add_predicted_draws(newdata, m_prior_check)
+
+newdata_predicted %>% 
 ggplot(aes(
-  x = # TODO: enter the variable for predictions here
-  y = # TODO: enter the variable for conditions here
+  x = , # TODO: enter the variable for predictions here (Don't forget a comma at the end.)
+  y =  # TODO: enter the variable for conditions here.
 )) +
 stat_halfeye()
 ```
@@ -137,8 +140,9 @@ In this step you will run the Bayesian model. Fill in the model syntax and famil
 ```{r}
 m <- brm(
   # TODO: write out the model formula 
+  wpm ~ cond,
   data = df_between,
-  family =  # TODO: write down the likelihood function, 
+  family =  student(), # TODO: write down the likelihood function, 
   prior = priors_choice,
   seed = 1234
 )
@@ -168,16 +172,17 @@ posterior_predictive_draws %>%
   ggplot() +
   stat_halfeye(
     aes(
-      x = # TODO: enter the variable here
-      y = # TODO: enter the variable here
+      x = , # TODO: enter the variable here. (Don't forget a comma.)
+      y =   # TODO: enter the variable here
     ),
     position = position_nudge(y = .1),
     height = .8
   ) +
   geom_point(df_between,
              mapping = aes(
-                x = # TODO: plug in x, 
-                y = # TODO: plug in y
+                x = , # TODO: plug in x, 
+                y =   # TODO: plug in y (Note: the variable is a column from `df_between`
+                      #      ---which is the first argument of `geom_point()`.)
              ),
              size = 5, shape = 20, alpha = .4) 
   
