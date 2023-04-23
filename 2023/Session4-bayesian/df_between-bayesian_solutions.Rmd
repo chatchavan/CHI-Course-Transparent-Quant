@@ -16,7 +16,7 @@ output:
 
 ```{r setup, include=FALSE}
 rm(list = ls(all.names = TRUE))
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 10, fig.height = 6)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width = 6, fig.height = 3)
 ```
 
 # Introduction
@@ -24,12 +24,18 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width =
 ## Load necessary packages
 
 ```{r message=FALSE, warning=FALSE}
-library(tidyverse)
-library(rlang)
+
+library(tidyverse) # data manipulation & ggplot
+
+library(rlang) # draw prior distribution
 library(distributional)
-library(brms)
-library(tidybayes)
-library(cowplot)
+
+library(brms) # bayesian modeling
+
+library(tidybayes) # extract posteriors
+
+library(cowplot) # arrange ggplot
+
 BRM_BACKEND <- ifelse(require("cmdstanr"), 'cmdstanr', 'rstan')
 
 theme_set(theme_ggdist())
@@ -41,6 +47,7 @@ In this exercise, you will use the dataset in the file `df_between.csv` which co
 
 ```{r}
 df_between <- read_csv("df_between.csv")
+
 head(df_between)
 ```
 
@@ -48,7 +55,7 @@ Next, let's plot the data to get a better understanding:
 
 ```{r}
 ggplot(df_between) +
-  stat_histinterval(aes(x = wpm, y = cond))
+  geom_point(aes(x = wpm, y = cond), size = 2)
 ```
 
 
@@ -56,7 +63,9 @@ ggplot(df_between) +
 
 First, use the `get_prior` function to check out the default priors. You will need to specify the model syntax for this research question.
 
-```{r}
+```{r eval=FALSE, include=FALSE}
+# your TODO part
+# this block does not run
 get_prior(
   # TODO: write down the model syntax ...
   ,  
@@ -65,7 +74,7 @@ get_prior(
 ```
 
 ```{r}
-# solution
+# our solution
 get_prior(
   wpm ~ cond,  
   data = df_between
@@ -77,7 +86,9 @@ get_prior(
 
 Change the priors on the population-level effect coefficient (`class - "b"`) and standard deviation parameter (`class = "sigma"`):
 
-```{r}
+```{r eval=FALSE, include=FALSE}
+# your TODO part
+# this block does not run
 priors_choice <-  c(
     prior(
           # TODO: plug-in your choice here
@@ -91,7 +102,7 @@ priors_choice <-  c(
 ```
 
 ```{r}
-# solution
+# our solution
 priors_choice <-  c(
     prior(
           normal(0, 5),
@@ -120,7 +131,11 @@ get_prior_dist(priors_choice) |>
 
 Enter the model syntax and model family below, and run the code. This will sample from the prior predictive distribution, which we will visualise in the next code block.
 
-```{r}
+```{r eval=FALSE, include=FALSE}
+
+# your TODO part
+# this block does not run
+
 m_prior_check <- brm(
   # TODO: write down the model syntax ...
   data = df_between,
@@ -133,14 +148,15 @@ m_prior_check <- brm(
 
 
 ```{r}
-# solution
+# our solution
 m_prior_check <- brm(
   wpm ~ cond,
   data = df_between,
   family = student(), 
   prior = priors_choice,
   seed = 1234,
-  sample_prior = 'only'
+  sample_prior = 'only',
+  backend = BRM_BACKEND
 )
 ```
 
@@ -150,8 +166,11 @@ Fill in the aesthetics for ggplot to show the prior predictive distribution for 
 2. On average, the mean of the distributions should be around 50
 4. The distributions should assign probability for values less than 100 (as values greater than 100 are quite unlikely)
 
-```{r}
-newdata <-   crossing(cond = df_between$cond)
+```{r eval=FALSE, include=FALSE}
+# your TODO part
+
+newdata <-  crossing(cond = df_between$cond)
+
 add_predicted_draws(
     newdata, 
     m_prior_check
@@ -165,7 +184,7 @@ stat_halfeye()
 
 
 ```{r}
-# solution
+# our solution
 newdata <- crossing(cond = df_between$cond)
 
 add_predicted_draws(
@@ -183,7 +202,9 @@ stat_halfeye()
 
 In this step you will run the Bayesian model. Fill in the model syntax and family (from Step 2) here:
 
-```{r}
+```{r eval=FALSE, include=FALSE}
+# your TODO part
+# this block does not run
 m <- brm(
   # TODO: write out the model formula 
   data = df_between,
@@ -195,13 +216,14 @@ m <- brm(
 
 
 ```{r}
-#solution
+# our solution
 m <- brm(
   wpm ~ cond,
   data = df_between,
   family = student(), 
   prior = priors_choice,
-  seed = 1234
+  seed = 1234,
+  backend = BRM_BACKEND
 )
 ```
 
@@ -213,15 +235,15 @@ summary(m)
 
 **Task:** Describe below how you would interpret and report these results
 
-
-
 ## Step 5: Posterior predictive checks
 
 The code below implements a posterior predictive checks. In other words, it compares the posterior predictive distribution from your Bayesian model with the distribution of the data. We have provided the code which will extract posterior predictive draws from your model (stored in the data frame `posterior_predictive_draws`). 
 
 To run the code below, you'll need to inspect the data frame `posterior_predictive_draws`, identify the variables and enter them to implement a posterior predictive check.
 
-```{r}
+```{r eval=FALSE, include=FALSE}
+# your TODO part
+# this block does not run
 posterior_predictive_draws = newdata %>%
   add_predicted_draws(m, ndraws = NULL, seed = 1234)
 
@@ -246,7 +268,7 @@ posterior_predictive_draws %>%
 ```
 
 ```{r}
-# solution
+# our solution
 posterior_predictive_draws = newdata %>%
   add_predicted_draws(m, ndraws = NULL, seed = 1234)
 
@@ -276,7 +298,9 @@ The code below extract posterior draws for the mean of each condition (stored in
 
 To run the code below, you'll need to inspect the data frame `posterior_draws`, identify the variables and enter them to visualise the results.
 
-```{r}
+```{r eval=FALSE, include=FALSE}
+# your TODO part
+# this block does not run
 posterior_draws <- 
 newdata %>%
   add_epred_draws(m, seed = 1234)  
@@ -301,7 +325,8 @@ posterior_draws %>%
 
 
 ```{r}
-# solution
+# our solution
+
 posterior_draws <- newdata %>%
   add_epred_draws(m, seed = 1234)  
   
@@ -328,7 +353,8 @@ Next, you will estimate the median point estimate and 95% posterior credible int
 
 The `median_qi` function calculates the median point estimate and upper and lower 95% quantile intervals based on your posterior draws (samples). However, as you want to calculate the point and interval estimates for each condition, you will need to `group_by` the condition
 
-```{r}
+```{r eval=FALSE, include=FALSE}
+# your TODO part
 posterior_draws %>% 
   group_by( 
       # TODO: plug in the variable, 
@@ -340,7 +366,7 @@ posterior_draws %>%
 
 
 ```{r}
-# solution
+# our solution
 posterior_draws %>% 
   group_by( 
      cond
@@ -364,7 +390,9 @@ posterior_draws_diff <- posterior_draws %>%
 
 Next, you will estimate the median point estimate and 95% posterior credible intervals for the difference between the conditions using the `median_qi` function.
 
-```{r}
+```{r eval=FALSE, include=FALSE}
+# your TODO part
+# this block does not run
 posterior_draws_diff %>% 
   group_by( 
      # TODO: plug in the variable, 
@@ -376,7 +404,7 @@ posterior_draws_diff %>%
 
 
 ```{r}
-# solution
+# our solution
 posterior_draws_diff %>% 
   group_by( 
     cond
@@ -388,7 +416,9 @@ posterior_draws_diff %>%
 
 Finally, we can visualise the result i.e. the mean difference between each pair of conditions. Enter the `x` and `y` variables to visualise the posterior mean difference between each pair of conditions:
 
-```{r}
+```{r eval=FALSE, include=FALSE}
+# your TODO part
+# this block does not run
 posterior_draws_diff %>% 
   ggplot() + 
   stat_halfeye(aes(
@@ -400,7 +430,7 @@ posterior_draws_diff %>%
 
 
 ```{r}
-# solution
+# our solution
 posterior_draws_diff %>% 
   ggplot() + 
   stat_halfeye(aes(
@@ -410,4 +440,11 @@ posterior_draws_diff %>%
   geom_vline(xintercept = 0, linetype = 2)
 ```
 
+# Session Info
+
+```{r}
+
+sessionInfo()
+
+```
 
