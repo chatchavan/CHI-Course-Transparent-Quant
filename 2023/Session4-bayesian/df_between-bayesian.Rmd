@@ -21,6 +21,9 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width =
 
 # Introduction
 
+Your research team invented SuperGlove! It emits electromagnetic signals to stimulate the wearer's hand to improve their productivity (i.e. zapping people to make them work faster). SuperGlove! has two modes of stimulation: constant signal vs. adaptive signal. You want to evaluate the effectiveness of SuperGlove!
+
+
 ## Load necessary packages
 
 ```{r message=FALSE, warning=FALSE}
@@ -37,7 +40,7 @@ theme_set(theme_ggdist())
 
 ## Load the data
 
-In this exercise, you will use the dataset in the file `df_between.csv` which contains the results of a between-subejects experiment where 30 participants are placed in three different conditions `cond` (levels: `off`, `constant`, `adaptive`), and the measure was `wpm`. The researchers want to see if participants `wpm` varies based on the condition, `cond`
+In this exercise, you will use the dataset in the file `df_between.csv` which contains the results of a between-subjects experiment where 30 participants are placed in three different conditions `cond` (levels: `off`, `constant`, `adaptive`), and the measure was `wpm`. The researchers want to see if participants `wpm` varies based on the condition, `cond`
 
 ```{r}
 df_between <- read_csv("df_between.csv")

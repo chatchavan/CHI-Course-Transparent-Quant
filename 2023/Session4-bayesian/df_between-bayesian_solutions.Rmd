@@ -21,6 +21,8 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.width =
 
 # Introduction
 
+In this exercise, you will use the dataset in the file `df_between.csv` which contains the results of a between-subjects experiment where 30 participants are placed in three different conditions `cond` (levels: `off`, `constant`, `adaptive`), and the measure was `wpm`. The researchers want to see if participants `wpm` varies based on the condition, `cond`
+
 ## Load necessary packages
 
 ```{r message=FALSE, warning=FALSE}
